@@ -1,0 +1,6 @@
+{
+  "name": "GamePay - شحن الألعاب",
+  "description": "متجر إلكتروني متخصص في شحن الألعاب والبطاقات الرقمية",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
