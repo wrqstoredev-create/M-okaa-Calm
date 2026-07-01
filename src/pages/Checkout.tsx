@@ -119,13 +119,18 @@ export default function Checkout() {
 
       // 3. Notify owner via Discord bot
       try {
-        await fetch('/api/notify-order', {
+        const notifyRes = await fetch('/api/notify-order', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ order: orderData, items })
         });
+        
+        if (!notifyRes.ok) {
+          const errorData = await notifyRes.json();
+          console.error('Discord notification server error:', errorData);
+        }
       } catch (notifyError) {
-        console.error('Failed to notify owner via Discord:', notifyError);
+        console.error('Failed to reach notification API:', notifyError);
       }
 
       setIsProcessing(false);

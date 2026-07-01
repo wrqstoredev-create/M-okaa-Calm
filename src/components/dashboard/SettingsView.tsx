@@ -865,6 +865,38 @@ export default function SettingsView() {
                     </button>
                   </div>
                   
+                  <div className="p-6 bg-indigo-50/50 border border-indigo-100 rounded-[2rem] space-y-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-lg shadow-indigo-200">
+                        <MessageCircle size={20} />
+                      </div>
+                      <div>
+                        <h4 className="font-black text-indigo-900 text-sm">اختبار اتصال ديسكورد</h4>
+                        <p className="text-[10px] text-indigo-700/70 font-bold">تأكد من صحة إعدادات البوت واستقبالك للرسائل</p>
+                      </div>
+                    </div>
+                    
+                    <button 
+                      onClick={async () => {
+                        try {
+                          addToast('جاري إرسال رسالة اختبار... 🚀', 'info');
+                          const res = await fetch('/api/test-discord', { method: 'POST' });
+                          const data = await res.json();
+                          if (res.ok) {
+                            addToast(`نجح الاتصال! بوت ${data.bot_name} أرسل لك رسالة ✅`, 'success');
+                          } else {
+                            addToast(`فشل الاختبار: ${data.details || data.error} ❌`, 'error');
+                          }
+                        } catch (e) {
+                          addToast('تعذر الوصول لخادم الإشعارات ❌', 'error');
+                        }
+                      }}
+                      className="w-full py-3 bg-indigo-600 text-white rounded-2xl font-black text-xs hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-200 active:scale-95"
+                    >
+                      إرسال رسالة اختبار الآن
+                    </button>
+                  </div>
+                  
                   <div className="p-4 bg-amber-50 border border-amber-100 rounded-2xl">
                     <p className="text-xs font-bold text-amber-800 leading-relaxed">
                       يتم إرسال الإشعارات تلقائياً إلى بريد المدير المسجل في النظام. تأكد من تفعيل خيارات التنبيه في متصفحك أيضاً.
