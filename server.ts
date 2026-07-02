@@ -2,10 +2,7 @@ import express from "express";
 import path from "path";
 import { createServer as createViteServer } from "vite";
 import * as dotenv from "dotenv";
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+import cors from "cors";
 
 // Load environment variables
 dotenv.config();
@@ -15,11 +12,23 @@ async function startServer() {
   const PORT = 3000;
 
   // Middleware to parse JSON body
+  app.use(cors());
   app.use(express.json());
 
   // API Routes
   app.get("/api/health", (req, res) => {
     res.json({ status: "ok" });
+  });
+
+  app.get("/api/config-check", (req, res) => {
+    res.json({
+      node_version: process.version,
+      env: process.env.NODE_ENV,
+      discord_token_set: !!process.env.DISCORD_BOT_TOKEN,
+      discord_token_length: process.env.DISCORD_BOT_TOKEN?.length || 0,
+      discord_owner_id_set: !!process.env.DISCORD_OWNER_ID,
+      fetch_available: typeof fetch !== "undefined"
+    });
   });
 
   app.post("/api/request-admin", async (req, res) => {
@@ -29,8 +38,11 @@ async function startServer() {
       const ownerId = process.env.DISCORD_OWNER_ID?.trim();
 
       if (!botToken || !ownerId) {
-        console.error("Discord configuration is missing: TOKEN or ID not set.");
-        return res.status(500).json({ error: "Discord configuration is missing." });
+        return res.status(500).json({ error: "Discord configuration is missing: TOKEN or ID not set in environment." });
+      }
+
+      if (typeof fetch === "undefined") {
+        return res.status(500).json({ error: "Fetch API is not available on this server. Please upgrade to Node.js 18 or higher." });
       }
 
       // Step 1: Create a DM channel with the owner
@@ -44,11 +56,11 @@ async function startServer() {
       });
 
       if (!dmChannelRes.ok) {
-        const errorData = await dmChannelRes.json();
+        const errorData = await dmChannelRes.json().catch(() => ({ message: "Unknown error" }));
         console.error("Discord API Error (Create DM):", errorData);
         return res.status(500).json({ 
-          error: "Failed to connect to Discord.",
-          details: errorData.message || "Unknown error"
+          error: "Discord connection failed (DM Channel).",
+          details: errorData.message || "Unknown Discord error"
         });
       }
 
@@ -68,18 +80,17 @@ async function startServer() {
       });
 
       if (!messageRes.ok) {
-        const errorData = await messageRes.json();
-        console.error("Discord API Error (Send Message):", errorData);
+        const errorData = await messageRes.json().catch(() => ({ message: "Unknown error" }));
         return res.status(500).json({ 
           error: "Failed to send message via Discord.",
-          details: errorData.message || "Unknown error"
+          details: errorData.message || "Unknown Discord error"
         });
       }
 
       res.json({ success: true, message: "Request sent to server owner." });
     } catch (error: any) {
       console.error("Error in /api/request-admin:", error.message);
-      res.status(500).json({ error: "Internal server error" });
+      res.status(500).json({ error: "Internal Server Error", message: error.message });
     }
   });
 
@@ -92,13 +103,18 @@ async function startServer() {
         return res.status(400).json({ error: "Missing DISCORD_BOT_TOKEN or DISCORD_OWNER_ID in environment variables." });
       }
 
+      if (typeof fetch === "undefined") {
+        return res.status(500).json({ error: "Fetch API is not available on this server. Node.js 18+ is required." });
+      }
+
       // Step 1: Validate Token and Get Bot Info
       const botInfoRes = await fetch("https://discord.com/api/v10/users/@me", {
         headers: { "Authorization": `Bot ${botToken}` }
       });
 
       if (!botInfoRes.ok) {
-        return res.status(401).json({ error: "Invalid Discord Bot Token." });
+        const err = await botInfoRes.json().catch(() => ({}));
+        return res.status(401).json({ error: "Invalid Discord Bot Token.", details: err.message });
       }
 
       const botData = await botInfoRes.json();
@@ -114,10 +130,10 @@ async function startServer() {
       });
 
       if (!dmChannelRes.ok) {
-        const errorData = await dmChannelRes.json();
+        const errorData = await dmChannelRes.json().catch(() => ({}));
         return res.status(500).json({ 
           error: "Failed to create DM channel with owner.",
-          details: errorData.message || "Unknown error (possibly ID is wrong or bot lacks permissions)"
+          details: errorData.message || "Unknown error (check if Owner ID is correct and Bot has DMs enabled)"
         });
       }
 
@@ -135,7 +151,7 @@ async function startServer() {
       });
 
       if (!messageRes.ok) {
-        return res.status(500).json({ error: "DM channel created but failed to send message." });
+        return res.status(500).json({ error: "DM channel created but failed to send message. Check Bot permissions." });
       }
 
       res.json({ 
@@ -145,7 +161,7 @@ async function startServer() {
       });
     } catch (error: any) {
       console.error("Error in /api/test-discord:", error.message);
-      res.status(500).json({ error: "Internal server error" });
+      res.status(500).json({ error: "Server error during Discord test", message: error.message });
     }
   });
 
@@ -155,11 +171,12 @@ async function startServer() {
       const botToken = process.env.DISCORD_BOT_TOKEN?.trim();
       const ownerId = process.env.DISCORD_OWNER_ID?.trim();
 
-      console.log(`Processing order notification for order #${order?.id || 'unknown'}`);
-
       if (!botToken || !ownerId) {
-        console.error("Discord configuration is missing: TOKEN or ID not set.");
         return res.status(500).json({ error: "Discord configuration is missing." });
+      }
+
+      if (typeof fetch === "undefined") {
+        return res.status(500).json({ error: "Fetch API missing on host." });
       }
 
       // Create DM channel
@@ -173,11 +190,10 @@ async function startServer() {
       });
 
       if (!dmChannelRes.ok) {
-        const errorData = await dmChannelRes.json();
-        console.error("Discord API Error (Create DM for order):", errorData);
+        const errorData = await dmChannelRes.json().catch(() => ({}));
         return res.status(500).json({ 
           error: "Failed to connect to Discord.",
-          details: errorData.message || "Unknown error"
+          details: errorData.message || "DM channel creation failed"
         });
       }
 

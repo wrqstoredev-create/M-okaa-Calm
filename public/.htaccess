@@ -1,0 +1,16 @@
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # 1. توجيه طلبات الـ API إلى خادم Node.js
+  # إذا كنت تقوم بتشغيل خادم Node.js على منفذ معين (مثلاً 3000) في HostGator،
+  # قم بإزالة علامة المربع (#) من السطر التالي وقم بتغيير المنفذ إذا لزم الأمر:
+  # RewriteRule ^api/(.*)$ http://127.0.0.1:3000/api/$1 [P,L]
+
+  # 2. توجيه باقي الطلبات لتطبيق React (لحل مشكلة 404 عند تحديث الصفحة)
+  RewriteBase /
+  RewriteRule ^index\.html$ - [L]
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{REQUEST_URI} !^/api/ [NC]
+  RewriteRule . /index.html [L]
+</IfModule>
