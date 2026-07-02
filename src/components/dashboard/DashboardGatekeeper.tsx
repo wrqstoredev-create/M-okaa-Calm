@@ -82,7 +82,8 @@ export default function DashboardGatekeeper({ children }: DashboardGatekeeperPro
     setRequestError('');
     
     try {
-      const res = await fetch('/api/request-admin', {
+      const API_BASE = import.meta.env.VITE_API_URL || '';
+      const res = await fetch(`${API_BASE}/api/request-admin`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ user: requestUser, reason: requestReason })

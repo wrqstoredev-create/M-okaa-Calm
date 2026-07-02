@@ -880,7 +880,8 @@ export default function SettingsView() {
                       <button 
                         onClick={async () => {
                           try {
-                            const res = await fetch('/api/config-check');
+                            const API_BASE = import.meta.env.VITE_API_URL || '';
+                            const res = await fetch(`${API_BASE}/api/config-check`);
                             const data = await res.json();
                             if (res.ok) {
                               const status = `Node: ${data.node_version} | Token: ${data.discord_token_set ? '✅' : '❌'} | ID: ${data.discord_owner_id_set ? '✅' : '❌'} | Fetch: ${data.fetch_available ? '✅' : '❌'}`;
