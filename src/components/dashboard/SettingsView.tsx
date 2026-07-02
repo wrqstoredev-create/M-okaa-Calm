@@ -866,29 +866,64 @@ export default function SettingsView() {
                   </div>
                   
                   <div className="p-6 bg-indigo-50/50 border border-indigo-100 rounded-[2rem] space-y-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-lg shadow-indigo-200">
-                        <MessageCircle size={20} />
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-lg shadow-indigo-200">
+                          <MessageCircle size={20} />
+                        </div>
+                        <div>
+                          <h4 className="font-black text-indigo-900 text-sm">اختبار اتصال ديسكورد</h4>
+                          <p className="text-[10px] text-indigo-700/70 font-bold">تأكد من صحة إعدادات البوت واستقبالك للرسائل</p>
+                        </div>
                       </div>
-                      <div>
-                        <h4 className="font-black text-indigo-900 text-sm">اختبار اتصال ديسكورد</h4>
-                        <p className="text-[10px] text-indigo-700/70 font-bold">تأكد من صحة إعدادات البوت واستقبالك للرسائل</p>
-                      </div>
+                      
+                      <button 
+                        onClick={async () => {
+                          try {
+                            const res = await fetch('/api/config-check');
+                            const data = await res.json();
+                            if (res.ok) {
+                              const status = `Node: ${data.node_version} | Token: ${data.discord_token_set ? '✅' : '❌'} | ID: ${data.discord_owner_id_set ? '✅' : '❌'} | Fetch: ${data.fetch_available ? '✅' : '❌'}`;
+                              addToast(status, 'info');
+                            } else {
+                              addToast('تعذر جلب بيانات التكوين ❌', 'error');
+                            }
+                          } catch (e) {
+                            addToast('خطأ في الاتصال بالخادم ❌', 'error');
+                          }
+                        }}
+                        className="p-2 text-indigo-600 hover:bg-indigo-100 rounded-lg transition-colors"
+                        title="فحص حالة الإعدادات"
+                      >
+                        <ShieldCheck size={18} />
+                      </button>
                     </div>
                     
                     <button 
                       onClick={async () => {
                         try {
                           addToast('جاري إرسال رسالة اختبار... 🚀', 'info');
-                          const res = await fetch('/api/test-discord', { method: 'POST' });
-                          const data = await res.json();
-                          if (res.ok) {
-                            addToast(`نجح الاتصال! بوت ${data.bot_name} أرسل لك رسالة ✅`, 'success');
+                          const API_BASE = import.meta.env.VITE_API_URL || '';
+                          const res = await fetch(`${API_BASE}/api/test-discord`, { method: 'POST' });
+                          
+                          const contentType = res.headers.get("content-type");
+                          if (contentType && contentType.indexOf("application/json") !== -1) {
+                            const data = await res.json();
+                            if (res.ok) {
+                              addToast(`نجح الاتصال! بوت ${data.bot_name} أرسل لك رسالة ✅`, 'success');
+                            } else {
+                              const errorMessage = data.details || data.message || data.error || 'فشل غير معروف';
+                              addToast(`فشل الاختبار: ${errorMessage} ❌`, 'error');
+                              console.error('Discord Test API Error:', data);
+                            }
                           } else {
-                            addToast(`فشل الاختبار: ${data.details || data.error} ❌`, 'error');
+                            const textData = await res.text();
+                            console.error(`Discord Test HTTP Error (Status: ${res.status}):`, textData);
+                            addToast(`خطأ خادم (Status: ${res.status}). يرجى مراجعة الـ Console ❌`, 'error');
                           }
-                        } catch (e) {
-                          addToast('تعذر الوصول لخادم الإشعارات ❌', 'error');
+                        } catch (e: any) {
+                          console.error('Fetch Exception:', e);
+                          addToast(`تعذر الوصول للخادم: ${e.message} ❌`, 'error');
                         }
                       }}
                       className="w-full py-3 bg-indigo-600 text-white rounded-2xl font-black text-xs hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-200 active:scale-95"
