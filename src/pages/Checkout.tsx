@@ -119,18 +119,25 @@ export default function Checkout() {
 
       // 3. Notify owner via Discord bot
       try {
-        const notifyRes = await fetch('/api/notify-order', {
+        const API_BASE = import.meta.env.VITE_API_URL || '';
+        const notifyRes = await fetch(`${API_BASE}/api/notify-order`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ order: orderData, items })
         });
         
         if (!notifyRes.ok) {
-          const errorData = await notifyRes.json();
-          console.error('Discord notification server error:', errorData);
+          const contentType = notifyRes.headers.get("content-type");
+          if (contentType && contentType.indexOf("application/json") !== -1) {
+            const errorData = await notifyRes.json();
+            console.error('Discord notification API error:', errorData);
+          } else {
+            const textData = await notifyRes.text();
+            console.error(`Discord notification HTTP Error (Status: ${notifyRes.status}):`, textData);
+          }
         }
-      } catch (notifyError) {
-        console.error('Failed to reach notification API:', notifyError);
+      } catch (notifyError: any) {
+        console.error('Failed to reach notification API (Exception):', notifyError.message);
       }
 
       setIsProcessing(false);
