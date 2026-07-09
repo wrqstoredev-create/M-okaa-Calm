@@ -3,10 +3,12 @@ import { Link } from 'react-router-dom';
 import { Trash2, Plus, Minus, ShoppingBag, Ticket, Loader2, X, CheckCircle } from 'lucide-react';
 import { useCurrency } from '../contexts/CurrencyContext';
 import { useCart } from '../contexts/CartContext';
+import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabaseClient';
 
 export default function Cart() {
   const { formatPrice } = useCurrency();
+  const { user } = useAuth();
   const { 
     items, 
     updateQuantity, 
@@ -207,7 +209,7 @@ export default function Cart() {
               </div>
             </div>
 
-            <Link to="/checkout" className="block w-full text-center bg-black text-white font-black py-4 rounded-2xl hover:bg-zinc-800 shadow-xl shadow-black/10 active:scale-[0.98] transition-all">
+            <Link to={user ? "/checkout" : "/login"} className="block w-full text-center bg-black text-white font-black py-4 rounded-2xl hover:bg-zinc-800 shadow-xl shadow-black/10 active:scale-[0.98] transition-all">
               متابعة للدفع
             </Link>
           </div>
