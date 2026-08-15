@@ -146,10 +146,10 @@ export default function Header() {
   return (
     <header className="border-b border-gray-100 dark:border-gray-700 shadow-sm bg-white dark:bg-[#1a1d24]/80 backdrop-blur-md sticky top-0 z-50 transition-all">
       {/* Main Header (Single Navigation Bar) */}
-      <div className="max-w-7xl mx-auto flex items-center justify-between px-2 py-2 md:px-4 md:py-3 gap-2 md:gap-4">
+      <div className="max-w-7xl mx-auto flex items-center justify-between px-2 py-2 md:px-4 md:py-3 gap-1 md:gap-4">
         
         {/* Logo & Nav */}
-        <div className="flex items-center gap-4 flex-shrink-0">
+        <div className="flex items-center gap-4">
           <div className="flex flex-col items-start">
             <Link to="/" className="flex items-center cursor-pointer hover:opacity-90">
               <img src="https://i.postimg.cc/X7NjBvxn/content.png" alt={storeName} className="h-10 w-10 md:h-11 md:w-11 rounded-full object-cover" />
@@ -190,7 +190,7 @@ export default function Header() {
         </div>
 
         {/* Socials & Settings */}
-        <div className="hidden xl:flex items-center gap-3 px-2 flex-shrink-0">
+        <div className="hidden xl:flex items-center gap-3 px-2">
           <div className="flex items-center gap-1.5 group cursor-pointer">
             <a href={`tel:${(settings?.phone_primary || '01102976303').replace(/[^0-9+]/g, '')}`} className="text-[11px] font-black text-gray-800 dark:text-white group-hover:text-red-700 transition-colors" dir="ltr">
               {settings?.phone_primary || '01102976303'}
@@ -244,12 +244,12 @@ export default function Header() {
         </div>
 
         {/* Actions */}
-        <div className="flex items-center gap-2 md:gap-3 flex-shrink-0">
+        <div className="flex items-center gap-1 md:gap-3">
           {roboCoinsEnabled && (
-            <div className="flex items-center gap-1.5 bg-amber-50 border border-amber-200/80 px-2.5 py-1.5 rounded-xl text-amber-800 shadow-sm text-right cursor-default select-none transition-colors" title="رصيدك المتبقي من الروبوكس">
-              <span className="text-[12px]">🪙</span>
-              <span className="text-[10px] font-black text-amber-900 whitespace-nowrap">متبقي:</span>
-              <span className="text-[11px] font-black font-mono tracking-tight text-amber-700">{roboCoinsBalance.toLocaleString('en-US')}</span>
+            <div className="flex items-center gap-1 md:gap-1.5 bg-amber-50 border border-amber-200/80 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-xl text-amber-800 shadow-sm text-right cursor-default select-none transition-colors" title="رصيدك المتبقي من الروبوكس">
+              <span className="text-[10px] md:text-[12px]">🪙</span>
+              <span className="hidden md:inline text-[10px] font-black text-amber-900 whitespace-nowrap">متبقي:</span>
+              <span className="text-[9px] md:text-[11px] font-black font-mono tracking-tight text-amber-700">{roboCoinsBalance.toLocaleString('en-US')}</span>
             </div>
           )}
 
@@ -258,8 +258,8 @@ export default function Header() {
               onClick={() => setIsFavoritesOpen(!isFavoritesOpen)}
               className="relative cursor-pointer group focus:outline-none"
             >
-            <div className={`w-12 h-12 flex items-center justify-center rounded-xl transition-all border shadow-sm ${isFavoritesOpen ? 'bg-red-50 text-red-700 border-red-200' : 'bg-white dark:bg-[#1a1d24] border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:bg-[#0f1115] dark:hover:bg-gray-700 dark:bg-gray-800 dark:hover:bg-zinc-800 dark:bg-zinc-800 text-gray-800 dark:text-white hover:border-gray-200 dark:border-gray-700 hover:shadow-md'}`}>
-                <Heart className={`w-6 h-6 ${isFavoritesOpen ? 'fill-red-500 text-red-600' : 'text-gray-700 dark:text-gray-300'}`} />
+            <div className={`w-9 h-9 md:w-12 md:h-12 flex items-center justify-center rounded-xl transition-all border shadow-sm ${isFavoritesOpen ? 'bg-red-50 text-red-700 border-red-200' : 'bg-white dark:bg-[#1a1d24] border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:bg-[#0f1115] dark:hover:bg-gray-700 dark:bg-gray-800 dark:hover:bg-zinc-800 dark:bg-zinc-800 text-gray-800 dark:text-white hover:border-gray-200 dark:border-gray-700 hover:shadow-md'}`}>
+                <Heart className={`w-5 h-5 md:w-6 md:h-6 ${isFavoritesOpen ? 'fill-red-500 text-red-600' : 'text-gray-700 dark:text-gray-300'}`} />
               </div>
               {favoritesCount > 0 && (
                 <span className="absolute -top-1 -right-1 bg-red-700 text-white text-[10px] w-4.5 h-4.5 rounded-full flex items-center justify-center font-black border-2 border-white group-hover:scale-110 transition-transform animate-pulse">
@@ -367,8 +367,8 @@ export default function Header() {
           </div>
 
           <Link to="/cart" className="relative cursor-pointer group">
-            <div className="bg-white dark:bg-[#1a1d24] w-12 h-12 flex items-center justify-center rounded-xl border border-gray-100 dark:border-gray-700 group-hover:bg-gray-50 dark:bg-[#0f1115] dark:hover:bg-gray-700 dark:bg-gray-800 dark:hover:bg-zinc-800 dark:bg-zinc-800 group-hover:border-gray-200 dark:border-gray-700 transition-all shadow-sm hover:shadow-md">
-              <ShoppingCart className="w-6 h-6 text-gray-700 dark:text-gray-300 group-hover:text-red-700" />
+            <div className="bg-white dark:bg-[#1a1d24] w-9 h-9 md:w-12 md:h-12 flex items-center justify-center rounded-xl border border-gray-100 dark:border-gray-700 group-hover:bg-gray-50 dark:bg-[#0f1115] dark:hover:bg-gray-700 dark:bg-gray-800 dark:hover:bg-zinc-800 dark:bg-zinc-800 group-hover:border-gray-200 dark:border-gray-700 transition-all shadow-sm hover:shadow-md">
+              <ShoppingCart className="w-5 h-5 md:w-6 md:h-6 text-gray-700 dark:text-gray-300 group-hover:text-red-700" />
             </div>
             {totalItems > 0 && (
               <span className="absolute -top-1 -right-1 bg-red-700 text-white text-[10px] w-4.5 h-4.5 rounded-full flex items-center justify-center font-black border-2 border-white group-hover:scale-110 transition-transform">
@@ -380,10 +380,10 @@ export default function Header() {
           {/* Requests Icon (Box) */}
           <Link 
             to="/profile?tab=orders" 
-            className="w-12 h-12 flex items-center justify-center rounded-xl bg-white dark:bg-[#1a1d24] border border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:bg-[#0f1115] dark:hover:bg-gray-700 dark:bg-gray-800 dark:hover:bg-zinc-800 dark:bg-zinc-800 hover:border-gray-200 dark:border-gray-700 transition-all shadow-sm hover:shadow-md relative group"
+            className="w-9 h-9 md:w-12 md:h-12 flex items-center justify-center rounded-xl bg-white dark:bg-[#1a1d24] border border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:bg-[#0f1115] dark:hover:bg-gray-700 dark:bg-gray-800 dark:hover:bg-zinc-800 dark:bg-zinc-800 hover:border-gray-200 dark:border-gray-700 transition-all shadow-sm hover:shadow-md relative group"
             title="طلباتي"
           >
-            <Package size={24} className="text-gray-600 dark:text-gray-400 group-hover:text-red-600 transition-colors" />
+            <Package className="w-5 h-5 md:w-6 md:h-6 text-gray-600 dark:text-gray-400 group-hover:text-red-600 transition-colors" />
             <div className="absolute -top-1 -right-1 bg-red-600 text-white text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center border-2 border-white shadow-sm opacity-0 group-hover:opacity-100 transition-opacity">
               !
             </div>
@@ -490,7 +490,7 @@ export default function Header() {
               </AnimatePresence>
             </div>
           ) : (
-            <Link to="/login" className="text-xs font-black bg-red-700 text-white px-5 py-2.5 rounded-xl hover:bg-red-800 transition-all shadow-lg shadow-red-100 active:scale-95">
+            <Link to="/login" className="text-[10px] md:text-xs font-black bg-red-700 text-white px-3 py-1.5 md:px-5 md:py-2.5 rounded-xl hover:bg-red-800 transition-all shadow-lg shadow-red-100 active:scale-95 whitespace-nowrap">
               دخول
             </Link>
           )}

@@ -214,7 +214,10 @@ export default function GamesView() {
           </button>
           
           <button 
-            onClick={() => setEditingGame({ name: '', image_url: '', is_active: true })}
+            onClick={() => {
+              setEditingGame({ name: '', image_url: '', is_active: true });
+              setIsModalOpen(true);
+            }}
             className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-xl font-black transition-all shadow-lg shadow-red-600/20 active:scale-95"
           >
             <Plus size={20} />

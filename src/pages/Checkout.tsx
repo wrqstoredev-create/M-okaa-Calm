@@ -48,6 +48,11 @@ export default function Checkout() {
   const [isUploading, setIsUploading] = useState(false);
 
   const handlePayment = async () => {
+    if (!paymentMethod) {
+      addToast('يرجى اختيار وسيلة الدفع', 'error');
+      return;
+    }
+
     if (!termsAccepted) {
       addToast('يرجى الموافقة على الشروط والأحكام للمتابعة 📄', 'error');
       return;
@@ -62,10 +67,18 @@ export default function Checkout() {
     let screenshotUrl = '';
 
     try {
+      // Refresh session to prevent token expiration issues if user left the page open
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      if (sessionError || !session) {
+        addToast('انتهت صلاحية الجلسة، يرجى تسجيل الدخول مرة أخرى', 'error');
+        navigate('/login');
+        return;
+      }
+
       if (paymentScreenshot) {
         setIsUploading(true);
         const fileExt = paymentScreenshot.name.split('.').pop();
-        const fileName = `${Math.random()}.${fileExt}`;
+        const fileName = `${Math.random()}-${Date.now()}.${fileExt}`;
         const filePath = `screenshots/${fileName}`;
 
         const { error: uploadError, data } = await supabase.storage
@@ -85,10 +98,10 @@ export default function Checkout() {
       const { data: orderData, error: orderError } = await supabase
         .from('orders')
         .insert({
-          user_id: user?.id || null,
+          user_id: session.user.id,
           total_price: finalPrice, // Use finalPrice after discount
           payment_method: `${paymentMethod}___${currency}`,
-          customer_email: user?.email || 'guest@example.com',
+          customer_email: session.user.email || 'guest@example.com',
           payment_screenshot_url: screenshotUrl,
           status: isManual ? 'pending' : 'processing',
           coupon_code: appliedCoupon?.code || null,
