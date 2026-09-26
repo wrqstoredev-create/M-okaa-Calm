@@ -379,7 +379,7 @@ export default function CartDrawer() {
                 </div>
 
                 <a 
-                  href="/terms" 
+                  href="https://www.mokaa3.com/terms" 
                   target="_blank" 
                   rel="noreferrer"
                   className="flex items-center justify-center gap-2 text-xs font-bold text-red-500 hover:text-red-400 hover:underline mt-4"
