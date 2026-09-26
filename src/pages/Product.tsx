@@ -227,6 +227,28 @@ export default function Product() {
     window.scrollTo(0, 0);
   }, [id]);
 
+  /* ── Dynamic Page Title & Social OpenGraph Tags ───────────────────── */
+  useEffect(() => {
+    if (product?.title) {
+      document.title = `${product.title} | GamePay`;
+      const ogTitle = document.querySelector('meta[property="og:title"]');
+      if (ogTitle) ogTitle.setAttribute('content', `${product.title} - شحن فوري وآمن`);
+      const ogDesc = document.querySelector('meta[property="og:description"]');
+      if (ogDesc && product.description) {
+        ogDesc.setAttribute('content', product.description.slice(0, 160));
+      }
+      if (product.image_url) {
+        const ogImg = document.querySelector('meta[property="og:image"]');
+        if (ogImg) ogImg.setAttribute('content', product.image_url);
+        const twImg = document.querySelector('meta[name="twitter:image"]');
+        if (twImg) twImg.setAttribute('content', product.image_url);
+      }
+    }
+    return () => {
+      document.title = 'GamePay - متجر شحن الألعاب والبطاقات الرقمية';
+    };
+  }, [product]);
+
   /* ── In-stock check helper ────────────────────────────────────────── */
   const isItemInStock = (item: any) => {
     if (!item) return false;
@@ -606,9 +628,16 @@ export default function Product() {
               {/* Stock + delivery badges */}
               <div className="flex flex-wrap gap-2">
                 <StockBadge stock={product.stock} />
-                <span className="inline-flex items-center gap-1.5 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 border border-emerald-200 text-[11px] font-black px-3 py-1.5 rounded-full">
-                  <Zap size={12} className="fill-emerald-600" />
-                  تسليم فوري
+                <span className="inline-flex items-center gap-1.5 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/30 text-[11px] font-black px-3 py-1.5 rounded-full shadow-xs">
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                  </span>
+                  تسليم فوري وآلي &lt; 5 دقائق ⚡
+                </span>
+                <span className="inline-flex items-center gap-1.5 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 border border-blue-200 dark:border-blue-500/30 text-[11px] font-black px-3 py-1.5 rounded-full shadow-xs">
+                  <ShieldCheck size={13} className="text-blue-500" />
+                  أمان وضمان رسمي 100%
                 </span>
               </div>
 
@@ -818,8 +847,30 @@ export default function Product() {
                         ? 'bg-red-50 dark:bg-red-950/60 border-red-200 dark:border-red-500/50 text-red-600 dark:text-red-500 shadow-[0_0_15px_rgba(255,32,64,0.35)]'
                         : 'bg-white dark:bg-white/5 border-gray-200 dark:border-white/10 text-gray-400 hover:border-red-400 dark:hover:border-red-500/40 hover:text-red-500'
                     }`}
+                    title={isFav ? 'إزالة من المفضلة' : 'إضافة للمفضلة'}
                   >
                     <Heart size={20} className={isFav ? 'fill-current' : ''} />
+                  </button>
+
+                  {/* Share Product */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (navigator.share) {
+                        navigator.share({
+                          title: product.title,
+                          text: `اشحن ${product.title} الآن عبر متجرنا بأفضل سعر ⚡`,
+                          url: window.location.href,
+                        }).catch(() => {});
+                      } else {
+                        navigator.clipboard.writeText(window.location.href);
+                        addToast('تم نسخ رابط المنتج للمشاركة 🚀', 'success');
+                      }
+                    }}
+                    className="w-14 h-14 flex items-center justify-center rounded-2xl border bg-white dark:bg-white/5 border-gray-200 dark:border-white/10 text-gray-400 hover:border-red-400 dark:hover:border-red-500/40 hover:text-red-500 transition-all flex-shrink-0 cursor-pointer active:scale-90"
+                    title="مشاركة المنتج"
+                  >
+                    <Share2 size={20} />
                   </button>
                 </div>
               )}

@@ -258,12 +258,21 @@ export default function Profile() {
     }
   };
 
+  const [copiedKey, setCopiedKey] = useState<string | null>(null);
+
   const handleCopyOrderId = (id: string) => {
     const short = id.slice(0, 8);
     navigator.clipboard.writeText(short);
     setCopiedOrderId(id);
     addToast(`تم نسخ رقم الطلب #${short} 📋`, 'success');
     setTimeout(() => setCopiedOrderId(null), 2000);
+  };
+
+  const handleCopyText = (text: string, label: string = 'البيانات') => {
+    navigator.clipboard.writeText(text);
+    setCopiedKey(text);
+    addToast(`تم نسخ ${label} بنجاح 📋`, 'success');
+    setTimeout(() => setCopiedKey(null), 2000);
   };
 
   /* ── Display name ──────────────────────────────────────────────────── */
@@ -596,14 +605,25 @@ export default function Profile() {
                               </p>
 
                               {order.fulfillment_type === 'link' && order.fulfillment_data && (
-                                <a
-                                  href={order.fulfillment_data}
-                                  target="_blank"
-                                  rel="noreferrer"
-                                  className="flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-black px-3 py-2 rounded-xl transition-all active:scale-95 shadow-sm"
-                                >
-                                  <LinkIcon size={12} /> رابط التفعيل
-                                </a>
+                                <div className="flex items-center gap-2 flex-wrap">
+                                  <a
+                                    href={order.fulfillment_data}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-black px-3 py-2 rounded-xl transition-all active:scale-95 shadow-sm"
+                                  >
+                                    <LinkIcon size={12} /> رابط التفعيل
+                                  </a>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleCopyText(order.fulfillment_data!, 'رابط التفعيل')}
+                                    className="flex items-center gap-1 bg-gray-100 dark:bg-zinc-800 hover:bg-gray-200 dark:hover:bg-zinc-700 text-gray-700 dark:text-gray-200 text-[11px] font-bold px-2.5 py-2 rounded-xl transition-all active:scale-95 cursor-pointer"
+                                    title="نسخ الرابط"
+                                  >
+                                    {copiedKey === order.fulfillment_data ? <Check size={12} className="text-emerald-500" /> : <Copy size={12} />}
+                                    <span>نسخ الرابط</span>
+                                  </button>
+                                </div>
                               )}
 
                               {order.fulfillment_type === 'document' && order.fulfillment_file_url && (
@@ -621,29 +641,68 @@ export default function Profile() {
                                 try {
                                   const parsed = JSON.parse(order.fulfillment_data);
                                   if (Array.isArray(parsed) && parsed[0]?.email) {
-                                    return parsed.map((acc, i) => (
-                                      <div key={i} className="group relative bg-zinc-900 border border-zinc-700 rounded-xl overflow-hidden cursor-help">
-                                        <div className="px-4 py-2.5 flex items-center gap-3 relative z-10">
-                                          <Key size={13} className="text-red-400 flex-shrink-0" />
-                                          <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 blur-sm group-hover:blur-none transition-all duration-300">
-                                            <span className="text-[11px] font-black text-white select-all bg-white/10 px-2 py-0.5 rounded">{acc.email}</span>
-                                            <span className="text-[11px] font-black text-red-200 select-all bg-red-500/20 px-2 py-0.5 rounded">{acc.password}</span>
+                                    return parsed.map((acc, i) => {
+                                      const accountFull = `${acc.email}:${acc.password}`;
+                                      return (
+                                        <div key={i} className="group relative bg-zinc-900 border border-zinc-700 hover:border-red-500/40 rounded-xl overflow-hidden transition-all shadow-sm">
+                                          <div className="px-3.5 py-2.5 flex items-center justify-between gap-3 relative z-10">
+                                            <div className="flex items-center gap-2.5 min-w-0">
+                                              <Key size={13} className="text-red-400 flex-shrink-0" />
+                                              <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                                                <span
+                                                  onClick={() => handleCopyText(acc.email, 'اسم المستخدم / الإيميل')}
+                                                  className="text-[11px] font-mono font-bold text-white select-all bg-white/10 hover:bg-white/20 px-2 py-0.5 rounded cursor-pointer transition-colors"
+                                                  title="انقر لنسخ الإيميل"
+                                                >
+                                                  {acc.email}
+                                                </span>
+                                                <span
+                                                  onClick={() => handleCopyText(acc.password, 'كلمة المرور')}
+                                                  className="text-[11px] font-mono font-bold text-red-200 select-all bg-red-500/20 hover:bg-red-500/30 px-2 py-0.5 rounded cursor-pointer transition-colors"
+                                                  title="انقر لنسخ كلمة المرور"
+                                                >
+                                                  {acc.password}
+                                                </span>
+                                              </div>
+                                            </div>
+
+                                            <button
+                                              type="button"
+                                              onClick={() => handleCopyText(accountFull, 'بيانات الحساب')}
+                                              className="flex items-center gap-1 bg-white/10 hover:bg-red-600 text-white text-[10px] font-black px-2.5 py-1.5 rounded-lg transition-all active:scale-95 flex-shrink-0 cursor-pointer"
+                                              title="نسخ الحساب كاملاً"
+                                            >
+                                              {copiedKey === accountFull ? <Check size={11} className="text-emerald-400" /> : <Copy size={11} />}
+                                              <span>نسخ الكل</span>
+                                            </button>
                                           </div>
                                         </div>
-                                        <div className="absolute inset-0 bg-black/60 pointer-events-none group-hover:opacity-0 transition-opacity flex items-center justify-center">
-                                          <span className="text-[9px] font-black text-white uppercase tracking-widest">مرر للإظهار</span>
-                                        </div>
-                                      </div>
-                                    ));
+                                      );
+                                    });
                                   }
                                 } catch { /* not JSON */ }
                                 return (
-                                  <div className="group relative bg-zinc-900 border border-zinc-700 rounded-xl overflow-hidden cursor-help">
-                                    <div className="px-4 py-2.5 flex items-center gap-2 relative z-10">
-                                      <Key size={13} className="text-red-400" />
-                                      <span className="text-[11px] font-black text-white select-all blur-sm group-hover:blur-none transition-all duration-300">
-                                        {order.fulfillment_data}
-                                      </span>
+                                  <div className="group relative bg-zinc-900 border border-zinc-700 hover:border-red-500/40 rounded-xl overflow-hidden transition-all shadow-sm">
+                                    <div className="px-3.5 py-2.5 flex items-center justify-between gap-3 relative z-10">
+                                      <div className="flex items-center gap-2 min-w-0">
+                                        <Key size={13} className="text-red-400 flex-shrink-0" />
+                                        <span
+                                          onClick={() => handleCopyText(order.fulfillment_data!, 'الكود')}
+                                          className="text-[11px] font-mono font-black text-white select-all cursor-pointer truncate max-w-[200px] sm:max-w-xs"
+                                          title="انقر للنسخ"
+                                        >
+                                          {order.fulfillment_data}
+                                        </span>
+                                      </div>
+                                      <button
+                                        type="button"
+                                        onClick={() => handleCopyText(order.fulfillment_data!, 'كود التفعيل')}
+                                        className="flex items-center gap-1 bg-white/10 hover:bg-red-600 text-white text-[10px] font-black px-2.5 py-1.5 rounded-lg transition-all active:scale-95 flex-shrink-0 cursor-pointer"
+                                        title="نسخ الكود"
+                                      >
+                                        {copiedKey === order.fulfillment_data ? <Check size={11} className="text-emerald-400" /> : <Copy size={11} />}
+                                        <span>نسخ الكود</span>
+                                      </button>
                                     </div>
                                   </div>
                                 );

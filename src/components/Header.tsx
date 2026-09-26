@@ -48,6 +48,7 @@ import { useFavorites } from '../contexts/FavoritesContext';
 import { motion, AnimatePresence } from 'motion/react';
 import { supabase } from '../lib/supabaseClient';
 import Tooltip from './ui/Tooltip';
+import AnnouncementBar from './AnnouncementBar';
 
 /* أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬ Inline social-icon SVGs (unchanged from original) أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬ */
 
@@ -105,7 +106,7 @@ export default function Header() {
 
   const { user, profile, signOut }          = useAuth();
   const { currency, setCurrency, formatPrice } = useCurrency();
-  const { totalItems }                      = useCart();
+  const { totalItems, toggleCartDrawer }    = useCart();
   const { favorites, removeFavorite, favoritesCount, clearFavorites } = useFavorites();
 
   const [storeName,        setStoreName]        = useState('Mokaa');
@@ -230,6 +231,7 @@ export default function Header() {
   /* أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯ */
   return (
     <>
+      <AnnouncementBar />
       <header className="border-b border-gray-200/80 dark:border-white/10 shadow-sm bg-white/95 dark:bg-[#060608]/90 backdrop-blur-2xl sticky top-0 z-50 transition-colors duration-300">
         <div className="max-w-7xl mx-auto flex items-center justify-between px-2 py-2 md:px-4 md:py-3 gap-1 md:gap-4">
 
@@ -506,17 +508,27 @@ export default function Header() {
             </div>
 
             {/* Cart */}
-            <Tooltip content="ط·آ³ط¸â€‍ط·آ© ط·آ§ط¸â€‍ط¸â€¦ط·آ´ط·ع¾ط·آ±ط¸ظ¹ط·آ§ط·ع¾" position="bottom">
-              <Link to="/cart" className="relative cursor-pointer group">
+            <Tooltip content="سلة المشتريات" position="bottom">
+              <button
+                type="button"
+                onClick={() => toggleCartDrawer && toggleCartDrawer()}
+                className="relative cursor-pointer group"
+                aria-label="سلة المشتريات"
+              >
                 <div className="bg-white dark:bg-white/5 w-9 h-9 md:w-12 md:h-12 flex items-center justify-center rounded-xl border border-gray-200 dark:border-white/8 group-hover:border-red-500/40 group-hover:bg-red-50 dark:group-hover:bg-red-500/10 dark:group-hover:shadow-[0_0_15px_rgba(255,32,64,0.2)] transition-all duration-200 shadow-sm">
                   <ShoppingCart className="w-5 h-5 md:w-6 md:h-6 text-gray-700 dark:text-gray-300 group-hover:text-red-500 transition-colors" />
                 </div>
                 {totalItems > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-red-600 dark:bg-red-500 dark:shadow-[0_0_8px_rgba(255,32,64,0.8)] text-white text-[10px] w-4.5 h-4.5 rounded-full flex items-center justify-center font-black border-2 border-white dark:border-[#060608] group-hover:scale-110 transition-transform">
+                  <motion.span 
+                    key={totalItems}
+                    initial={{ scale: 0.5 }}
+                    animate={{ scale: [1, 1.3, 1] }}
+                    className="absolute -top-1 -right-1 bg-red-600 dark:bg-red-500 dark:shadow-[0_0_8px_rgba(255,32,64,0.8)] text-white text-[10px] w-4.5 h-4.5 rounded-full flex items-center justify-center font-black border-2 border-white dark:border-[#060608] group-hover:scale-110 transition-transform"
+                  >
                     {totalItems}
-                  </span>
+                  </motion.span>
                 )}
-              </Link>
+              </button>
             </Tooltip>
 
             {/* My Orders */}

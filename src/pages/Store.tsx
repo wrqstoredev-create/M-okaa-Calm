@@ -1,17 +1,21 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { productsApi } from '../services/api/productsApi';
 import { motion, AnimatePresence } from 'motion/react';
 import ProductCard from '../components/ProductCard';
 import ProductSkeleton from '../components/ProductSkeleton';
-import { Search, Gift, Ticket, Cpu, Loader2, Sparkles } from 'lucide-react';
+import { Search, Ticket, Cpu, Loader2, Sparkles, ArrowUpDown, Check, Filter, RotateCcw, CheckCircle2 } from 'lucide-react';
 import { useToast } from '../contexts/ToastContext';
 import RippleButton from '../components/ui/RippleButton';
+
+type SortOption = 'default' | 'price-asc' | 'price-desc' | 'newest';
 
 export default function Store() {
   const [games, setGames] = useState<any[]>([]);
   const [products, setProducts] = useState<any[]>([]);
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState('');
+  const [sortBy, setSortBy] = useState<SortOption>('default');
+  const [inStockOnly, setInStockOnly] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [redeemCode, setRedeemCode] = useState('');
   const [isRedeeming, setIsRedeeming] = useState(false);
@@ -54,12 +58,37 @@ export default function Store() {
     }
   };
 
-  const filteredProducts = products.filter(p => {
-    const matchesSearch = (p.title || '').toLowerCase().includes(searchTerm.toLowerCase()) || 
-                         (p.game_name || '').toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = activeCategory === 'all' || (p.game_name || '').toLowerCase() === activeCategory.toLowerCase();
-    return matchesSearch && matchesCategory;
-  });
+  const filteredAndSortedProducts = useMemo(() => {
+    let result = products.filter(p => {
+      const query = searchTerm.toLowerCase();
+      const matchesSearch = (p.title || '').toLowerCase().includes(query) || 
+                           (p.game_name || '').toLowerCase().includes(query) ||
+                           (p.description || '').toLowerCase().includes(query);
+      const matchesCategory = activeCategory === 'all' || (p.game_name || '').toLowerCase() === activeCategory.toLowerCase();
+      const matchesStock = inStockOnly ? (p.stock === undefined || p.stock === null || p.stock > 0) : true;
+      return matchesSearch && matchesCategory && matchesStock;
+    });
+
+    switch (sortBy) {
+      case 'price-asc':
+        return result.sort((a, b) => Number(a.price || 0) - Number(b.price || 0));
+      case 'price-desc':
+        return result.sort((a, b) => Number(b.price || 0) - Number(a.price || 0));
+      case 'newest':
+        return result.sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime());
+      default:
+        return result;
+    }
+  }, [products, searchTerm, activeCategory, inStockOnly, sortBy]);
+
+  const hasActiveFilters = activeCategory !== 'all' || searchTerm.trim() !== '' || inStockOnly || sortBy !== 'default';
+
+  const resetFilters = () => {
+    setActiveCategory('all');
+    setSearchTerm('');
+    setInStockOnly(false);
+    setSortBy('default');
+  };
 
   return (
     <div className="flex-1 w-full relative bg-[#f8f8fa] dark:bg-[#060608] min-h-screen text-right" dir="rtl">
@@ -119,7 +148,7 @@ export default function Store() {
         </motion.div>
 
         {/* Store Header & Search */}
-        <div className="flex flex-col lg:flex-row gap-6 justify-between items-start lg:items-center mb-8">
+        <div className="flex flex-col lg:flex-row gap-6 justify-between items-start lg:items-center mb-6">
           <div>
             <h1 className="text-3xl font-black text-gray-900 dark:text-white mb-1.5 flex items-center gap-2">
               جميع باقات الألعاب والمنتجات
@@ -141,14 +170,96 @@ export default function Store() {
           </div>
         </div>
 
+        {/* Mobile Horizontal Category Pills (Hidden on Desktop) */}
+        <div className="lg:hidden flex items-center gap-2 overflow-x-auto no-scrollbar pb-3 mb-4">
+          <button
+            onClick={() => setActiveCategory('all')}
+            className={`px-4 py-2 rounded-xl text-xs font-black whitespace-nowrap transition-all cursor-pointer ${
+              activeCategory === 'all'
+                ? 'bg-red-600 text-white shadow-md shadow-red-600/30'
+                : 'bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-700 dark:text-zinc-300'
+            }`}
+          >
+            الكل ({products.length})
+          </button>
+          {games.map(game => (
+            <button
+              key={game.id}
+              onClick={() => setActiveCategory(game.name)}
+              className={`px-3.5 py-2 rounded-xl text-xs font-black whitespace-nowrap transition-all cursor-pointer flex items-center gap-2 ${
+                (activeCategory || '').toLowerCase() === (game.name || '').toLowerCase()
+                  ? 'bg-red-600 text-white shadow-md shadow-red-600/30'
+                  : 'bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-700 dark:text-zinc-300'
+              }`}
+            >
+              {game.image_url && <img src={game.image_url} alt="" className="w-4 h-4 object-contain" />}
+              <span>{game.name}</span>
+            </button>
+          ))}
+        </div>
+
+        {/* Controls Toolbar: Results Count, In-Stock Filter, Sort Dropdown */}
+        <div className="bg-white/80 dark:bg-[#0c0c10]/80 backdrop-blur-xl border border-gray-200/80 dark:border-white/10 rounded-2xl p-3 md:p-4 mb-6 flex flex-wrap items-center justify-between gap-3 shadow-xs">
+          {/* Results count & active status */}
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-extrabold text-gray-500 dark:text-gray-400">
+              عرض <strong className="text-red-600 dark:text-red-400 font-mono text-sm">{filteredAndSortedProducts.length}</strong> من أصل {products.length} منتج
+            </span>
+            {hasActiveFilters && (
+              <button
+                onClick={resetFilters}
+                className="inline-flex items-center gap-1 text-[11px] font-black text-red-600 dark:text-red-400 hover:underline cursor-pointer mr-2"
+                title="إعادة تعيين الفلاتر"
+              >
+                <RotateCcw size={12} />
+                مسح الفلاتر
+              </button>
+            )}
+          </div>
+
+          {/* Action Filters: In Stock Only & Sort */}
+          <div className="flex items-center gap-2.5 flex-wrap">
+            {/* In-Stock Toggle Button */}
+            <button
+              type="button"
+              onClick={() => setInStockOnly(!inStockOnly)}
+              className={`px-3 py-1.5 rounded-xl text-xs font-extrabold transition-all flex items-center gap-1.5 cursor-pointer border ${
+                inStockOnly
+                  ? 'bg-emerald-500/10 border-emerald-500/40 text-emerald-600 dark:text-emerald-400 shadow-xs'
+                  : 'bg-gray-50 dark:bg-white/5 border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-300 hover:border-gray-300 dark:hover:border-white/20'
+              }`}
+            >
+              <span className={`w-2 h-2 rounded-full ${inStockOnly ? 'bg-emerald-500 animate-pulse' : 'bg-gray-400'}`} />
+              <span>المتوفر بالمخزون فقط</span>
+            </button>
+
+            {/* Sort Selector */}
+            <div className="flex items-center gap-1.5">
+              <span className="text-xs font-extrabold text-gray-400 flex items-center gap-1">
+                <ArrowUpDown size={13} /> ترتيب:
+              </span>
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value as SortOption)}
+                className="bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white rounded-xl px-3 py-1.5 text-xs font-bold focus:outline-none focus:border-red-500 cursor-pointer"
+              >
+                <option value="default" className="dark:bg-[#101118]">الافتراضي (الأكثر صلة)</option>
+                <option value="price-asc" className="dark:bg-[#101118]">السعر: من الأقل للأعلى</option>
+                <option value="price-desc" className="dark:bg-[#101118]">السعر: من الأعلى للأقل</option>
+                <option value="newest" className="dark:bg-[#101118]">الأحدث إضافة</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
         <div className="flex flex-col lg:flex-row gap-8">
-          {/* Sidebar Categories */}
-          <div className="w-full lg:w-64 flex-shrink-0">
+          {/* Sidebar Categories (Desktop) */}
+          <div className="hidden lg:block w-64 flex-shrink-0">
             <div className="bg-white/95 dark:bg-[#0c0c10]/95 backdrop-blur-2xl border border-gray-150 dark:border-white/10 rounded-3xl p-4 md:p-5 shadow-sm sticky top-24 space-y-3">
               <h3 className="font-black text-gray-900 dark:text-white px-2 text-sm border-r-4 border-red-600 pr-2.5">
                 تصفية حسب اللعبة
               </h3>
-              <div className="space-y-1">
+              <div className="space-y-1 max-h-[65vh] overflow-y-auto pr-1">
                 <button
                   onClick={() => setActiveCategory('all')}
                   className={`w-full text-right px-4 py-3 rounded-2xl font-bold transition-all duration-200 flex items-center justify-between cursor-pointer ${
@@ -202,10 +313,10 @@ export default function Store() {
                   <ProductSkeleton key={i} />
                 ))}
               </div>
-            ) : filteredProducts.length > 0 ? (
+            ) : filteredAndSortedProducts.length > 0 ? (
               <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
                 <AnimatePresence mode="popLayout">
-                  {filteredProducts.map((product) => (
+                  {filteredAndSortedProducts.map((product) => (
                     <motion.div
                       key={product.id}
                       layout
@@ -226,16 +337,13 @@ export default function Store() {
                 </div>
                 <h3 className="text-xl font-black text-gray-900 dark:text-white mb-2">لا توجد منتجات مطابقة</h3>
                 <p className="text-gray-500 dark:text-gray-400 font-bold max-w-sm mx-auto text-sm leading-relaxed">
-                  لم نتمكن من العثور على أي باقات أو منتجات مطابقة لبحثك في هذا التصنيف.
+                  لم نتمكن من العثور على أي باقات أو منتجات مطابقة لبحثك والفلاتر المحددة.
                 </p>
                 <button 
-                  onClick={() => {
-                    setSearchTerm('');
-                    setActiveCategory('all');
-                  }}
+                  onClick={resetFilters}
                   className="mt-6 font-black text-white bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 px-6 py-2.5 rounded-xl transition-all shadow-[0_4px_16px_rgba(255,32,64,0.3)] hover:shadow-[0_0_20px_rgba(255,32,64,0.6)] cursor-pointer"
                 >
-                  عرض كافة المنتجات
+                  إعادة ضبط جميع الفلاتر
                 </button>
               </div>
             )}

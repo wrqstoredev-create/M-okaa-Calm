@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Checkout.tsx â€” GamePay  (UI redesign â€” zero logic changes)
  *
  * What changed vs. original (UI only):
@@ -117,6 +117,7 @@ export default function Checkout() {
   const [showTermsModal,    setShowTermsModal]     = useState(false);
   const [paymentScreenshot, setPaymentScreenshot] = useState<File | null>(null);
   const [isUploading,       setIsUploading]       = useState(false);
+  const [createdOrder,      setCreatedOrder]      = useState<any>(null);
 
   useEffect(() => { fetchSettings(); }, []);
 
@@ -203,6 +204,7 @@ export default function Checkout() {
         .select()
         .single();
       if (orderError) throw orderError;
+      setCreatedOrder(orderData);
 
       const orderItems = items.map(item => {
         const username = item.attributes?.username || item.customerData?.player_username || (item.customerData as any)?.username || null;
@@ -300,8 +302,16 @@ export default function Checkout() {
 
   /* â”€â”€ Success state â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
   if (isSuccess) {
+    const rawWa = settings?.whatsapp_number || settings?.phone_cash_number || 'mokaa3';
+    const waClean = rawWa.replace(/[^a-zA-Z0-9]/g, '');
+    const orderCode = createdOrder?.id ? `#${createdOrder.id.slice(0, 8).toUpperCase()}` : '';
+    const waMessage = encodeURIComponent(
+      `مرحباً، قمت بإتمام الطلب رقم: ${orderCode} بقيمة ${formatPrice(finalPrice)}، وأرجو تأكيد وسرعة التنفيذ والشحن وشكراً لك!`
+    );
+    const waUrl = rawWa.startsWith('http') ? rawWa : `https://wa.me/${waClean}?text=${waMessage}`;
+
     return (
-      <div className="flex-1 flex flex-col items-center justify-center py-20 px-4 text-center gap-6" dir="rtl">
+      <div className="flex-1 flex flex-col items-center justify-center py-16 px-4 text-center gap-6" dir="rtl">
         {/* Confetti dots */}
         <div className="relative">
           {['top-0 left-1/2', 'top-4 right-4', 'top-4 left-4', 'bottom-0 left-1/3', 'bottom-0 right-1/3'].map((pos, i) => (
@@ -317,9 +327,9 @@ export default function Checkout() {
             initial={{ scale: 0 }}
             animate={{ scale: [0, 1.2, 1] }}
             transition={{ duration: 0.5, type: 'spring', stiffness: 200 }}
-            className="w-24 h-24 bg-emerald-100 dark:bg-emerald-900/30 rounded-full flex items-center justify-center"
+            className="w-24 h-24 bg-emerald-100 dark:bg-emerald-900/30 rounded-3xl flex items-center justify-center border border-emerald-500/30 shadow-[0_0_30px_rgba(16,185,129,0.3)]"
           >
-            <CheckCircle2 size={48} className="text-emerald-600" />
+            <CheckCircle2 size={48} className="text-emerald-600 dark:text-emerald-400" />
           </motion.div>
         </div>
 
@@ -327,7 +337,7 @@ export default function Checkout() {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="space-y-2"
+          className="space-y-3 max-w-md"
         >
           <h1 className="text-3xl font-black text-gray-900 dark:text-white">ط´ظƒط±ط§ظ‹ ظ„ط·ظ„ط¨ظƒ! ًںژ‰</h1>
           <p className="text-sm font-bold text-gray-500 max-w-sm leading-relaxed">
@@ -335,25 +345,61 @@ export default function Checkout() {
               ? 'طھظ… ط§ط³طھظ„ط§ظ… ط·ظ„ط¨ظƒ ظˆظ‡ظˆ ظ‚ظٹط¯ ط§ظ„ظ…ط±ط§ط¬ط¹ط©. ط³ظٹطھظ… ط´ط­ظ† ظ…ظ†طھط¬ط§طھظƒ ط®ظ„ط§ظ„ ط¯ظ‚ط§ط¦ظ‚ ط¨ط¹ط¯ طھط£ظƒظٹط¯ ط§ظ„طھط­ظˆظٹظ„.'
               : 'طھظ…طھ ظ…ط¹ط§ظ„ط¬ط© ط·ظ„ط¨ظƒ ط¨ظ†ط¬ط§ط­ ظˆط³ظٹطھظ… ط´ط­ظ† ظ…ظ†طھط¬ط§طھظƒ ط¥ظ„ظ‰ ط­ط³ط§ط¨ظƒ ظپظˆط±ط§ظ‹.'}
           </p>
+
+          {/* Order Details Badge Card with Copy */}
+          {createdOrder?.id && (
+            <div className="bg-gray-50 dark:bg-[#12131a] border border-gray-200 dark:border-white/10 rounded-2xl p-4 mt-4 text-right flex items-center justify-between gap-3 shadow-xs">
+              <div>
+                <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest block">رقم الطلب (Order ID)</span>
+                <span className="font-mono text-base font-black text-gray-900 dark:text-white tracking-wider">
+                  {orderCode}
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  navigator.clipboard.writeText(createdOrder.id);
+                  addToast('تم نسخ رقم الطلب بنجاح 📋', 'success');
+                }}
+                className="flex items-center gap-1.5 bg-white dark:bg-white/10 hover:bg-gray-100 dark:hover:bg-white/20 border border-gray-200 dark:border-white/10 px-3 py-2 rounded-xl text-xs font-black text-gray-800 dark:text-white shadow-xs transition-all cursor-pointer active:scale-95"
+              >
+                <Copy size={13} />
+                <span>نسخ الرقم</span>
+              </button>
+            </div>
+          )}
         </motion.div>
 
+        {/* Action Buttons: WhatsApp & Direct Links */}
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
-          className="flex gap-3"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.45 }}
+          className="flex flex-col sm:flex-row items-center justify-center gap-3 w-full max-w-md"
         >
-          <Link
-            to="/"
-            className="bg-red-700 hover:bg-red-800 text-white px-8 py-4 rounded-2xl font-black shadow-lg shadow-red-700/20 active:scale-95 transition-all"
+          {/* Direct WhatsApp Followup CTA */}
+          <a
+            href={waUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full sm:flex-1 bg-[#25D366] hover:bg-[#20ba59] text-white px-6 py-4 rounded-2xl font-black shadow-lg shadow-emerald-500/25 active:scale-95 transition-all flex items-center justify-center gap-2 text-xs sm:text-sm cursor-pointer whitespace-nowrap"
           >
-            ط§ظ„ط¹ظˆط¯ط© ظ„ظ„ط±ط¦ظٹط³ظٹط©
-          </Link>
+            <WhatsAppIcon size={18} />
+            <span>تتبع الطلب بالواتساب 💬</span>
+          </a>
+
           <Link
             to="/profile"
-            className="bg-gray-100 dark:bg-[#1a1d24] border border-gray-200 dark:border-gray-700 text-gray-800 dark:text-white px-6 py-4 rounded-2xl font-black active:scale-95 transition-all"
+            className="w-full sm:w-auto bg-gray-100 dark:bg-[#1a1d24] hover:bg-gray-200 dark:hover:bg-zinc-800 border border-gray-200 dark:border-gray-700 text-gray-800 dark:text-white px-6 py-4 rounded-2xl font-black active:scale-95 transition-all text-xs sm:text-sm"
           >
-            ط·ظ„ط¨ط§طھظٹ
+            متابعة طلباتي
+          </Link>
+
+          <Link
+            to="/"
+            className="w-full sm:w-auto bg-white dark:bg-white/5 hover:bg-gray-50 dark:hover:bg-white/10 border border-gray-200 dark:border-white/10 text-gray-700 dark:text-gray-300 px-5 py-4 rounded-2xl font-bold active:scale-95 transition-all text-xs sm:text-sm"
+          >
+            الرئيسية
           </Link>
         </motion.div>
       </div>
