@@ -14,7 +14,7 @@
 
 import React, { useState, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { supabase } from '../lib/supabaseClient';
+import { authApi } from '../services/api/authApi';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   Eye, EyeOff, Mail, Lock, User, AlertCircle,
@@ -189,17 +189,8 @@ export default function Register() {
     setLoading(true);
     setServerErr(null);
     try {
-      const { data, error: signUpError } = await supabase.auth.signUp({
-        email: form.email.trim(),
-        password: form.password,
-        options: {
-          data: { full_name: form.fullName.trim() },
-          emailRedirectTo: window.location.origin,
-        },
-      });
-      if (signUpError) throw signUpError;
+      const data = await authApi.signUp(form.email.trim(), form.password, form.fullName.trim());
       if (data.user) {
-        /* If email confirmation is needed, show success; else redirect */
         if (data.user.identities?.length === 0 || !data.session) {
           setSuccess(true);
         } else {
@@ -219,11 +210,7 @@ export default function Register() {
     setOauthLoad(provider);
     setServerErr(null);
     try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider,
-        options: { redirectTo: window.location.origin },
-      });
-      if (error) throw error;
+      await authApi.signInWithOAuth(provider);
     } catch (err: any) {
       setServerErr(mapError(err.message || 'فشل التسجيل'));
       setOauthLoad(null);

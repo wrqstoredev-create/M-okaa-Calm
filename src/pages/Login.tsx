@@ -14,7 +14,7 @@
 
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { supabase } from '../lib/supabaseClient';
+import { authApi } from '../services/api/authApi';
 import { motion, AnimatePresence } from 'motion/react';
 import { Eye, EyeOff, Mail, Lock, AlertCircle, Loader2 } from 'lucide-react';
 import AuthLayout from '../components/AuthLayout';
@@ -118,11 +118,7 @@ export default function Login() {
     setLoading(true);
     setServerErr(null);
     try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email: form.email.trim(),
-        password: form.password,
-      });
-      if (error) throw error;
+      await authApi.signInWithPassword(form.email.trim(), form.password);
       navigate('/');
     } catch (err: any) {
       setServerErr(mapError(err.message || 'خطأ في تسجيل الدخول'));
@@ -137,11 +133,7 @@ export default function Login() {
     setOauthLoad(provider);
     setServerErr(null);
     try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider,
-        options: { redirectTo: window.location.origin },
-      });
-      if (error) throw error;
+      await authApi.signInWithOAuth(provider);
     } catch (err: any) {
       setServerErr(mapError(err.message || 'فشل تسجيل الدخول'));
       setOauthLoad(null);

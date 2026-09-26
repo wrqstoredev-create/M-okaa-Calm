@@ -135,11 +135,34 @@ export default function Profile() {
   }, [user, profile, loading, navigate]);
 
   useEffect(() => {
-    if (user) { fetchOrders(); fetchReviews(); }
+    if (user) { 
+      fetchOrders(); 
+      fetchReviews(); 
+
+      // 🔄 Real-Time Sync: Listen for any updates to the user's orders (e.g. status changed by admin)
+      const channel = supabase
+        .channel('schema-db-changes')
+        .on(
+          'postgres_changes',
+          { event: 'UPDATE', schema: 'public', table: 'orders', filter: `user_id=eq.${user.id}` },
+          (payload) => {
+            console.log('🔄 Realtime order update received:', payload);
+            fetchOrders(); // Refetch to get the nested products data properly
+          }
+        )
+        .subscribe();
+
+      return () => {
+        supabase.removeChannel(channel);
+      };
+    }
   }, [user]);
 
   useEffect(() => {
-    if (activeTab === 'orders' && user) { fetchOrders(); fetchReviews(); }
+    if (activeTab === 'orders' && user) { 
+      // fetchOrders(); // Removed to avoid double fetch with the user effect
+      fetchReviews(); 
+    }
   }, [activeTab, user]);
 
   useEffect(() => {
