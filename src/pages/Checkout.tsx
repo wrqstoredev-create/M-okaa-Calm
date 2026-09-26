@@ -100,7 +100,8 @@ function getAccountNumber(settings: any, method: string): string {
 ═══════════════════════════════════════════════════════════════════════════ */
 export default function Checkout() {
   const navigate         = useNavigate();
-  const { user }         = useAuth();
+  const { user, profile } = useAuth();
+  if (profile?.is_banned) { navigate('/profile', { replace: true }); }
   const { formatPrice, currency } = useCurrency();
   const { items, totalPrice, finalPrice, discountAmount, shippingFee, appliedCoupon, clearCart } = useCart();
   const { addToast }     = useToast();
