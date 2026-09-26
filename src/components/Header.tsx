@@ -104,7 +104,7 @@ export default function Header() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { user, profile, signOut, loading } = useAuth();
+  const { user, profile, signOut }          = useAuth();
   const { currency, setCurrency, formatPrice } = useCurrency();
   const { totalItems, toggleCartDrawer }    = useCart();
   const { favorites, removeFavorite, favoritesCount, clearFavorites } = useFavorites();
@@ -374,7 +374,7 @@ export default function Header() {
             {/* Robux balance */}
             {roboCoinsEnabled && (
               <div
-                className="hidden sm:flex items-center gap-1 md:gap-1.5 bg-amber-50 border border-amber-200/80 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-xl text-amber-800 shadow-sm text-right cursor-default select-none"
+                className="flex items-center gap-1 md:gap-1.5 bg-amber-50 border border-amber-200/80 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-xl text-amber-800 shadow-sm text-right cursor-default select-none"
                 title="ط·آ±ط·آµط¸ظ¹ط·آ¯ط¸ئ’ ط·آ§ط¸â€‍ط¸â€¦ط·ع¾ط·آ¨ط¸â€ڑط¸ظ¹ ط¸â€¦ط¸â€  ط·آ§ط¸â€‍ط·آ±ط¸ث†ط·آ¨ط¸ث†ط¸ئ’ط·آ³"
               >
                 <span className="text-[10px] md:text-[12px]">ظ‹ع؛ع¾â„¢</span>
@@ -388,7 +388,7 @@ export default function Header() {
             )}
 
             {/* Favorites */}
-            <div className="relative hidden sm:block" ref={favoritesRef}>
+            <div className="relative" ref={favoritesRef}>
               <button
                 onClick={() => setIsFavoritesOpen(!isFavoritesOpen)}
                 className="relative cursor-pointer group focus:outline-none"
@@ -535,7 +535,7 @@ export default function Header() {
             <Tooltip content="ط·آ·ط¸â€‍ط·آ¨ط·آ§ط·ع¾ط¸ظ¹" position="bottom">
               <Link
                 to="/profile?tab=orders"
-                className="hidden sm:flex w-9 h-9 md:w-12 md:h-12 items-center justify-center rounded-xl bg-white dark:bg-white/5 border border-gray-200 dark:border-white/8 hover:border-red-500/40 hover:bg-red-50 dark:hover:bg-red-500/10 dark:hover:shadow-[0_0_15px_rgba(255,32,64,0.15)] transition-all duration-200 shadow-sm relative group"
+                className="w-9 h-9 md:w-12 md:h-12 flex items-center justify-center rounded-xl bg-white dark:bg-white/5 border border-gray-200 dark:border-white/8 hover:border-red-500/40 hover:bg-red-50 dark:hover:bg-red-500/10 dark:hover:shadow-[0_0_15px_rgba(255,32,64,0.15)] transition-all duration-200 shadow-sm relative group"
               >
                 <Package className="w-5 h-5 md:w-6 md:h-6 text-gray-600 dark:text-gray-400 group-hover:text-red-500 transition-colors" />
                 <div className="absolute -top-1 -right-1 bg-red-500 dark:shadow-[0_0_6px_rgba(255,32,64,0.8)] text-white text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center border-2 border-white dark:border-[#060608] shadow-sm opacity-0 group-hover:opacity-100 transition-opacity">
@@ -545,15 +545,7 @@ export default function Header() {
             </Tooltip>
 
             {/* Profile / Login */}
-            {loading ? (
-              <div className="flex items-center gap-2 bg-gray-50 dark:bg-[#1a1d24]/50 p-1.5 pr-2 rounded-xl border border-gray-100 dark:border-gray-800/50 h-[52px] animate-pulse">
-                <div className="hidden sm:flex flex-col gap-1.5 items-end flex-1 mr-1 w-16">
-                  <div className="w-10 h-2 bg-gray-200 dark:bg-gray-700 rounded-full" />
-                  <div className="w-14 h-3 bg-gray-200 dark:bg-gray-700 rounded-full" />
-                </div>
-                <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 shrink-0" />
-              </div>
-            ) : user ? (
+            {user ? (
               <div
                 className="relative group/profile"
                 ref={dropdownRef}
@@ -573,17 +565,17 @@ export default function Header() {
                     </p>
                   </div>
                   {profile?.avatar_url && profile.avatar_url !== '' ? (
-                    <div className="relative shrink-0 flex-none w-10 h-10 min-w-[40px] min-h-[40px]">
-                        <img
-                          src={profile.avatar_url}
-                          alt="Profile"
-                          className="w-10 h-10 rounded-full border-2 border-white shadow-sm object-cover group-hover:border-red-200 transition-all"
+                    <div className="relative shrink-0 flex-none min-w-[36px]">
+                      <img
+                        src={profile.avatar_url}
+                        alt="Profile"
+                        className="w-9 h-9 rounded-full border-2 border-white shadow-sm object-cover group-hover:border-red-200 transition-all"
                         referrerPolicy="no-referrer"
                       />
                       <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 border-2 border-white rounded-full" />
                     </div>
                   ) : (
-                    <div className="w-10 h-10 shrink-0 flex-none min-w-[40px] min-h-[40px] rounded-full bg-red-100 text-red-700 flex items-center justify-center font-black text-xs border-2 border-white shadow-sm group-hover:bg-red-200 transition-all">
+                    <div className="w-9 h-9 shrink-0 flex-none min-w-[36px] rounded-full bg-red-100 text-red-700 flex items-center justify-center font-black text-xs border-2 border-white shadow-sm group-hover:bg-red-200 transition-all">
                       {user.email?.[0].toUpperCase()}
                     </div>
                   )}
@@ -851,9 +843,5 @@ export default function Header() {
     </>
   );
 }
-
-
-
-
 
 
