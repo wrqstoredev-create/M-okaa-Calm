@@ -34,7 +34,7 @@ import {
   CreditCard, Wallet, Smartphone,
   ShieldCheck, CheckCircle2, ChevronRight,
   Copy, Loader2, X, Upload, ShoppingBag,
-  Zap, Tag,
+  Zap, Tag, AlertTriangle,
 } from 'lucide-react';
 
 /* ─── Payment method config ──────────────────────────────────────────────── */
@@ -105,6 +105,9 @@ export default function Checkout() {
   const { items, totalPrice, finalPrice, discountAmount, shippingFee, appliedCoupon, clearCart } = useCart();
   const { addToast }     = useToast();
 
+  const isItemOutOfStock = (item: any) => item.stock !== undefined && item.stock !== null && Number(item.stock) <= 0;
+  const hasOutOfStock = items.some(isItemOutOfStock);
+
   const [paymentMethod,     setPaymentMethod]     = useState('');
   const [settings,          setSettings]          = useState<any>(null);
   const [isProcessing,      setIsProcessing]      = useState(false);
@@ -135,8 +138,13 @@ export default function Checkout() {
   const isAutomatic = paymentMethod === 'visa' || paymentMethod === 'apple-pay';
   const isManual    = !isAutomatic;
 
-  /* ── handlePayment — unchanged from original ──────────────────────── */
+  /* ── handlePayment ────────────────────────────────────────────────── */
   const handlePayment = async () => {
+    if (hasOutOfStock) {
+      addToast('سلتك تحتوي على منتجات غير متوفرة، يرجى إزالتها أولاً ⚠️', 'error');
+      navigate('/cart');
+      return;
+    }
     if (!paymentMethod) {
       addToast('يرجى اختيار وسيلة الدفع', 'error');
       return;
@@ -195,18 +203,45 @@ export default function Checkout() {
         .single();
       if (orderError) throw orderError;
 
-      const orderItems = items.map(item => ({
-        order_id:        orderData.id,
-        product_id:      item.id,
-        quantity:        item.quantity,
-        unit_price:      item.price,
-        player_id:       item.customerData?.player_id       || null,
-        player_username: item.customerData?.player_username || null,
-        player_social:   item.customerData?.player_social   || null,
-        player_phone:    item.customerData?.player_phone    || null,
-      }));
+      const orderItems = items.map(item => {
+        const username = item.attributes?.username || item.customerData?.player_username || (item.customerData as any)?.username || null;
+        const playerId = item.attributes?.id || item.customerData?.player_id || null;
+        const phone    = item.attributes?.phone || item.customerData?.player_phone || null;
+        const social   = item.attributes?.social || item.customerData?.player_social || null;
 
-      const { error: itemsError } = await supabase.from('order_items').insert(orderItems);
+        const attributesObj = item.attributes || {
+          username: username || undefined,
+          phone: phone || undefined,
+          id: playerId || undefined,
+          social: social || undefined,
+        };
+
+        const notesJson = JSON.stringify(attributesObj);
+
+        return {
+          order_id:        orderData.id,
+          product_id:      item.id,
+          quantity:        item.quantity,
+          unit_price:      item.price,
+          player_id:       playerId,
+          player_username: username,
+          player_social:   social,
+          player_phone:    phone,
+          notes:           notesJson,
+        };
+      });
+
+      // Try inserting with notes column
+      let { error: itemsError } = await supabase.from('order_items').insert(orderItems);
+
+      // Fallback: if 'notes' column doesn't exist in Supabase schema, insert without 'notes'
+      if (itemsError && itemsError.message && (itemsError.message.includes('notes') || itemsError.code === '42703')) {
+        console.warn('Retrying order_items insert without notes column:', itemsError.message);
+        const fallbackOrderItems = orderItems.map(({ notes, ...rest }) => rest);
+        const { error: retryError } = await supabase.from('order_items').insert(fallbackOrderItems);
+        itemsError = retryError;
+      }
+
       if (itemsError) throw itemsError;
 
       try {
@@ -356,6 +391,22 @@ export default function Checkout() {
             دفع آمن 100%
           </div>
         </div>
+
+        {/* Out of stock top banner */}
+        {hasOutOfStock && (
+          <div className="mb-6 bg-red-500/15 border-2 border-red-500/50 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-red-600 dark:text-red-400">
+            <div className="flex items-center gap-3">
+              <AlertTriangle size={24} className="flex-shrink-0 animate-bounce text-red-500" />
+              <div>
+                <h4 className="font-black text-sm">تنبيه: سلتك تحتوي على منتجات نفدت كميتها!</h4>
+                <p className="text-xs font-bold opacity-90">لا يمكنك إتمام الدفع حتى تقوم بإزالة هذه المنتجات من سلتك أولاً.</p>
+              </div>
+            </div>
+            <Link to="/cart" className="bg-red-600 hover:bg-red-700 text-white text-xs font-black px-4 py-2 rounded-xl transition-colors self-start sm:self-auto">
+              العودة للسلة والحذف
+            </Link>
+          </div>
+        )}
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
@@ -582,20 +633,48 @@ export default function Checkout() {
                   ملخص الطلب
                 </h2>
                 <div className="space-y-3 max-h-52 overflow-y-auto pr-1">
-                  {items.map((item, idx) => (
-                    <div key={idx} className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-xl overflow-hidden bg-gray-50 dark:bg-[#0f1115] border border-gray-100 dark:border-gray-700 flex-shrink-0">
-                        <img src={item.image_url || undefined} alt="" className="w-full h-full object-cover" />
+                  {items.map((item, idx) => {
+                    const username = item.attributes?.username || item.customerData?.player_username || (item.customerData as any)?.username;
+                    const playerId = item.attributes?.id || item.customerData?.player_id;
+                    const isOos = isItemOutOfStock(item);
+
+                    return (
+                      <div key={idx} className={`flex items-center gap-3 p-2 rounded-2xl transition-colors ${isOos ? 'bg-red-500/10 border border-red-500/30' : ''}`}>
+                        <div className="w-12 h-12 rounded-xl overflow-hidden bg-gray-50 dark:bg-[#0f1115] border border-gray-100 dark:border-gray-700 flex-shrink-0 relative">
+                          <img src={item.image_url || undefined} alt="" className="w-full h-full object-cover" />
+                          {isOos && (
+                            <span className="absolute inset-0 bg-red-950/70 flex items-center justify-center text-white text-[9px] font-black">
+                              نفد
+                            </span>
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-[11px] font-black text-gray-900 dark:text-white truncate">{item.title}</p>
+                          <div className="flex flex-wrap items-center gap-1.5 mt-0.5">
+                            <span className="text-[10px] font-bold text-gray-400">×{item.quantity}</span>
+                            {username && (
+                              <span className="text-[9px] font-black text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-950/40 px-1.5 py-0.2 rounded border border-purple-200 dark:border-purple-800/40 truncate max-w-[120px]" dir="ltr">
+                                {username}
+                              </span>
+                            )}
+                            {playerId && (
+                              <span className="text-[9px] font-black text-red-500 bg-red-50 dark:bg-red-950/40 px-1.5 py-0.2 rounded border border-red-200 dark:border-red-800/40 truncate max-w-[100px]" dir="ltr">
+                                ID: {playerId}
+                              </span>
+                            )}
+                          </div>
+                          {isOos && (
+                            <p className="text-[9px] font-black text-red-600 dark:text-red-400 mt-0.5">
+                              ⚠️ نفد من المخزون
+                            </p>
+                          )}
+                        </div>
+                        <p className="text-[12px] font-black text-red-700 flex-shrink-0">
+                          {formatPrice(item.price * item.quantity)}
+                        </p>
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-[11px] font-black text-gray-900 dark:text-white truncate">{item.title}</p>
-                        <p className="text-[10px] font-bold text-gray-400">×{item.quantity}</p>
-                      </div>
-                      <p className="text-[12px] font-black text-red-700 flex-shrink-0">
-                        {formatPrice(item.price * item.quantity)}
-                      </p>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
 
@@ -660,19 +739,21 @@ export default function Checkout() {
               {/* Confirm button */}
               <button
                 onClick={handlePayment}
-                disabled={isProcessing || isUploading}
+                disabled={isProcessing || isUploading || hasOutOfStock}
                 className={[
                   'w-full min-h-[54px] font-black rounded-2xl',
                   'flex items-center justify-center gap-3 text-sm',
                   'transition-all active:scale-[0.98]',
-                  termsAccepted && paymentMethod
-                    ? 'bg-red-700 hover:bg-red-800 text-white shadow-lg shadow-red-700/20'
+                  termsAccepted && paymentMethod && !hasOutOfStock
+                    ? 'bg-red-700 hover:bg-red-800 text-white shadow-lg shadow-red-700/20 cursor-pointer'
                     : 'bg-gray-200 dark:bg-gray-700 text-gray-400 cursor-not-allowed',
                   'disabled:opacity-60',
                 ].join(' ')}
               >
                 {isProcessing || isUploading ? (
                   <><Loader2 size={20} className="animate-spin" /> {isUploading ? 'جاري الرفع...' : 'جاري المعالجة...'}</>
+                ) : hasOutOfStock ? (
+                  <><AlertTriangle size={18} className="text-red-500" /> يرجى إزالة المنتجات غير المتوفرة</>
                 ) : (
                   <><ShieldCheck size={18} /> تأكيد الدفع وإتمام الطلب</>
                 )}

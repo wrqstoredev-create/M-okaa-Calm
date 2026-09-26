@@ -95,81 +95,135 @@ export default function Cart() {
         </span>
       </div>
       
+      {/* Out of stock top banner */}
+      {hasOutOfStock && (
+        <div className="mb-6 bg-red-500/15 border-2 border-red-500/50 rounded-2xl p-4 flex items-center gap-3 text-red-600 dark:text-red-400 animate-pulse">
+          <AlertTriangle size={24} className="flex-shrink-0" />
+          <div className="text-right">
+            <h4 className="font-black text-sm">تنبيه: توجد منتجات نفدت كميتها في سلتك!</h4>
+            <p className="text-xs font-bold mt-0.5 opacity-90">
+              يرجى حذف المنتجات الموضحة باللون الأحمر لتتمكن من إتمام الطلب والدفع.
+            </p>
+          </div>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Cart Items */}
         <div className="lg:col-span-2 space-y-4">
-          {items.map((item) => (
-            <div 
-              key={item.id + JSON.stringify(item.customerData)} 
-              className="bg-white/95 dark:bg-[#0c0c10]/95 backdrop-blur-2xl border border-gray-150 dark:border-white/10 rounded-3xl p-5 shadow-sm hover:border-red-400/40 dark:hover:border-red-500/30 dark:hover:shadow-[0_0_20px_rgba(255,32,64,0.12)] transition-all duration-300 flex flex-col gap-4"
-            >
-              <div className="flex w-full gap-4 items-center">
-                <div className="w-20 h-20 bg-gray-50 dark:bg-[#141418] rounded-2xl p-1 flex-shrink-0 flex items-center justify-center border border-gray-200 dark:border-white/10 overflow-hidden">
-                   <img src={item.image_url || undefined} alt={item.title} className="w-full h-full object-contain filter drop-shadow-sm" />
-                </div>
-                
-                <div className="flex-1 min-w-0 text-right">
-                  <div className="text-[10px] text-red-500 dark:text-red-400 font-black mb-1 uppercase tracking-widest">{item.game_name}</div>
-                  <h3 className="font-black text-gray-900 dark:text-white text-sm truncate">{item.title}</h3>
-                  
-                  <div className="flex flex-wrap gap-2 mt-2">
-                    {item.customerData?.player_id && (
-                      <div className="bg-red-50 dark:bg-red-950/40 text-red-700 dark:text-red-400 px-2 py-0.5 rounded-lg text-[10px] font-black border border-red-200 dark:border-red-500/30 uppercase" dir="ltr">
-                        ID: {item.customerData.player_id}
-                      </div>
-                    )}
-                    {item.customerData?.username && (
-                      <div className="bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-400 px-2 py-0.5 rounded-lg text-[10px] font-black border border-purple-200 dark:border-purple-500/30 uppercase" dir="ltr">
-                        User: {item.customerData.username}
-                      </div>
-                    )}
-                  </div>
-                </div>
+          {items.map((item) => {
+            const outOfStock = isItemOutOfStock(item);
+            const username = item.attributes?.username || item.customerData?.player_username || (item.customerData as any)?.username;
+            const playerId = item.attributes?.id || item.customerData?.player_id;
+            const phone = item.attributes?.phone || item.customerData?.player_phone;
+            const itemKey = item.id + JSON.stringify(item.attributes || item.customerData || {});
 
-                <div className="flex flex-col items-end gap-2">
-                  <button 
-                    onClick={() => removeItem(item.id)} 
-                    className="text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/30 cursor-pointer"
-                    title="حذف من السلة"
-                  >
-                    <Trash2 size={17} />
-                  </button>
-                  <div 
-                    className="font-black text-sm whitespace-nowrap"
-                    style={{
-                      color: 'var(--neon-green)',
-                      textShadow: '0 0 10px rgba(0, 255, 136, 0.4)',
-                    }}
-                    dir="ltr"
-                  >
-                    {formatPrice(item.price * item.quantity)}
+            return (
+              <div 
+                key={itemKey} 
+                className={`bg-white/95 dark:bg-[#0c0c10]/95 backdrop-blur-2xl rounded-3xl p-5 shadow-sm transition-all duration-300 flex flex-col gap-4 border ${
+                  outOfStock
+                    ? 'border-red-500 bg-red-50/20 dark:bg-red-950/20 shadow-[0_0_25px_rgba(239,68,68,0.2)]'
+                    : 'border-gray-150 dark:border-white/10 hover:border-red-400/40 dark:hover:border-red-500/30 dark:hover:shadow-[0_0_20px_rgba(255,32,64,0.12)]'
+                }`}
+              >
+                {/* Out of Stock Warning Banner */}
+                {outOfStock && (
+                  <div className="bg-red-500/15 border border-red-500/40 rounded-2xl p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-red-600 dark:text-red-400">
+                    <div className="flex items-center gap-2 font-black text-xs">
+                      <AlertTriangle size={16} className="text-red-500 animate-bounce flex-shrink-0" />
+                      <span>نفدت الكمية - يرجى الحذف للمتابعة ⚠️</span>
+                    </div>
+                    <button
+                      onClick={() => removeItem(item.id, item.attributes)}
+                      className="bg-red-600 hover:bg-red-700 text-white text-[11px] font-black px-3.5 py-1.5 rounded-xl transition-all shadow-md hover:shadow-red-600/40 flex items-center justify-center gap-1.5 cursor-pointer self-start sm:self-auto"
+                    >
+                      <Trash2 size={13} />
+                      حذف من السلة
+                    </button>
+                  </div>
+                )}
+
+                <div className="flex w-full gap-4 items-center">
+                  <div className="w-20 h-20 bg-gray-50 dark:bg-[#141418] rounded-2xl p-1 flex-shrink-0 flex items-center justify-center border border-gray-200 dark:border-white/10 overflow-hidden relative">
+                     <img src={item.image_url || undefined} alt={item.title} className="w-full h-full object-contain filter drop-shadow-sm" />
+                     {outOfStock && (
+                       <span className="absolute inset-0 bg-red-950/70 backdrop-blur-[1px] flex items-center justify-center text-white text-[10px] font-black">
+                         نفد ❌
+                       </span>
+                     )}
+                  </div>
+                  
+                  <div className="flex-1 min-w-0 text-right">
+                    <div className="text-[10px] text-red-500 dark:text-red-400 font-black mb-1 uppercase tracking-widest">{item.game_name}</div>
+                    <h3 className="font-black text-gray-900 dark:text-white text-sm truncate">{item.title}</h3>
+                    
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {username && (
+                        <div className="bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 px-2 py-0.5 rounded-lg text-[10px] font-black border border-purple-200 dark:border-purple-800/40" dir="ltr">
+                          User: {username}
+                        </div>
+                      )}
+                      {playerId && (
+                        <div className="bg-red-50 dark:bg-red-950/40 text-red-700 dark:text-red-300 px-2 py-0.5 rounded-lg text-[10px] font-black border border-red-200 dark:border-red-800/40" dir="ltr">
+                          ID: {playerId}
+                        </div>
+                      )}
+                      {phone && (
+                        <div className="bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 px-2 py-0.5 rounded-lg text-[10px] font-black border border-emerald-200 dark:border-emerald-800/40" dir="ltr">
+                          Phone: {phone}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col items-end gap-2">
+                    <button 
+                      onClick={() => removeItem(item.id, item.attributes)} 
+                      className="text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/30 cursor-pointer"
+                      title="حذف من السلة"
+                    >
+                      <Trash2 size={17} />
+                    </button>
+                    <div 
+                      className="font-black text-sm whitespace-nowrap"
+                      style={{
+                        color: 'var(--neon-green)',
+                        textShadow: '0 0 10px rgba(0, 255, 136, 0.4)',
+                      }}
+                      dir="ltr"
+                    >
+                      {formatPrice(item.price * item.quantity)}
+                    </div>
                   </div>
                 </div>
-              </div>
-              
-              <div className="flex items-center justify-between w-full pt-4 border-t border-gray-100 dark:border-white/5">
-                <div className="flex items-center bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl overflow-hidden p-0.5">
-                  <button 
-                    onClick={() => updateQuantity(item.id, item.quantity - 1)} 
-                    className="p-2 text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white hover:bg-gray-200 dark:hover:bg-white/10 rounded-lg transition-colors cursor-pointer"
-                  >
-                    <Minus size={13} />
-                  </button>
-                  <span className="w-10 text-center text-sm font-black text-gray-900 dark:text-white">{item.quantity}</span>
-                  <button 
-                    onClick={() => updateQuantity(item.id, item.quantity + 1)} 
-                    className="p-2 text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white hover:bg-gray-200 dark:hover:bg-white/10 rounded-lg transition-colors cursor-pointer"
-                  >
-                    <Plus size={13} />
-                  </button>
-                </div>
                 
-                <span className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider" dir="ltr">
-                  Unit: {formatPrice(item.price)}
-                </span>
+                <div className="flex items-center justify-between w-full pt-4 border-t border-gray-100 dark:border-white/5">
+                  <div className={`flex items-center bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl overflow-hidden p-0.5 ${outOfStock ? 'opacity-40 pointer-events-none' : ''}`}>
+                    <button 
+                      onClick={() => updateQuantity(item.id, item.quantity - 1)} 
+                      className="p-2 text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white hover:bg-gray-200 dark:hover:bg-white/10 rounded-lg transition-colors cursor-pointer"
+                      disabled={outOfStock}
+                    >
+                      <Minus size={13} />
+                    </button>
+                    <span className="w-10 text-center text-sm font-black text-gray-900 dark:text-white">{item.quantity}</span>
+                    <button 
+                      onClick={() => updateQuantity(item.id, item.quantity + 1)} 
+                      className="p-2 text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white hover:bg-gray-200 dark:hover:bg-white/10 rounded-lg transition-colors cursor-pointer"
+                      disabled={outOfStock}
+                    >
+                      <Plus size={13} />
+                    </button>
+                  </div>
+                  
+                  <span className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider" dir="ltr">
+                    Unit: {formatPrice(item.price)}
+                  </span>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
 
           {/* Coupon Section */}
           <div className="bg-white/95 dark:bg-[#0c0c10]/95 backdrop-blur-2xl border border-dashed border-gray-200 dark:border-white/15 rounded-3xl p-6 mt-6">
@@ -272,12 +326,27 @@ export default function Cart() {
               </div>
             </div>
 
-            <Link 
-              to={user ? "/checkout" : "/login"} 
-              className="block w-full text-center bg-gradient-to-r from-red-600 via-rose-600 to-red-600 hover:from-red-500 hover:to-rose-500 text-white font-black py-4 rounded-2xl shadow-[0_4px_20px_rgba(255,32,64,0.4)] hover:shadow-[0_0_30px_rgba(255,32,64,0.7)] active:scale-[0.98] transition-all cursor-pointer"
-            >
-              متابعة للدفع ⚡
-            </Link>
+            {hasOutOfStock ? (
+              <div className="space-y-2">
+                <button 
+                  disabled 
+                  className="w-full text-center bg-gray-200 dark:bg-white/10 text-gray-400 dark:text-gray-500 font-black py-4 rounded-2xl border border-gray-300 dark:border-white/10 text-sm cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  <AlertTriangle size={16} className="text-red-500" />
+                  متابعة للدفع (معطل)
+                </button>
+                <p className="text-[11px] font-black text-red-600 dark:text-red-400 text-center leading-relaxed bg-red-500/10 border border-red-500/20 py-2.5 px-3 rounded-xl">
+                  ⚠️ السلة تحتوي على منتجات نفدت كميتها. يرجى حذفها أولاً لتتمكن من متابعة الدفع.
+                </p>
+              </div>
+            ) : (
+              <Link 
+                to={user ? "/checkout" : "/login"} 
+                className="block w-full text-center bg-gradient-to-r from-red-600 via-rose-600 to-red-600 hover:from-red-500 hover:to-rose-500 text-white font-black py-4 rounded-2xl shadow-[0_4px_20px_rgba(255,32,64,0.4)] hover:shadow-[0_0_30px_rgba(255,32,64,0.7)] active:scale-[0.98] transition-all cursor-pointer"
+              >
+                متابعة للدفع ⚡
+              </Link>
+            )}
           </div>
         </div>
       </div>
