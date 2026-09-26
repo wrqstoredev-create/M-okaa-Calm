@@ -123,12 +123,12 @@ export default function Categories() {
 
   if (isLoading) {
     return (
-      <section className="bg-white dark:bg-[#1a1d24]/80 backdrop-blur-md py-6 px-4 md:px-6 border-b border-gray-100 dark:border-gray-700/50">
-        <div className="flex justify-between items-center gap-6 overflow-x-auto no-scrollbar w-full max-w-none">
-          {Array.from({ length: 8 }).map((_, i) => (
-            <div key={i} className="flex flex-col items-center gap-2 animate-pulse min-w-max">
-              <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full bg-gray-100 dark:bg-[#1a1d24] shadow-sm" />
-              <div className="w-16 h-2.5 bg-gray-100 dark:bg-[#1a1d24] rounded-full mt-1" />
+      <section className="bg-white/95 dark:bg-[#060608]/90 backdrop-blur-xl py-3 px-4 md:px-6 border-b border-gray-100 dark:border-white/10 relative z-10 w-full">
+        <div className="max-w-[1240px] mx-auto flex items-center gap-3 overflow-x-auto no-scrollbar py-3 px-6">
+          {Array.from({ length: 10 }).map((_, i) => (
+            <div key={i} className="w-[74px] sm:w-[82px] flex-shrink-0 flex flex-col items-center gap-2 animate-pulse">
+              <div className="w-16 h-16 sm:w-[68px] sm:h-[68px] rounded-2xl bg-gray-200 dark:bg-white/5" />
+              <div className="w-12 h-2.5 bg-gray-200 dark:bg-white/5 rounded-full" />
             </div>
           ))}
         </div>
@@ -137,28 +137,41 @@ export default function Categories() {
   }
 
   return (
-    <section className="bg-white/95 dark:bg-[#060608]/90 backdrop-blur-xl py-4 px-4 md:px-6 border-b border-gray-150 dark:border-white/10 overflow-hidden relative z-10 w-full group">
+    <section className="bg-white/95 dark:bg-[#060608]/90 backdrop-blur-xl border-b border-gray-150 dark:border-white/10 relative z-10 w-full group py-1">
       <motion.div 
-        initial={{ opacity: 0, x: 20 }}
-        animate={{ opacity: 1, x: 0 }}
-        className="max-w-[1180px] mx-auto relative"
+        initial={{ opacity: 0, y: -4 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="max-w-[1240px] mx-auto relative px-2 sm:px-4"
       >
+        {/* Left Fade Gradient Mask */}
+        <div className="absolute left-0 top-0 bottom-0 w-12 sm:w-16 bg-gradient-to-r from-white dark:from-[#060608] via-white/80 dark:via-[#060608]/80 to-transparent z-15 pointer-events-none" />
+
+        {/* Right Fade Gradient Mask */}
+        <div className="absolute right-0 top-0 bottom-0 w-12 sm:w-16 bg-gradient-to-l from-white dark:from-[#060608] via-white/80 dark:via-[#060608]/80 to-transparent z-15 pointer-events-none" />
+
+        {/* Scroll Left Button */}
         <button 
           onClick={scrollLeft}
-          className="absolute left-1 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-gradient-to-r from-red-600 to-rose-600 flex items-center justify-center text-white z-20 shadow-[0_2px_12px_rgba(255,32,64,0.4)] hover:shadow-[0_0_20px_rgba(255,32,64,0.65)] hover:scale-105 active:scale-95 transition-all cursor-pointer"
+          className="absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/95 dark:bg-[#12131a]/95 backdrop-blur-md border border-gray-200 dark:border-white/15 text-gray-700 dark:text-gray-200 hover:text-white hover:bg-gradient-to-r hover:from-red-600 hover:to-rose-600 hover:border-transparent flex items-center justify-center z-20 shadow-md hover:shadow-[0_0_15px_rgba(255,32,64,0.5)] active:scale-95 transition-all cursor-pointer"
           aria-label="Scroll left"
         >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M15 19l-7-7 7-7" /></svg>
+          <svg className="w-4 h-4 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+          </svg>
         </button>
 
+        {/* Scroll Right Button */}
         <button 
           onClick={scrollRight}
-          className="absolute right-1 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-gradient-to-r from-red-600 to-rose-600 flex items-center justify-center text-white z-20 shadow-[0_2px_12px_rgba(255,32,64,0.4)] hover:shadow-[0_0_20px_rgba(255,32,64,0.65)] hover:scale-105 active:scale-95 transition-all cursor-pointer"
+          className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/95 dark:bg-[#12131a]/95 backdrop-blur-md border border-gray-200 dark:border-white/15 text-gray-700 dark:text-gray-200 hover:text-white hover:bg-gradient-to-r hover:from-red-600 hover:to-rose-600 hover:border-transparent flex items-center justify-center z-20 shadow-md hover:shadow-[0_0_15px_rgba(255,32,64,0.5)] active:scale-95 transition-all cursor-pointer"
           aria-label="Scroll right"
         >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M9 5l7 7-7 7" /></svg>
+          <svg className="w-4 h-4 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+          </svg>
         </button>
 
+        {/* Horizontal Games Scroller with generous top/bottom padding to prevent any clipping */}
         <div 
           ref={scrollRef}
           onMouseEnter={pauseAutoScroll}
@@ -170,7 +183,7 @@ export default function Categories() {
             pauseAutoScroll();
             resumeAutoScroll();
           }}
-          className="flex items-center gap-4 sm:gap-6 overflow-x-auto overflow-y-hidden no-scrollbar px-10 py-1"
+          className="flex items-center gap-2.5 sm:gap-3.5 overflow-x-auto no-scrollbar px-10 sm:px-14 pt-4 pb-3"
           style={{ scrollBehavior: 'auto' }}
         >
           {games.map((game, index) => {
@@ -184,32 +197,39 @@ export default function Categories() {
             return (
               <motion.div
                 key={game.id}
-                initial={{ opacity: 0, scale: 0.9 }}
+                initial={{ opacity: 0, scale: 0.92 }}
                 animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: index * 0.04 }}
-                className="flex-shrink-0"
+                transition={{ delay: index * 0.03 }}
+                className="w-[74px] sm:w-[82px] flex-shrink-0"
               >
                 <Link 
                   to={`/category/${game.name.split(' ')[0].toLowerCase()}`} 
-                  className="flex flex-col items-center gap-2 group cursor-pointer min-w-max relative-layout"
+                  className="w-full flex flex-col items-center gap-1.5 group cursor-pointer"
+                  title={game.name}
                 >
-                  <div className="w-20 h-20 sm:w-22 sm:h-22 rounded-2xl bg-white dark:bg-[#101016] border border-gray-200 dark:border-white/10 flex items-center justify-center transition-all duration-300 relative overflow-visible p-3 shadow-sm group-hover:border-red-500 group-hover:shadow-[0_0_25px_rgba(255,32,64,0.35)] group-hover:scale-105 group-hover:-translate-y-1">
-                    <div className="w-full h-full flex items-center justify-center z-10 transition-transform duration-500 group-hover:scale-110">
+                  {/* Card Container */}
+                  <div className="w-16 h-16 sm:w-[68px] sm:h-[68px] rounded-2xl bg-white dark:bg-[#0c0d14] border border-gray-200 dark:border-white/10 flex items-center justify-center relative p-2.5 shadow-xs transition-all duration-300 origin-center group-hover:border-red-500 group-hover:shadow-[0_0_20px_rgba(255,32,64,0.35)] group-hover:scale-105">
+                    
+                    {/* Game Icon */}
+                    <div className="w-full h-full flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
                       <img 
                         src={game.image_url} 
                         alt={game.name}
-                        className="w-full h-full object-contain filter drop-shadow-sm" 
+                        className="w-full h-full object-contain filter drop-shadow-sm select-none" 
                         referrerPolicy="no-referrer"
                       />
                     </div>
-                    {/* Hot Badge */}
+
+                    {/* Hot Badge — Perfectly nested and padded so it NEVER clips */}
                     {isHot && (
-                      <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-red-600 to-rose-600 text-white text-[9px] font-black px-2 py-0.5 rounded-full z-20 shadow-[0_2px_10px_rgba(255,32,64,0.5)] border border-white/20 uppercase whitespace-nowrap">
+                      <div className="absolute -top-2 left-1/2 -translate-x-1/2 bg-gradient-to-r from-red-600 to-rose-600 text-white text-[8px] sm:text-[9px] font-black px-1.5 py-0.5 rounded-full shadow-[0_2px_8px_rgba(255,32,64,0.45)] border border-white/20 uppercase whitespace-nowrap pointer-events-none z-20">
                         🔥 رائج
                       </div>
                     )}
                   </div>
-                  <span className="text-[11px] sm:text-[12px] font-black text-gray-800 dark:text-gray-200 group-hover:text-red-600 dark:group-hover:text-red-400 group-hover:drop-shadow-[0_0_8px_rgba(255,32,64,0.5)] transition-all capitalize text-center leading-tight">
+
+                  {/* Clean truncated title with exact width bounds */}
+                  <span className="w-full text-center text-[10px] sm:text-[11px] font-extrabold text-gray-700 dark:text-zinc-300 group-hover:text-red-600 dark:group-hover:text-red-400 group-hover:drop-shadow-[0_0_8px_rgba(255,32,64,0.4)] transition-colors truncate px-0.5 leading-snug">
                     {game.name}
                   </span>
                 </Link>

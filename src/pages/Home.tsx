@@ -400,7 +400,7 @@ export default function Home() {
               {[
                 {
                   icon: <CheckCircle2 className="w-6 h-6 text-emerald-500" />,
-                  value: "+150,000",
+                  value: "+12,000",
                   title: "طلب مكتمل بنجاح",
                   desc: "شحن فوري ومضمون لآلاف اللاعبين",
                   glowColor: "hover:border-emerald-500/40 hover:shadow-emerald-500/10",
@@ -514,7 +514,7 @@ export default function Home() {
                           </Link>
                           <p className="text-white/80 text-xs font-extrabold whitespace-nowrap flex items-center gap-1.5">
                             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                            أكثر من 50,000+ عميل معتمد يثق بنا
+                            أكثر من 5,000+ عميل معتمد يثق بنا
                           </p>
                         </div>
                       </div>
