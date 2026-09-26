@@ -1,4 +1,4 @@
-
+﻿
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { MessageCircle, X, Send, User } from 'lucide-react';
@@ -132,7 +132,7 @@ export default function SupportChat() {
   };
 
   return (
-    <div className="fixed bottom-24 left-6 z-[9999]" dir="rtl">
+    <div className="fixed bottom-24 left-6 z-40" dir="rtl">
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -149,8 +149,8 @@ export default function SupportChat() {
                   <User size={20} />
                 </div>
                 <div>
-                  <h3 className="font-bold text-sm">الدعم الفني</h3>
-                  <p className="text-xs text-white/80">نحن هنا لمساعدتك</p>
+                  <h3 className="font-bold text-sm">ط§ظ„ط¯ط¹ظ… ط§ظ„ظپظ†ظٹ</h3>
+                  <p className="text-xs text-white/80">ظ†ط­ظ† ظ‡ظ†ط§ ظ„ظ…ط³ط§ط¹ط¯طھظƒ</p>
                 </div>
               </div>
               <button 
@@ -165,7 +165,7 @@ export default function SupportChat() {
             <div className="flex-1 bg-zinc-900 overflow-y-auto p-4 flex flex-col gap-3">
               {!user ? (
                 <div className="flex-1 flex items-center justify-center text-center p-6 text-zinc-400">
-                  <p>يرجى تسجيل الدخول لبدء محادثة مع الدعم الفني.</p>
+                  <p>ظٹط±ط¬ظ‰ طھط³ط¬ظٹظ„ ط§ظ„ط¯ط®ظˆظ„ ظ„ط¨ط¯ط، ظ…ط­ط§ط¯ط«ط© ظ…ط¹ ط§ظ„ط¯ط¹ظ… ط§ظ„ظپظ†ظٹ.</p>
                 </div>
               ) : isLoading ? (
                 <div className="flex-1 flex items-center justify-center">
@@ -173,7 +173,7 @@ export default function SupportChat() {
                 </div>
               ) : messages.length === 0 ? (
                 <div className="flex-1 flex items-center justify-center text-center p-6 text-zinc-500 text-sm">
-                  <p>مرحباً بك! كيف يمكننا مساعدتك اليوم؟</p>
+                  <p>ظ…ط±ط­ط¨ط§ظ‹ ط¨ظƒ! ظƒظٹظپ ظٹظ…ظƒظ†ظ†ط§ ظ…ط³ط§ط¹ط¯طھظƒ ط§ظ„ظٹظˆظ…طں</p>
                 </div>
               ) : (
                 messages.map((msg, index) => {
@@ -203,7 +203,7 @@ export default function SupportChat() {
                   value={newMessage}
                   onChange={(e) => setNewMessage(e.target.value)}
                   disabled={!user}
-                  placeholder={user ? "اكتب رسالتك هنا..." : "سجل دخولك أولاً"}
+                  placeholder={user ? "ط§ظƒطھط¨ ط±ط³ط§ظ„طھظƒ ظ‡ظ†ط§..." : "ط³ط¬ظ„ ط¯ط®ظˆظ„ظƒ ط£ظˆظ„ط§ظ‹"}
                   className="w-full bg-zinc-900 border border-white/10 rounded-full py-3 px-4 pl-12 text-sm text-white focus:outline-none focus:border-red-500 disabled:opacity-50"
                 />
                 <button
@@ -230,7 +230,7 @@ export default function SupportChat() {
         {!isOpen && (
           <>
             <div className="absolute right-full mr-4 px-4 py-2 bg-black text-white text-[10px] font-black rounded-xl opacity-0 group-hover:opacity-100 pointer-events-none transition-all whitespace-nowrap hidden sm:block">
-              الدعم الفني
+              ط§ظ„ط¯ط¹ظ… ط§ظ„ظپظ†ظٹ
             </div>
             <div className="absolute -top-1 -right-1 w-6 h-6 bg-red-500 border-4 border-white rounded-full animate-pulse"></div>
           </>
