@@ -1,5 +1,5 @@
-/**
- * ProductSkeleton — GamePay
+﻿/**
+ * ProductSkeleton â€” GamePay
  * Phase 4: Neon Gaming Shimmer Skeleton
  * Dark OLED base with animated neon shimmer sweep
  */
@@ -24,16 +24,16 @@ export default function ProductSkeleton() {
         }}
       />
 
-      {/* Image placeholder — 1:1 */}
+      {/* Image placeholder â€” 1:1 */}
       <div className="w-full aspect-square bg-gray-200 dark:bg-[#141418] animate-pulse" />
 
       {/* Info region */}
-      <div className="flex flex-col flex-1 p-3 gap-2.5">
+      <div className="flex flex-col flex-1 p-3.5 gap-2">
 
         {/* Game-name chip */}
-        <div className="h-3 w-16 bg-gray-200 dark:bg-white/5 rounded-full animate-pulse" />
+        <div className="h-3 w-16 bg-gray-200 dark:bg-white/5 rounded-xl animate-pulse" />
 
-        {/* Title — 2 lines */}
+        {/* Title â€” 2 lines */}
         <div className="space-y-1.5">
           <div className="h-3.5 w-full  bg-gray-200 dark:bg-white/5 rounded animate-pulse" />
           <div className="h-3.5 w-4/5   bg-gray-200 dark:bg-white/5 rounded animate-pulse" />
@@ -46,9 +46,9 @@ export default function ProductSkeleton() {
         </div>
 
         {/* CTA buttons */}
-        <div className="flex flex-col gap-1.5">
-          <div className="h-11 w-full bg-gray-200 dark:bg-red-500/10 rounded-full animate-pulse" />
-          <div className="h-10 w-full bg-gray-100 dark:bg-white/4 rounded-full animate-pulse" />
+        <div className="flex flex-col gap-1.5 mt-1.5">
+          <div className="h-11 w-full bg-gray-200 dark:bg-red-500/10 rounded-xl animate-pulse" />
+          <div className="h-10 w-full bg-gray-100 dark:bg-white/4 rounded-xl animate-pulse" />
         </div>
       </div>
 
@@ -61,3 +61,4 @@ export default function ProductSkeleton() {
     </div>
   );
 }
+
