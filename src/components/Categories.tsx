@@ -137,15 +137,15 @@ export default function Categories() {
   }
 
   return (
-    <section className="bg-white dark:bg-[#1a1d24]/80 backdrop-blur-md py-3 px-4 md:px-6 border-b border-gray-100 dark:border-gray-700/50 overflow-hidden relative z-10 w-full group">
+    <section className="bg-white/95 dark:bg-[#060608]/90 backdrop-blur-xl py-4 px-4 md:px-6 border-b border-gray-150 dark:border-white/10 overflow-hidden relative z-10 w-full group">
       <motion.div 
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
-        className="max-w-[1110px] mx-auto relative"
+        className="max-w-[1180px] mx-auto relative"
       >
         <button 
           onClick={scrollLeft}
-          className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-[#cc2229] flex items-center justify-center text-white z-20 shadow-md hover:bg-red-700 transition-colors"
+          className="absolute left-1 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-gradient-to-r from-red-600 to-rose-600 flex items-center justify-center text-white z-20 shadow-[0_2px_12px_rgba(255,32,64,0.4)] hover:shadow-[0_0_20px_rgba(255,32,64,0.65)] hover:scale-105 active:scale-95 transition-all cursor-pointer"
           aria-label="Scroll left"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M15 19l-7-7 7-7" /></svg>
@@ -153,7 +153,7 @@ export default function Categories() {
 
         <button 
           onClick={scrollRight}
-          className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-[#cc2229] flex items-center justify-center text-white z-20 shadow-md hover:bg-red-700 transition-colors"
+          className="absolute right-1 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-gradient-to-r from-red-600 to-rose-600 flex items-center justify-center text-white z-20 shadow-[0_2px_12px_rgba(255,32,64,0.4)] hover:shadow-[0_0_20px_rgba(255,32,64,0.65)] hover:scale-105 active:scale-95 transition-all cursor-pointer"
           aria-label="Scroll right"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M9 5l7 7-7 7" /></svg>
@@ -170,43 +170,52 @@ export default function Categories() {
             pauseAutoScroll();
             resumeAutoScroll();
           }}
-          className="flex items-center gap-4 sm:gap-8 overflow-x-auto overflow-y-hidden no-scrollbar px-6"
+          className="flex items-center gap-4 sm:gap-6 overflow-x-auto overflow-y-hidden no-scrollbar px-10 py-1"
           style={{ scrollBehavior: 'auto' }}
         >
-          {games.map((game, index) => (
-            <motion.div
-              key={game.id}
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: index * 0.05 }}
-              className="flex-shrink-0"
-            >
-              <Link 
-                to={`/category/${game.name.split(' ')[0].toLowerCase()}`} 
-                className="flex flex-col items-center gap-2 group cursor-pointer min-w-max relative-layout"
+          {games.map((game, index) => {
+            const isHot = game.name.toLowerCase().includes('roblox') || 
+                          game.name.toLowerCase().includes('pubg') || 
+                          game.name.toLowerCase().includes('free fire') ||
+                          game.name.includes('روبلوكس') ||
+                          game.name.includes('ببجي') ||
+                          index < 2;
+
+            return (
+              <motion.div
+                key={game.id}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: index * 0.04 }}
+                className="flex-shrink-0"
               >
-                <div className="w-20 h-20 sm:w-21 sm:h-21 rounded-full bg-white dark:bg-[#1a1d24] border border-gray-200 dark:border-gray-700/70 flex items-center justify-center transition-all duration-300 relative overflow-visible p-3 shadow-sm group-hover:border-red-605 group-hover:shadow-md">
-                  <div className="w-full h-full flex items-center justify-center z-10 transition-transform duration-500 group-hover:scale-105">
-                    <img 
-                      src={game.image_url} 
-                      alt={game.name}
-                      className="w-full h-full object-contain" 
-                      referrerPolicy="no-referrer"
-                    />
-                  </div>
-                  {/* Optional SALE badge for visual matching the example */}
-                  {game.name.toLowerCase().includes('parts') && (
-                    <div className="absolute -top-1 left-1/2 -translate-x-1/2 bg-red-600 text-white text-[9px] font-black px-2.5 py-0.5 rounded-full z-20 shadow-md border border-white uppercase">
-                      SALE
+                <Link 
+                  to={`/category/${game.name.split(' ')[0].toLowerCase()}`} 
+                  className="flex flex-col items-center gap-2 group cursor-pointer min-w-max relative-layout"
+                >
+                  <div className="w-20 h-20 sm:w-22 sm:h-22 rounded-2xl bg-white dark:bg-[#101016] border border-gray-200 dark:border-white/10 flex items-center justify-center transition-all duration-300 relative overflow-visible p-3 shadow-sm group-hover:border-red-500 group-hover:shadow-[0_0_25px_rgba(255,32,64,0.35)] group-hover:scale-105 group-hover:-translate-y-1">
+                    <div className="w-full h-full flex items-center justify-center z-10 transition-transform duration-500 group-hover:scale-110">
+                      <img 
+                        src={game.image_url} 
+                        alt={game.name}
+                        className="w-full h-full object-contain filter drop-shadow-sm" 
+                        referrerPolicy="no-referrer"
+                      />
                     </div>
-                  )}
-                </div>
-                <span className="text-[11px] sm:text-[12px] font-bold text-gray-800 dark:text-white group-hover:text-red-700 transition-colors capitalize text-center leading-tight">
-                  {game.name}
-                </span>
-              </Link>
-            </motion.div>
-          ))}
+                    {/* Hot Badge */}
+                    {isHot && (
+                      <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-red-600 to-rose-600 text-white text-[9px] font-black px-2 py-0.5 rounded-full z-20 shadow-[0_2px_10px_rgba(255,32,64,0.5)] border border-white/20 uppercase whitespace-nowrap">
+                        🔥 رائج
+                      </div>
+                    )}
+                  </div>
+                  <span className="text-[11px] sm:text-[12px] font-black text-gray-800 dark:text-gray-200 group-hover:text-red-600 dark:group-hover:text-red-400 group-hover:drop-shadow-[0_0_8px_rgba(255,32,64,0.5)] transition-all capitalize text-center leading-tight">
+                    {game.name}
+                  </span>
+                </Link>
+              </motion.div>
+            );
+          })}
         </div>
       </motion.div>
     </section>
