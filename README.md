@@ -26,7 +26,7 @@
 * 💬 **Discord:** [Join our Server](https://discord.gg/s2TSqHVS68)
 * ✉️ **Email:** [kamaalbakker@gmail.com](mailto:kamaalbakker@gmail.com)
 * 🌐 **Facebook:** [Abdelrahman's Profile](https://www.facebook.com/profile.php?id=100073605631036)
-
+.
 <br/>
 <div align="center">
   <i>Developed with ❤️ by Abdelrahman</i>
