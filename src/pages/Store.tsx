@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { supabase } from '../lib/supabaseClient';
+import { productsApi } from '../services/api/productsApi';
 import { motion, AnimatePresence } from 'motion/react';
 import ProductCard from '../components/ProductCard';
 import { Search, Gift, Ticket, Cpu, Loader2 } from 'lucide-react';
@@ -19,13 +19,13 @@ export default function Store() {
     async function fetchData() {
       setIsLoading(true);
       try {
-        const [gamesRes, productsRes] = await Promise.all([
-          supabase.from('games').select('*').order('name'),
-          supabase.from('products').select('*').order('created_at', { ascending: false })
+        const [gamesData, productsData] = await Promise.all([
+          productsApi.getGames(),
+          productsApi.getProducts()
         ]);
 
-        if (gamesRes.data) setGames(gamesRes.data);
-        if (productsRes.data) setProducts(productsRes.data);
+        if (gamesData) setGames(gamesData);
+        if (productsData) setProducts(productsData);
       } catch (error) {
         console.error('Error fetching store data:', error);
       } finally {
