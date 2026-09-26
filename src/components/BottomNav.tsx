@@ -98,11 +98,11 @@ export default function BottomNav() {
         /* Only shown below lg */
         'lg:hidden',
         /* Background */
-        'bg-white/90 dark:bg-[#1a1d24]/95 backdrop-blur-xl',
+        'bg-white/95 dark:bg-[#0c0c10]/95 backdrop-blur-2xl',
         /* Top border */
-        'border-t border-gray-100 dark:border-gray-700/60',
+        'border-t border-gray-200 dark:border-white/10',
         /* Shadow */
-        'shadow-[0_-4px_20px_rgba(0,0,0,0.06)]',
+        'shadow-[0_-4px_20px_rgba(0,0,0,0.08)] dark:shadow-[0_-4px_25px_rgba(0,0,0,0.7)]',
         /* Safe area for iPhone home indicator */
         'pb-safe',
       ].join(' ')}
@@ -156,7 +156,7 @@ export default function BottomNav() {
                         'rounded-full flex items-center justify-center',
                         'bg-red-600 text-white',
                         'text-[9px] font-black',
-                        'border-2 border-white dark:border-[#1a1d24]',
+                        'border-2 border-white dark:border-[#0c0c10]',
                       ].join(' ')}
                     >
                       {badge > 99 ? '99+' : badge}

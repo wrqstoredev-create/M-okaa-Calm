@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Trash2, Plus, Minus, ShoppingBag, Ticket, Loader2, X, CheckCircle } from 'lucide-react';
+import { Trash2, Plus, Minus, ShoppingBag, Ticket, Loader2, X, CheckCircle, ArrowRight, AlertTriangle } from 'lucide-react';
 import { useCurrency } from '../contexts/CurrencyContext';
 import { useCart } from '../contexts/CartContext';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabaseClient';
+import RippleButton from '../components/ui/RippleButton';
 
 export default function Cart() {
   const { formatPrice } = useCurrency();
@@ -21,6 +22,9 @@ export default function Cart() {
     shippingFee,
     finalPrice
   } = useCart();
+  
+  const isItemOutOfStock = (item: any) => item.stock !== undefined && item.stock !== null && Number(item.stock) <= 0;
+  const hasOutOfStock = items.some(isItemOutOfStock);
   
   const [couponCode, setCouponCode] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -62,92 +66,139 @@ export default function Cart() {
 
   if (items.length === 0) {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center py-20 px-4 text-center">
-        <div className="w-24 h-24 bg-gray-100 dark:bg-[#1a1d24] rounded-full flex items-center justify-center mb-6">
-          <ShoppingBag size={40} className="text-gray-400" />
+      <div className="flex-1 flex flex-col items-center justify-center py-24 px-4 text-center">
+        <div className="w-24 h-24 bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-full flex items-center justify-center mb-6 shadow-[0_0_25px_rgba(255,32,64,0.15)]">
+          <ShoppingBag size={40} className="text-gray-400 dark:text-red-500/80" />
         </div>
-        <h1 className="text-2xl font-bold mb-2 font-black">السلة فارغة</h1>
-        <p className="text-gray-500 dark:text-gray-400 mb-8 max-w-sm font-bold">لم تقم بإضافة أي منتجات إلى سلة المشتريات حتى الآن.</p>
-        <Link to="/" className="bg-black text-white font-black py-4 px-10 rounded-2xl hover:bg-gray-800 transition-all shadow-xl shadow-black/10 active:scale-[0.98]">
-          تصفح المنتجات
+        <h1 className="text-2xl font-black mb-2 text-gray-900 dark:text-white">السلة فارغة</h1>
+        <p className="text-gray-500 dark:text-gray-400 mb-8 max-w-sm font-bold text-sm leading-relaxed">
+          لم تقم بإضافة أي منتجات أو باقات شحن إلى سلة المشتريات حتى الآن.
+        </p>
+        <Link 
+          to="/" 
+          className="bg-gradient-to-r from-red-600 to-rose-600 text-white font-black py-4 px-10 rounded-2xl hover:from-red-500 hover:to-rose-500 transition-all shadow-[0_4px_20px_rgba(255,32,64,0.4)] hover:shadow-[0_0_30px_rgba(255,32,64,0.65)] active:scale-[0.98]"
+        >
+          تصفح المتجر الآن
         </Link>
       </div>
     );
   }
 
   return (
-    <div className="flex-1 container mx-auto px-4 max-w-5xl py-8" dir="rtl">
-      <h1 className="text-2xl font-black mb-8 border-r-4 border-red-700 pr-3">سلة المشتريات</h1>
+    <div className="flex-1 container mx-auto px-4 max-w-5xl py-8 md:py-12" dir="rtl">
+      <div className="flex items-center justify-between mb-8 pb-4 border-b border-gray-200 dark:border-white/10">
+        <h1 className="text-2xl md:text-3xl font-black border-r-4 border-red-600 pr-3 text-gray-900 dark:text-white">
+          سلة المشتريات
+        </h1>
+        <span className="text-xs font-bold text-gray-400">
+          ({items.length} {items.length === 1 ? 'عنصر' : 'عناصر'})
+        </span>
+      </div>
       
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Cart Items */}
         <div className="lg:col-span-2 space-y-4">
           {items.map((item) => (
-            <div key={item.id + JSON.stringify(item.customerData)} className="bg-white dark:bg-[#1a1d24] border border-gray-100 dark:border-gray-700 rounded-3xl p-5 shadow-sm flex flex-col sm:row gap-4 items-start sm:items-center">
+            <div 
+              key={item.id + JSON.stringify(item.customerData)} 
+              className="bg-white/95 dark:bg-[#0c0c10]/95 backdrop-blur-2xl border border-gray-150 dark:border-white/10 rounded-3xl p-5 shadow-sm hover:border-red-400/40 dark:hover:border-red-500/30 dark:hover:shadow-[0_0_20px_rgba(255,32,64,0.12)] transition-all duration-300 flex flex-col gap-4"
+            >
               <div className="flex w-full gap-4 items-center">
-                <div className="w-20 h-20 bg-zinc-50 dark:bg-[#0f1115] rounded-2xl p-1 flex-shrink-0 flex items-center justify-center border border-zinc-100 overflow-hidden">
-                   <img src={item.image_url || null} alt={item.title} className="w-full h-full object-cover" />
+                <div className="w-20 h-20 bg-gray-50 dark:bg-[#141418] rounded-2xl p-1 flex-shrink-0 flex items-center justify-center border border-gray-200 dark:border-white/10 overflow-hidden">
+                   <img src={item.image_url || undefined} alt={item.title} className="w-full h-full object-contain filter drop-shadow-sm" />
                 </div>
                 
-                <div className="flex-1 min-w-0">
-                  <div className="text-[10px] text-zinc-400 font-black mb-1 uppercase tracking-widest">{item.game_name}</div>
-                  <h3 className="font-black text-zinc-900 dark:text-white text-sm truncate">{item.title}</h3>
+                <div className="flex-1 min-w-0 text-right">
+                  <div className="text-[10px] text-red-500 dark:text-red-400 font-black mb-1 uppercase tracking-widest">{item.game_name}</div>
+                  <h3 className="font-black text-gray-900 dark:text-white text-sm truncate">{item.title}</h3>
                   
                   <div className="flex flex-wrap gap-2 mt-2">
                     {item.customerData?.player_id && (
-                      <div className="bg-red-50 text-red-700 px-2 py-0.5 rounded-lg text-[10px] font-black border border-red-100/50 uppercase" dir="ltr">
+                      <div className="bg-red-50 dark:bg-red-950/40 text-red-700 dark:text-red-400 px-2 py-0.5 rounded-lg text-[10px] font-black border border-red-200 dark:border-red-500/30 uppercase" dir="ltr">
                         ID: {item.customerData.player_id}
+                      </div>
+                    )}
+                    {item.customerData?.username && (
+                      <div className="bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-400 px-2 py-0.5 rounded-lg text-[10px] font-black border border-purple-200 dark:border-purple-500/30 uppercase" dir="ltr">
+                        User: {item.customerData.username}
                       </div>
                     )}
                   </div>
                 </div>
 
                 <div className="flex flex-col items-end gap-2">
-                   <button onClick={() => removeItem(item.id)} className="text-zinc-300 hover:text-red-600 transition-colors p-2">
-                    <Trash2 size={18} />
+                  <button 
+                    onClick={() => removeItem(item.id)} 
+                    className="text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/30 cursor-pointer"
+                    title="حذف من السلة"
+                  >
+                    <Trash2 size={17} />
                   </button>
-                  <div className="text-red-700 font-black text-sm whitespace-nowrap">
+                  <div 
+                    className="font-black text-sm whitespace-nowrap"
+                    style={{
+                      color: 'var(--neon-green)',
+                      textShadow: '0 0 10px rgba(0, 255, 136, 0.4)',
+                    }}
+                    dir="ltr"
+                  >
                     {formatPrice(item.price * item.quantity)}
                   </div>
                 </div>
               </div>
               
-              <div className="flex items-center justify-between w-full pt-4 border-t border-zinc-50">
-                <div className="flex items-center bg-zinc-50 dark:bg-[#0f1115] border border-zinc-100 rounded-xl overflow-hidden p-1">
-                  <button onClick={() => updateQuantity(item.id, item.quantity - 1)} className="p-2 text-zinc-500 hover:text-black dark:text-white hover:bg-zinc-200 dark:bg-zinc-800 rounded-lg transition-colors"><Minus size={14}/></button>
-                  <span className="w-10 text-center text-sm font-black text-zinc-900 dark:text-white">{item.quantity}</span>
-                  <button onClick={() => updateQuantity(item.id, item.quantity + 1)} className="p-2 text-zinc-500 hover:text-black dark:text-white hover:bg-zinc-200 dark:bg-zinc-800 rounded-lg transition-colors"><Plus size={14}/></button>
+              <div className="flex items-center justify-between w-full pt-4 border-t border-gray-100 dark:border-white/5">
+                <div className="flex items-center bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl overflow-hidden p-0.5">
+                  <button 
+                    onClick={() => updateQuantity(item.id, item.quantity - 1)} 
+                    className="p-2 text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white hover:bg-gray-200 dark:hover:bg-white/10 rounded-lg transition-colors cursor-pointer"
+                  >
+                    <Minus size={13} />
+                  </button>
+                  <span className="w-10 text-center text-sm font-black text-gray-900 dark:text-white">{item.quantity}</span>
+                  <button 
+                    onClick={() => updateQuantity(item.id, item.quantity + 1)} 
+                    className="p-2 text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white hover:bg-gray-200 dark:hover:bg-white/10 rounded-lg transition-colors cursor-pointer"
+                  >
+                    <Plus size={13} />
+                  </button>
                 </div>
                 
-                <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">سعر الوحدة: {formatPrice(item.price)}</span>
+                <span className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider" dir="ltr">
+                  Unit: {formatPrice(item.price)}
+                </span>
               </div>
             </div>
           ))}
 
           {/* Coupon Section */}
-          <div className="bg-white dark:bg-[#1a1d24] border border-dashed border-zinc-200 rounded-3xl p-6 mt-6">
+          <div className="bg-white/95 dark:bg-[#0c0c10]/95 backdrop-blur-2xl border border-dashed border-gray-200 dark:border-white/15 rounded-3xl p-6 mt-6">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 bg-red-50 rounded-xl flex items-center justify-center text-red-600">
+              <div className="w-10 h-10 bg-red-500/10 border border-red-500/20 rounded-xl flex items-center justify-center text-red-500">
                 <Ticket size={20} />
               </div>
               <div>
-                <h3 className="text-sm font-black text-zinc-900 dark:text-white">هل لديك كود خصم؟</h3>
-                <p className="text-[10px] font-bold text-zinc-500">أدخل الكود للحصول على تخفيض فوري</p>
+                <h3 className="text-sm font-black text-gray-900 dark:text-white">هل لديك كود خصم؟</h3>
+                <p className="text-[10px] font-bold text-gray-500 dark:text-gray-400">أدخل الكود للحصول على تخفيض فوري</p>
               </div>
             </div>
 
             {appliedCoupon ? (
-              <div className="bg-green-50 border border-green-100 p-4 rounded-2xl flex items-center justify-between group">
+              <div className="bg-emerald-500/10 border border-emerald-500/30 p-4 rounded-2xl flex items-center justify-between group">
                 <div className="flex items-center gap-3">
-                  <CheckCircle size={18} className="text-green-600" />
+                  <CheckCircle size={18} className="text-emerald-500" />
                   <div>
-                    <span className="text-xs font-black text-green-700 block line-height-none">تم تطبيق الكود: {appliedCoupon.code}</span>
-                    <span className="text-[10px] font-bold text-green-600">خصم بقيمة {appliedCoupon.discount_value}{appliedCoupon.discount_type === 'percentage' ? '%' : ' SAR'}</span>
+                    <span className="text-xs font-black text-emerald-600 dark:text-emerald-400 block line-height-none">
+                      تم تطبيق الكود: {appliedCoupon.code}
+                    </span>
+                    <span className="text-[10px] font-bold text-emerald-500">
+                      خصم بقيمة {appliedCoupon.discount_value}{appliedCoupon.discount_type === 'percentage' ? '%' : ' SAR'}
+                    </span>
                   </div>
                 </div>
                 <button 
                   onClick={removeCoupon}
-                  className="p-2 text-green-700 hover:bg-green-100 rounded-xl transition-colors"
+                  className="p-2 text-emerald-500 hover:bg-emerald-500/20 rounded-xl transition-colors cursor-pointer"
                   title="إزالة الكود"
                 >
                   <X size={16} />
@@ -156,61 +207,76 @@ export default function Cart() {
             ) : (
               <form onSubmit={handleApplyCoupon} className="flex gap-2">
                 <input 
-                  type="text"
+                  type="text" 
                   value={couponCode}
                   onChange={(e) => setCouponCode(e.target.value)}
                   placeholder="أدخل الكود هنا (مثال: SALE20)"
-                  className="flex-1 bg-zinc-50 dark:bg-[#0f1115] border border-zinc-100 rounded-2xl px-4 py-3 text-sm font-black focus:outline-none focus:ring-2 focus:ring-red-600/10 focus:border-red-600 transition-all"
+                  className="flex-1 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl px-4 py-3 text-sm font-black text-gray-900 dark:text-white focus:outline-none focus:border-red-500 dark:focus:border-red-500 focus:shadow-[0_0_15px_rgba(255,32,64,0.25)] transition-all"
                   disabled={isSubmitting}
                 />
-                <button 
+                <RippleButton 
                   type="submit"
                   disabled={isSubmitting || !couponCode.trim()}
-                  className="bg-zinc-900 text-white px-6 py-3 rounded-2xl font-black text-sm hover:bg-zinc-800 disabled:opacity-50 transition-all flex items-center gap-2"
+                  rippleColor="rgba(255, 255, 255, 0.3)"
+                  className="bg-zinc-900 dark:bg-white/10 text-white px-6 py-3 rounded-2xl font-black text-sm hover:bg-zinc-800 dark:hover:bg-white/20 disabled:opacity-50 transition-all flex items-center gap-2 cursor-pointer"
                 >
                   {isSubmitting ? <Loader2 size={16} className="animate-spin" /> : 'تطبيق'}
-                </button>
+                </RippleButton>
               </form>
             )}
             
-            {error && <p className="mt-3 text-[10px] font-black text-red-600 flex items-center gap-1"><X size={12}/> {error}</p>}
-            {success && <p className="mt-3 text-[10px] font-black text-green-600 flex items-center gap-1"><CheckCircle size={12}/> {success}</p>}
+            {error && <p className="mt-3 text-[10px] font-black text-red-500 flex items-center gap-1"><X size={12}/> {error}</p>}
+            {success && <p className="mt-3 text-[10px] font-black text-emerald-500 flex items-center gap-1"><CheckCircle size={12}/> {success}</p>}
           </div>
         </div>
 
         {/* Order Summary */}
         <div className="lg:col-span-1">
-          <div className="bg-white dark:bg-[#1a1d24] border border-zinc-100 rounded-[2.5rem] p-8 sticky top-4 shadow-xl shadow-zinc-200/50">
-            <h2 className="text-lg font-black mb-6 border-b border-zinc-50 pb-4">تفاصيل الطلب</h2>
+          <div className="bg-white/95 dark:bg-[#0c0c10]/95 backdrop-blur-2xl border border-gray-150 dark:border-white/10 rounded-[2.5rem] p-7 md:p-8 sticky top-24 shadow-2xl dark:shadow-[0_12px_45px_rgba(0,0,0,0.8),0_0_20px_rgba(255,32,64,0.08)] space-y-6">
+            <h2 className="text-lg font-black border-b border-gray-100 dark:border-white/10 pb-4 text-gray-900 dark:text-white">
+              تفاصيل الطلب
+            </h2>
             
-            <div className="space-y-4 mb-8">
+            <div className="space-y-4">
               <div className="flex justify-between text-xs">
-                <span className="text-zinc-400 font-black">المجموع الفرعي:</span>
-                <span className="font-black text-zinc-900 dark:text-white">{formatPrice(totalPrice)}</span>
+                <span className="text-gray-400 font-bold">المجموع الفرعي:</span>
+                <span className="font-black text-gray-900 dark:text-white" dir="ltr">{formatPrice(totalPrice)}</span>
               </div>
               
               {appliedCoupon && (
                 <div className="flex justify-between text-xs">
-                  <span className="text-green-600 font-black flex items-center gap-1">الخصم ({appliedCoupon.code}):</span>
-                  <span className="font-black text-green-600">-{formatPrice(discountAmount)}</span>
+                  <span className="text-emerald-500 font-bold flex items-center gap-1">الخصم ({appliedCoupon.code}):</span>
+                  <span className="font-black text-emerald-500" dir="ltr">-{formatPrice(discountAmount)}</span>
                 </div>
               )}
 
               <div className="flex justify-between text-xs">
-                <span className="text-zinc-400 font-black">الشحن والرسوم:</span>
-                <span className={`${shippingFee === 0 ? 'text-green-600' : 'text-zinc-900 dark:text-white'} font-black`}>
-                  {shippingFee === 0 ? 'مجاني' : formatPrice(shippingFee)}
+                <span className="text-gray-400 font-bold">الشحن والرسوم:</span>
+                <span className={`${shippingFee === 0 ? 'text-emerald-500' : 'text-gray-900 dark:text-white'} font-black`}>
+                  {shippingFee === 0 ? 'فوري مجاني ⚡' : formatPrice(shippingFee)}
                 </span>
               </div>
               
-              <div className="border-t border-zinc-50 pt-5 flex justify-between items-center">
-                <span className="font-black text-sm">الإجمالي النهائي:</span>
-                <span className="font-black text-red-700 text-2xl tracking-tighter">{formatPrice(finalPrice)}</span>
+              <div className="border-t border-gray-100 dark:border-white/10 pt-5 flex justify-between items-baseline">
+                <span className="font-black text-sm text-gray-900 dark:text-white">الإجمالي النهائي:</span>
+                <span 
+                  className="font-black text-2xl md:text-3xl tracking-tight"
+                  style={{
+                    color: 'var(--neon-green)',
+                    textShadow: '0 0 16px rgba(0, 255, 136, 0.5)',
+                  }}
+                  dir="ltr"
+                >
+                  {formatPrice(finalPrice)}
+                </span>
               </div>
             </div>
 
-            <Link to={user ? "/checkout" : "/login"} className="block w-full text-center bg-black text-white font-black py-4 rounded-2xl hover:bg-zinc-800 shadow-xl shadow-black/10 active:scale-[0.98] transition-all">
-              متابعة للدفع
+            <Link 
+              to={user ? "/checkout" : "/login"} 
+              className="block w-full text-center bg-gradient-to-r from-red-600 via-rose-600 to-red-600 hover:from-red-500 hover:to-rose-500 text-white font-black py-4 rounded-2xl shadow-[0_4px_20px_rgba(255,32,64,0.4)] hover:shadow-[0_0_30px_rgba(255,32,64,0.7)] active:scale-[0.98] transition-all cursor-pointer"
+            >
+              متابعة للدفع ⚡
             </Link>
           </div>
         </div>
@@ -218,4 +284,3 @@ export default function Cart() {
     </div>
   );
 }
-

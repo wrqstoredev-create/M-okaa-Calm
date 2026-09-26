@@ -2,6 +2,14 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Product } from '../types/products';
 import { supabase } from '../lib/supabaseClient';
 
+export interface PlayerAttributes {
+  username?: string;
+  phone?: string;
+  id?: string;
+  social?: string;
+  [key: string]: any;
+}
+
 export interface CartItem extends Product {
   quantity: number;
   customerData?: {
@@ -10,6 +18,7 @@ export interface CartItem extends Product {
     player_social?: string;
     player_phone?: string;
   };
+  attributes?: PlayerAttributes;
 }
 
 export interface Coupon {
@@ -21,8 +30,13 @@ export interface Coupon {
 
 interface CartContextType {
   items: CartItem[];
-  addItem: (product: Product, quantity?: number, customerData?: CartItem['customerData']) => void;
-  removeItem: (productId: string) => void;
+  addItem: (
+    product: Product, 
+    quantity?: number, 
+    customerData?: CartItem['customerData'],
+    attributes?: PlayerAttributes
+  ) => void;
+  removeItem: (productId: string, attributes?: PlayerAttributes) => void;
   updateQuantity: (productId: string, quantity: number) => void;
   clearCart: () => void;
   applyCoupon: (coupon: Coupon) => void;
@@ -33,6 +47,9 @@ interface CartContextType {
   discountAmount: number;
   shippingFee: number;
   finalPrice: number;
+  isCartDrawerOpen?: boolean;
+  openCartDrawer?: () => void;
+  closeCartDrawer?: () => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -53,6 +70,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     is_shipping_free: false,
     free_shipping_threshold: 0
   });
+
+  const [isCartDrawerOpen, setIsCartDrawerOpen] = useState(false);
+  const openCartDrawer = () => setIsCartDrawerOpen(true);
+  const closeCartDrawer = () => setIsCartDrawerOpen(false);
 
   useEffect(() => {
     localStorage.setItem('cart', JSON.stringify(items));
@@ -85,11 +106,30 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }
   }, [appliedCoupon]);
 
-  const addItem = (product: Product, quantity = 1, customerData?: CartItem['customerData']) => {
+  const addItem = (
+    product: Product, 
+    quantity = 1, 
+    customerData?: CartItem['customerData'],
+    attributes?: PlayerAttributes
+  ) => {
+    const finalAttributes: PlayerAttributes = attributes || {
+      username: customerData?.player_username,
+      phone: customerData?.player_phone,
+      id: customerData?.player_id,
+      social: customerData?.player_social,
+    };
+
+    const finalCustomerData: CartItem['customerData'] = customerData || {
+      player_username: finalAttributes.username,
+      player_phone: finalAttributes.phone,
+      player_id: finalAttributes.id,
+      player_social: finalAttributes.social,
+    };
+
     setItems(currentItems => {
       const itemIndex = currentItems.findIndex(item => 
         item.id === product.id && 
-        JSON.stringify(item.customerData) === JSON.stringify(customerData)
+        JSON.stringify(item.attributes || item.customerData) === JSON.stringify(finalAttributes || finalCustomerData)
       );
 
       if (itemIndex > -1) {
@@ -98,12 +138,24 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         return newItems;
       }
 
-      return [...currentItems, { ...product, quantity, customerData }];
+      return [...currentItems, { 
+        ...product, 
+        quantity, 
+        customerData: finalCustomerData,
+        attributes: finalAttributes 
+      }];
     });
   };
 
-  const removeItem = (productId: string) => {
-    setItems(currentItems => currentItems.filter(item => item.id !== productId));
+  const removeItem = (productId: string, attributes?: PlayerAttributes) => {
+    setItems(currentItems => {
+      if (attributes) {
+        return currentItems.filter(item => 
+          !(item.id === productId && JSON.stringify(item.attributes || item.customerData) === JSON.stringify(attributes))
+        );
+      }
+      return currentItems.filter(item => item.id !== productId);
+    });
   };
 
   const updateQuantity = (productId: string, quantity: number) => {
@@ -159,7 +211,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       totalPrice,
       discountAmount,
       shippingFee,
-      finalPrice
+      finalPrice,
+      isCartDrawerOpen,
+      openCartDrawer,
+      closeCartDrawer
     }}>
       {children}
     </CartContext.Provider>

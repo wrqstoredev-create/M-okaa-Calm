@@ -45,6 +45,8 @@ import { motion, AnimatePresence } from 'motion/react';
 import ProductSection from '../components/ProductSection';
 import { useCart } from '../contexts/CartContext';
 import ProductComments from '../components/ProductComments';
+import RippleButton from '../components/ui/RippleButton';
+import Tooltip from '../components/ui/Tooltip';
 
 /* ─── Tab config ──────────────────────────────────────────────────────────── */
 type TabId = 'description' | 'details' | 'shipping' | 'reviews' | 'related';
@@ -100,6 +102,7 @@ function FormInput({
   placeholder,
   type = 'text',
   error,
+  optional = false,
 }: {
   label: string;
   icon: React.ReactNode;
@@ -108,13 +111,21 @@ function FormInput({
   placeholder: string;
   type?: string;
   error?: string;
+  optional?: boolean;
 }) {
   return (
-    <div className="space-y-1.5">
-      <label className="flex items-center gap-2 text-[11px] font-black text-gray-700 dark:text-gray-300 uppercase tracking-wider">
-        <span className="text-red-600">{icon}</span>
-        {label} <span className="text-red-500">*</span>
-      </label>
+    <div className="space-y-1.5 text-right" dir="rtl">
+      <div className="flex items-center justify-between text-[11px] font-black text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+        <label className="flex items-center gap-2">
+          <span className="text-red-500 drop-shadow-[0_0_6px_rgba(255,32,64,0.5)]">{icon}</span>
+          {label} {!optional && <span className="text-red-500 font-black">*</span>}
+        </label>
+        {optional && (
+          <span className="text-[10px] text-gray-400 font-bold bg-gray-100 dark:bg-white/5 px-2 py-0.5 rounded-md border border-gray-200 dark:border-white/10">
+            اختياري
+          </span>
+        )}
+      </div>
       <input
         type={type}
         value={value}
@@ -122,17 +133,17 @@ function FormInput({
         placeholder={placeholder}
         dir={type === 'url' || type === 'tel' || type === 'text' ? 'ltr' : undefined}
         className={[
-          'w-full bg-gray-50 dark:bg-[#0f1115]',
-          'border-2 rounded-xl py-3.5 px-4',
-          'text-sm font-bold outline-none transition-all',
-          'placeholder:text-gray-300',
+          'w-full bg-gray-50/80 dark:bg-[#0c0c10]/90 backdrop-blur-md',
+          'border rounded-xl py-3.5 px-4',
+          'text-sm font-bold text-gray-900 dark:text-white outline-none transition-all duration-300',
+          'placeholder:text-gray-400 dark:placeholder:text-gray-600',
           error
-            ? 'border-red-400 focus:border-red-600 bg-red-50/30'
-            : 'border-transparent focus:border-red-600',
+            ? 'border-red-500 bg-red-50/30 dark:bg-red-950/20 shadow-[0_0_15px_rgba(255,32,64,0.3)]'
+            : 'border-gray-200 dark:border-white/10 hover:border-gray-300 dark:hover:border-white/20 focus:border-red-500 dark:focus:border-red-500 focus:shadow-[0_0_15px_rgba(255,32,64,0.25)]',
         ].join(' ')}
       />
       {error && (
-        <p className="text-red-600 text-[10px] font-bold flex items-center gap-1">
+        <p className="text-red-500 text-[10px] font-bold flex items-center gap-1">
           <AlertTriangle size={10} /> {error}
         </p>
       )}
@@ -216,26 +227,40 @@ export default function Product() {
     window.scrollTo(0, 0);
   }, [id]);
 
+  /* ── In-stock check helper ────────────────────────────────────────── */
+  const isItemInStock = (item: any) => {
+    if (!item) return false;
+    if (item.stock === undefined || item.stock === null) return true;
+    return Number(item.stock) > 0;
+  };
+
   /* ── Cart validation ────────────────────────────────────────────────── */
   const handleAddToCart = (thenNavigate = false) => {
     const newErrors: Record<string, string> = {};
-    if (product.require_player_id && !formData.playerId.trim())
-      newErrors.playerId = 'يرجى إدخال معرف اللاعب (Player ID)';
-    if (product.require_username && !formData.username.trim())
-      newErrors.username = 'يرجى إدخال اسم المستخدم';
-    if (product.require_social_link && !formData.socialLink.trim())
-      newErrors.socialLink = 'يرجى إدخال رابط الحساب';
-    if (product.require_phone_number && !formData.phoneNumber.trim())
-      newErrors.phoneNumber = 'يرجى إدخال رقم الهاتف';
 
-    const hasNoCustomReqs = !product.require_player_id && !product.require_username &&
-                            !product.require_social_link && !product.require_phone_number;
-    if (hasNoCustomReqs && !formData.playerId.trim())
-      newErrors.playerId = 'يرجى إدخال معرف اللاعب (ID) لإتمام عملية الشحن';
+    // Username is strictly required for every game item
+    if (!formData.username.trim()) {
+      newErrors.username = 'يرجى إدخال اسم المستخدم داخل اللعبة (إجباري) *';
+    }
+
+    // Player ID: required if product specifies it, otherwise optional
+    if (product.require_player_id && !formData.playerId.trim()) {
+      newErrors.playerId = 'يرجى إدخال معرف اللاعب (Player ID)';
+    }
+
+    // Phone: required if product specifies it, otherwise optional
+    if (product.require_phone_number && !formData.phoneNumber.trim()) {
+      newErrors.phoneNumber = 'يرجى إدخال رقم الهاتف';
+    }
+
+    // Social link if required
+    if (product.require_social_link && !formData.socialLink.trim()) {
+      newErrors.socialLink = 'يرجى إدخال رابط الحساب';
+    }
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
-      addToast('يرجى تعبئة كافة الحقول المطلوبة ❌', 'error');
+      addToast('يرجى تعبئة الحقول المطلوبة بشكل صحيح ❌', 'error');
       purchaseCardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       return;
     }
@@ -256,25 +281,44 @@ export default function Product() {
       return;
     }
 
-    const customerData = {
-      player_id: formData.playerId, player_username: formData.username,
-      player_social: formData.socialLink, player_phone: formData.phoneNumber,
+    const attributes = {
+      username: formData.username.trim(),
+      phone: formData.phoneNumber.trim() || undefined,
+      id: formData.playerId.trim() || undefined,
+      social: formData.socialLink.trim() || undefined,
     };
+
+    const customerData = {
+      player_id: formData.playerId.trim() || undefined,
+      player_username: formData.username.trim(),
+      player_social: formData.socialLink.trim() || undefined,
+      player_phone: formData.phoneNumber.trim() || undefined,
+    };
+
     const overriddenProduct = {
-      ...product, price: activePrice,
+      ...product,
+      price: activePrice,
       ...(product?.robux_quantity !== undefined ? { robux_quantity: activeRobuxQty } : {}),
     };
 
     setTimeout(() => {
-      addItem(overriddenProduct, 1, customerData);
+      addItem(overriddenProduct, 1, customerData, attributes);
       addToast('تمت إضافة المنتج للسلة بنجاح ✅', 'success');
       setIsAdding(false);
       if (thenNavigate) navigate('/checkout');
-      else openCartDrawer();
+      else if (openCartDrawer) openCartDrawer();
     }, 400);
   };
 
   const handleAddToCartAll = () => {
+    // 1. Validate mandatory username
+    if (!formData.username.trim()) {
+      setErrors(prev => ({ ...prev, username: 'يرجى إدخال اسم المستخدم أولاً لتطبيقه على المنتجات المضافة *' }));
+      addToast('يرجى إدخال اسم المستخدم أولاً لتطبيقه على كافة المنتجات ✍️', 'error');
+      purchaseCardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
     const baseRobuxQty = product?.robux_quantity || 1000;
     const unitPrice    = product ? Number(product.price) / baseRobuxQty : 0;
     const activeRobuxQty = isCustomRobux ? customRobuxAmount : (product?.robux_quantity || 0);
@@ -282,12 +326,43 @@ export default function Product() {
       ? Math.max(1, Math.round(unitPrice * customRobuxAmount))
       : Number(product?.price || 0);
 
-    [product, ...boughtTogether].filter(p => p?.id).forEach((item) => {
+    const attributes = {
+      username: formData.username.trim(),
+      phone: formData.phoneNumber.trim() || undefined,
+      id: formData.playerId.trim() || undefined,
+      social: formData.socialLink.trim() || undefined,
+    };
+
+    const customerData = {
+      player_id: formData.playerId.trim() || undefined,
+      player_username: formData.username.trim(),
+      player_social: formData.socialLink.trim() || undefined,
+      player_phone: formData.phoneNumber.trim() || undefined,
+    };
+
+    // Filter to only available in-stock products (stock > 0 or unlimited)
+    const availableItems = [
+      ...(isItemInStock(product) ? [product] : []),
+      ...boughtTogether.filter(isItemInStock),
+    ];
+
+    if (availableItems.length === 0) {
+      addToast('عذراً، جميع المنتجات المعروضة نفدت من المخزون حالياً ❌', 'error');
+      return;
+    }
+
+    availableItems.forEach((item) => {
       const price = item.id === product?.id ? activePrice : Number(item.price);
-      addItem({ ...item, price }, 1);
+      const overridden = {
+        ...item,
+        price,
+        ...(item.id === product?.id && product?.robux_quantity !== undefined ? { robux_quantity: activeRobuxQty } : {}),
+      };
+      addItem(overridden, 1, customerData, attributes);
     });
-    addToast(`تمت إضافة ${1 + boughtTogether.length} منتج إلى السلة!`, 'success');
-    openCartDrawer();
+
+    addToast(`تمت إضافة ${availableItems.length} منتج متوفر إلى السلة بنجاح! ✅`, 'success');
+    if (openCartDrawer) openCartDrawer();
   };
 
   /* ── Loading skeleton ───────────────────────────────────────────────── */
@@ -327,9 +402,13 @@ export default function Product() {
   const activePrice    = isCustomRobux
     ? Math.max(1, Math.round(unitPrice * customRobuxAmount))
     : Number(product?.price || 0);
-  const totalTogether  = activePrice + boughtTogether.reduce((a, c) => a + Number(c.price), 0);
-  const isFav          = isFavorite(product.id);
-  const isOutOfStock   = product.stock !== undefined && product.stock !== null && product.stock <= 0;
+
+  const isMainInStock           = isItemInStock(product);
+  const availableBoughtTogether  = boughtTogether.filter(isItemInStock);
+  const totalTogether           = (isMainInStock ? activePrice : 0) + availableBoughtTogether.reduce((a, c) => a + Number(c.price || 0), 0);
+  const canAddTogether          = isMainInStock || availableBoughtTogether.length > 0;
+  const isFav                   = isFavorite(product.id);
+  const isOutOfStock            = !isMainInStock;
 
   /* ────────────────────────────────────────────────────────────────────── */
   return (
@@ -368,11 +447,14 @@ export default function Product() {
           <div className="lg:col-span-7 space-y-6 order-2 lg:order-1">
 
             {/* Image area */}
-            <div className="relative bg-zinc-950 rounded-3xl overflow-hidden min-h-[320px] md:min-h-[480px] flex items-center justify-center">
+            <div className="relative bg-[#08080c] rounded-3xl overflow-hidden min-h-[320px] md:min-h-[480px] flex items-center justify-center border border-gray-150 dark:border-white/10 shadow-2xl dark:shadow-[0_12px_45px_rgba(0,0,0,0.8),0_0_20px_rgba(255,32,64,0.1)]">
+              {/* Scanlines overlay */}
+              <div className="absolute inset-0 z-1 pointer-events-none scanlines opacity-25" />
+
               {/* Blurred background glow */}
               {product.image_url && (
                 <div
-                  className="absolute inset-0 opacity-50 blur-3xl scale-125 bg-center bg-cover"
+                  className="absolute inset-0 opacity-40 blur-3xl scale-125 bg-center bg-cover"
                   style={{ backgroundImage: `url(${product.image_url})` }}
                 />
               )}
@@ -381,28 +463,28 @@ export default function Product() {
               <motion.img
                 src={product.image_url || undefined}
                 alt={product.title}
-                whileHover={{ scale: 1.05 }}
+                whileHover={{ scale: 1.06 }}
                 transition={{ type: 'spring', stiffness: 200, damping: 20 }}
-                className="relative z-10 w-full max-w-[260px] md:max-w-[400px] object-contain drop-shadow-2xl"
+                className="relative z-10 w-full max-w-[260px] md:max-w-[400px] object-contain filter drop-shadow-[0_15px_30px_rgba(0,0,0,0.6)]"
               />
 
               {/* Discount badge */}
               {product.discount_badge && (
-                <div className="absolute top-5 right-5 z-20 bg-red-600 text-white text-[11px] font-black py-1.5 px-3 rounded-full shadow-lg">
+                <div className="absolute top-5 right-5 z-20 bg-gradient-to-r from-red-600 to-rose-600 text-white text-[11px] font-black py-1.5 px-3 rounded-full shadow-[0_2px_10px_rgba(255,32,64,0.5)]">
                   {product.discount_badge}
                 </div>
               )}
 
               {/* New badge */}
               {product.is_new && !product.discount_badge && (
-                <div className="absolute top-5 right-5 z-20 bg-emerald-600 text-white text-[11px] font-black py-1.5 px-3 rounded-full shadow-lg">
+                <div className="absolute top-5 right-5 z-20 bg-gradient-to-r from-emerald-600 to-teal-500 text-white text-[11px] font-black py-1.5 px-3 rounded-full shadow-[0_2px_10px_rgba(16,185,129,0.5)]">
                   جديد ✨
                 </div>
               )}
 
               {/* Featured badge */}
               {product.is_featured && (
-                <div className="absolute top-5 left-5 z-20 bg-amber-500 text-white text-[11px] font-black py-1.5 px-3 rounded-full shadow-lg flex items-center gap-1">
+                <div className="absolute top-5 left-5 z-20 bg-gradient-to-r from-amber-500 to-yellow-500 text-white text-[11px] font-black py-1.5 px-3 rounded-full shadow-[0_2px_10px_rgba(245,158,11,0.5)] flex items-center gap-1">
                   <Star size={10} className="fill-white" /> مميز
                 </div>
               )}
@@ -410,7 +492,8 @@ export default function Product() {
               {/* Share button */}
               <button
                 onClick={() => navigator.share?.({ title: product.title, url: window.location.href })}
-                className="absolute bottom-5 left-5 z-20 w-10 h-10 bg-white/10 backdrop-blur-md border border-white/20 rounded-full flex items-center justify-center text-white hover:bg-white/20 transition-all"
+                className="absolute bottom-5 left-5 z-20 w-10 h-10 bg-white/10 backdrop-blur-md border border-white/20 rounded-full flex items-center justify-center text-white hover:bg-white/20 hover:border-red-500/50 hover:shadow-[0_0_15px_rgba(255,32,64,0.3)] transition-all cursor-pointer"
+                title="مشاركة"
               >
                 <Share2 size={18} />
               </button>
@@ -418,40 +501,71 @@ export default function Product() {
 
             {/* Frequently bought together */}
             {boughtTogether.length > 0 && (
-              <div className="bg-white dark:bg-[#1a1d24] border border-gray-100 dark:border-gray-700 rounded-3xl p-5">
-                <h3 className="text-sm font-black text-gray-900 dark:text-white mb-4 border-r-4 border-red-600 pr-3">
-                  غالباً ما يتم شراؤها معاً
-                </h3>
+              <div className="bg-white/95 dark:bg-[#0c0c10]/90 backdrop-blur-xl border border-gray-150 dark:border-white/10 rounded-3xl p-5 shadow-sm">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-sm font-black text-gray-900 dark:text-white border-r-4 border-red-600 pr-3">
+                    غالباً ما يتم شراؤها معاً
+                  </h3>
+                  <span className="text-[10px] font-bold text-gray-400">
+                    (تضاف فقط المنتجات المتوفرة بالمخزون)
+                  </span>
+                </div>
                 <div className="flex flex-wrap items-center gap-3">
                   {/* Main product chip */}
-                  <div className="flex items-center gap-2 bg-red-50 dark:bg-red-900/20 border border-red-100 rounded-2xl p-2 flex-shrink-0">
+                  <div className={`relative flex items-center gap-2 border rounded-2xl p-2 flex-shrink-0 transition-opacity ${
+                    isMainInStock 
+                      ? 'bg-red-500/10 border-red-500/20' 
+                      : 'bg-gray-100 dark:bg-white/5 border-dashed border-gray-300 dark:border-white/10 opacity-60'
+                  }`}>
                     <img src={product.image_url || undefined} alt="" className="w-10 h-10 object-contain" />
                     <div className="text-right">
                       <p className="text-[10px] font-black text-gray-900 dark:text-white truncate max-w-[90px]">{product.title}</p>
-                      <p className="text-[10px] font-black text-red-700">{formatPrice(activePrice)}</p>
+                      <p className="text-[10px] font-black text-red-500 dark:text-red-400">{formatPrice(activePrice)}</p>
+                      {!isMainInStock && (
+                        <span className="text-[9px] font-black text-red-600 dark:text-red-400 block">نفدت الكمية</span>
+                      )}
                     </div>
                   </div>
 
-                  {boughtTogether.map((item) => (
-                    <React.Fragment key={item.id}>
-                      <Plus size={16} className="text-gray-300 flex-shrink-0" />
-                      <Link to={`/product/${item.id}`} className="flex items-center gap-2 bg-gray-50 dark:bg-[#0f1115] border border-gray-100 dark:border-gray-700 rounded-2xl p-2 flex-shrink-0 hover:border-red-200 transition-colors">
-                        <img src={item.image_url || undefined} alt="" className="w-10 h-10 object-contain" />
-                        <div className="text-right">
-                          <p className="text-[10px] font-black text-gray-900 dark:text-white truncate max-w-[90px]">{item.title}</p>
-                          <p className="text-[10px] font-black text-red-700">{formatPrice(Number(item.price))}</p>
-                        </div>
-                      </Link>
-                    </React.Fragment>
-                  ))}
+                  {boughtTogether.map((item) => {
+                    const inStock = isItemInStock(item);
+                    return (
+                      <React.Fragment key={item.id}>
+                        <Plus size={16} className="text-gray-400 flex-shrink-0" />
+                        <Link 
+                          to={`/product/${item.id}`} 
+                          className={`relative flex items-center gap-2 border rounded-2xl p-2 flex-shrink-0 transition-all ${
+                            inStock 
+                              ? 'bg-gray-50 dark:bg-white/5 border-gray-200 dark:border-white/10 hover:border-red-400 dark:hover:border-red-500/40' 
+                              : 'bg-gray-100 dark:bg-white/5 border-dashed border-gray-300 dark:border-white/10 opacity-60'
+                          }`}
+                        >
+                          <img src={item.image_url || undefined} alt="" className="w-10 h-10 object-contain" />
+                          <div className="text-right">
+                            <p className="text-[10px] font-black text-gray-900 dark:text-white truncate max-w-[90px]">{item.title}</p>
+                            <p className="text-[10px] font-black text-red-500 dark:text-red-400">{formatPrice(Number(item.price))}</p>
+                            {!inStock && (
+                              <span className="text-[9px] font-black text-red-600 dark:text-red-400 block">نفدت الكمية</span>
+                            )}
+                          </div>
+                        </Link>
+                      </React.Fragment>
+                    );
+                  })}
 
-                  <button
+                  <RippleButton
                     onClick={handleAddToCartAll}
-                    className="mr-auto bg-red-700 hover:bg-red-800 text-white font-black text-[11px] px-4 py-2.5 rounded-xl transition-all active:scale-95 flex items-center gap-1.5 flex-shrink-0"
+                    disabled={!canAddTogether}
+                    rippleColor="rgba(255, 255, 255, 0.4)"
+                    className={`mr-auto text-white font-black text-[11px] px-4 py-2.5 rounded-xl transition-all flex items-center gap-1.5 flex-shrink-0 cursor-pointer ${
+                      canAddTogether
+                        ? 'bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 shadow-[0_2px_12px_rgba(255,32,64,0.3)] hover:shadow-[0_0_18px_rgba(255,32,64,0.5)]'
+                        : 'bg-gray-400 dark:bg-white/10 cursor-not-allowed opacity-60'
+                    }`}
                   >
                     <ShoppingCart size={13} />
-                    أضف الكل ({formatPrice(totalTogether)})
-                  </button>
+                    {canAddTogether ? `أضف المتاح (${formatPrice(totalTogether)})` : 'نفدت الكمية ❌'}
+                  </RippleButton>
                 </div>
               </div>
             )}
@@ -459,7 +573,7 @@ export default function Product() {
 
           {/* ── RIGHT: Purchase card ─────────────────────────────────── */}
           <div className="lg:col-span-5 order-1 lg:order-2" ref={purchaseCardRef}>
-            <div className="bg-white dark:bg-[#1a1d24] border border-gray-100 dark:border-gray-700 rounded-3xl p-5 md:p-7 shadow-sm sticky top-20 space-y-5">
+            <div className="bg-white/95 dark:bg-[#0c0c10]/95 backdrop-blur-2xl border border-gray-150 dark:border-white/10 rounded-3xl p-5 md:p-7 shadow-xl dark:shadow-[0_12px_45px_rgba(0,0,0,0.7),0_0_25px_rgba(255,32,64,0.08)] sticky top-20 space-y-5">
 
               {/* Title */}
               <div>
@@ -472,12 +586,18 @@ export default function Product() {
               </div>
 
               {/* Price */}
-              <div className="flex items-baseline gap-3">
-                <span className="text-3xl font-black text-red-700 tracking-tight">
+              <div className="flex items-baseline gap-3" dir="ltr">
+                <span
+                  className="text-3xl md:text-4xl font-black tracking-tight"
+                  style={{
+                    color: 'var(--neon-green)',
+                    textShadow: '0 0 16px rgba(0, 255, 136, 0.5)',
+                  }}
+                >
                   {formatPrice(activePrice)}
                 </span>
                 {!isCustomRobux && product.old_price && (
-                  <span className="text-base text-gray-300 line-through font-bold">
+                  <span className="text-base text-gray-400 dark:text-gray-500 line-through font-bold">
                     {formatPrice(Number(product.old_price))}
                   </span>
                 )}
@@ -599,94 +719,105 @@ export default function Product() {
 
               {/* Customer inputs */}
               <div className="space-y-4">
-                {product.require_player_id && (
-                  <FormInput
-                    label="معرف اللاعب (Player ID)"
-                    icon={<Fingerprint size={14} />}
-                    value={formData.playerId}
-                    onChange={(v) => setFormData({ ...formData, playerId: v })}
-                    placeholder="51244XXXX"
-                    error={errors.playerId}
-                  />
-                )}
-                {product.require_username && (
-                  <FormInput
-                    label="اسم المستخدم"
-                    icon={<UserIcon size={14} />}
-                    value={formData.username}
-                    onChange={(v) => setFormData({ ...formData, username: v })}
-                    placeholder="Username"
-                    error={errors.username}
-                  />
-                )}
+                {/* 1. Username (Mandatory) */}
+                <FormInput
+                  label="اسم المستخدم داخل اللعبة (Username)"
+                  icon={<UserIcon size={14} />}
+                  value={formData.username}
+                  onChange={(v) => {
+                    setFormData({ ...formData, username: v });
+                    if (errors.username) setErrors(prev => ({ ...prev, username: '' }));
+                  }}
+                  placeholder="مثال: PlayerName_2026"
+                  error={errors.username}
+                  optional={false}
+                />
+
+                {/* 2. Player ID (Optional / Required per product) */}
+                <FormInput
+                  label="معرف اللاعب (Player ID)"
+                  icon={<Fingerprint size={14} />}
+                  value={formData.playerId}
+                  onChange={(v) => {
+                    setFormData({ ...formData, playerId: v });
+                    if (errors.playerId) setErrors(prev => ({ ...prev, playerId: '' }));
+                  }}
+                  placeholder="مثال: 51244XXXX"
+                  error={errors.playerId}
+                  optional={!product.require_player_id}
+                />
+
+                {/* 3. Phone number (Optional / Required per product) */}
+                <FormInput
+                  label="رقم الهاتف (Phone Number)"
+                  icon={<Phone size={14} />}
+                  value={formData.phoneNumber}
+                  onChange={(v) => {
+                    setFormData({ ...formData, phoneNumber: v });
+                    if (errors.phoneNumber) setErrors(prev => ({ ...prev, phoneNumber: '' }));
+                  }}
+                  placeholder="010XXXXXXXX / 05XXXXXXXX"
+                  type="tel"
+                  error={errors.phoneNumber}
+                  optional={!product.require_phone_number}
+                />
+
+                {/* 4. Social link (if requested by product) */}
                 {product.require_social_link && (
                   <FormInput
-                    label="رابط الحساب"
+                    label="رابط الحساب (Social Link)"
                     icon={<ShareIcon size={14} />}
                     value={formData.socialLink}
-                    onChange={(v) => setFormData({ ...formData, socialLink: v })}
+                    onChange={(v) => {
+                      setFormData({ ...formData, socialLink: v });
+                      if (errors.socialLink) setErrors(prev => ({ ...prev, socialLink: '' }));
+                    }}
                     placeholder="https://facebook.com/..."
                     type="url"
                     error={errors.socialLink}
-                  />
-                )}
-                {product.require_phone_number && (
-                  <FormInput
-                    label="رقم الهاتف"
-                    icon={<Phone size={14} />}
-                    value={formData.phoneNumber}
-                    onChange={(v) => setFormData({ ...formData, phoneNumber: v })}
-                    placeholder="091XXXXXXX"
-                    type="tel"
-                    error={errors.phoneNumber}
-                  />
-                )}
-                {/* Fallback Player ID */}
-                {!product.require_player_id && !product.require_username &&
-                  !product.require_social_link && !product.require_phone_number && (
-                  <FormInput
-                    label="معرف اللاعب (ID)"
-                    icon={<Fingerprint size={14} />}
-                    value={formData.playerId}
-                    onChange={(v) => setFormData({ ...formData, playerId: v })}
-                    placeholder="أدخل الـ ID هنا"
-                    error={errors.playerId}
+                    optional={false}
                   />
                 )}
               </div>
 
               {/* CTA Buttons */}
               {isOutOfStock ? (
-                <button disabled className="w-full bg-gray-100 text-gray-400 font-black py-4 rounded-2xl text-sm cursor-not-allowed">
+                <button disabled className="w-full bg-gray-100 dark:bg-white/5 text-gray-400 font-black py-4 rounded-2xl text-sm cursor-not-allowed border border-gray-200 dark:border-white/10">
                   نفدت الكمية الحالية ❌
                 </button>
               ) : (
                 <div className="flex gap-3">
                   {/* Buy now */}
-                  <button
+                  <RippleButton
                     onClick={() => handleAddToCart(true)}
                     disabled={isAdding}
-                    className="flex-1 bg-red-700 hover:bg-red-800 text-white font-black py-4 rounded-2xl text-sm shadow-lg shadow-red-700/20 active:scale-[0.98] transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                    rippleColor="rgba(255, 255, 255, 0.45)"
+                    className="flex-1 bg-gradient-to-r from-red-600 via-rose-600 to-red-600 hover:from-red-500 hover:to-rose-500 text-white font-black py-4 rounded-2xl text-sm shadow-[0_4px_20px_rgba(255,32,64,0.4)] hover:shadow-[0_0_30px_rgba(255,32,64,0.7)] transition-all disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer"
                   >
                     {isAdding ? <Loader2 size={16} className="animate-spin" /> : <Zap size={16} className="fill-white" />}
                     شراء الآن
-                  </button>
+                  </RippleButton>
                   {/* Add to cart */}
-                  <button
+                  <RippleButton
                     onClick={() => handleAddToCart(false)}
                     disabled={isAdding}
-                    className="flex-1 bg-gray-100 dark:bg-[#0f1115] hover:bg-gray-200 dark:hover:bg-[#0a0c10] border border-gray-200 dark:border-gray-700 text-gray-800 dark:text-white font-black py-4 rounded-2xl text-sm active:scale-[0.98] transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                    rippleColor="rgba(255, 32, 64, 0.25)"
+                    className="flex-1 bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 border border-gray-200 dark:border-white/10 hover:border-red-400 dark:hover:border-red-500/50 text-gray-800 dark:text-white font-black py-4 rounded-2xl text-sm hover:shadow-[0_0_15px_rgba(255,32,64,0.2)] transition-all disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer"
                   >
                     <ShoppingCart size={16} />
                     أضف للسلة
-                  </button>
+                  </RippleButton>
                   {/* Favourite */}
                   <button
                     onClick={() => {
                       toggleFavorite(product);
                       addToast(isFav ? 'تمت الإزالة من المفضلة' : 'تمت الإضافة للمفضلة ❤️', isFav ? 'info' : 'success');
                     }}
-                    className={`w-14 h-14 flex items-center justify-center rounded-2xl border-2 transition-all flex-shrink-0 ${isFav ? 'bg-red-50 border-red-200 text-red-600' : 'bg-white dark:bg-[#0f1115] border-gray-200 dark:border-gray-700 text-gray-400 hover:border-red-200 hover:text-red-600'}`}
+                    className={`w-14 h-14 flex items-center justify-center rounded-2xl border transition-all flex-shrink-0 cursor-pointer active:scale-90 ${
+                      isFav
+                        ? 'bg-red-50 dark:bg-red-950/60 border-red-200 dark:border-red-500/50 text-red-600 dark:text-red-500 shadow-[0_0_15px_rgba(255,32,64,0.35)]'
+                        : 'bg-white dark:bg-white/5 border-gray-200 dark:border-white/10 text-gray-400 hover:border-red-400 dark:hover:border-red-500/40 hover:text-red-500'
+                    }`}
                   >
                     <Heart size={20} className={isFav ? 'fill-current' : ''} />
                   </button>
@@ -712,16 +843,16 @@ export default function Product() {
         {/* ── Info Tabs ──────────────────────────────────────────────── */}
         <div className="mb-16">
           {/* Tab buttons */}
-          <div className="flex items-center gap-1 overflow-x-auto no-scrollbar border-b border-gray-100 dark:border-gray-700 mb-6">
+          <div className="flex items-center gap-1 overflow-x-auto no-scrollbar border-b border-gray-200 dark:border-white/10 mb-6">
             {TABS.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 className={[
                   'relative flex items-center gap-1.5 px-4 py-3 text-[12px] font-black',
-                  'whitespace-nowrap transition-all focus:outline-none',
+                  'whitespace-nowrap transition-all focus:outline-none cursor-pointer',
                   activeTab === tab.id
-                    ? 'text-red-700'
+                    ? 'text-red-600 dark:text-red-400 drop-shadow-[0_0_8px_rgba(255,32,64,0.6)]'
                     : 'text-gray-400 hover:text-gray-700 dark:hover:text-gray-200',
                 ].join(' ')}
               >
@@ -730,7 +861,7 @@ export default function Product() {
                 {activeTab === tab.id && (
                   <motion.div
                     layoutId="tab-underline"
-                    className="absolute bottom-0 inset-x-0 h-0.5 bg-red-700 rounded-full"
+                    className="absolute bottom-0 inset-x-0 h-0.5 bg-gradient-to-r from-red-600 to-rose-500 rounded-full shadow-[0_0_10px_rgba(255,32,64,0.8)]"
                     transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                   />
                 )}
@@ -746,7 +877,7 @@ export default function Product() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -6 }}
               transition={{ duration: 0.18 }}
-              className="bg-white dark:bg-[#1a1d24] rounded-3xl border border-gray-100 dark:border-gray-700 p-6 md:p-10 min-h-[280px]"
+              className="bg-white/95 dark:bg-[#0c0c10]/95 backdrop-blur-2xl rounded-3xl border border-gray-150 dark:border-white/10 p-6 md:p-10 min-h-[280px] shadow-sm dark:shadow-[0_8px_30px_rgba(0,0,0,0.6)]"
             >
               {/* Description */}
               {activeTab === 'description' && (
@@ -851,9 +982,9 @@ export default function Product() {
             className={[
               'fixed bottom-0 inset-x-0 z-50',
               'lg:hidden',
-              'bg-white dark:bg-[#1a1d24]',
-              'border-t border-gray-100 dark:border-gray-700',
-              'shadow-[0_-8px_30px_rgba(0,0,0,0.1)]',
+              'bg-white/95 dark:bg-[#060608]/90 backdrop-blur-2xl',
+              'border-t border-gray-200/80 dark:border-white/10',
+              'shadow-[0_-8px_30px_rgba(0,0,0,0.5)]',
               'px-4 pb-safe pt-3',
             ].join(' ')}
             dir="rtl"
@@ -861,32 +992,43 @@ export default function Product() {
             {/* Mini product info */}
             <div className="flex items-center gap-3 mb-3">
               {product.image_url && (
-                <img src={product.image_url} alt="" className="w-10 h-10 object-contain bg-gray-50 rounded-xl p-1 flex-shrink-0" />
+                <img src={product.image_url} alt="" className="w-10 h-10 object-contain bg-gray-50 dark:bg-white/5 rounded-xl p-1 flex-shrink-0 border border-gray-200 dark:border-white/10" />
               )}
-              <div className="flex-1 min-w-0">
+              <div className="flex-1 min-w-0 text-right">
                 <p className="text-[11px] font-black text-gray-900 dark:text-white truncate">{product.title}</p>
-                <p className="text-base font-black text-red-700 leading-none mt-0.5">{formatPrice(activePrice)}</p>
+                <p
+                  className="text-base font-black leading-none mt-0.5"
+                  style={{
+                    color: 'var(--neon-green)',
+                    textShadow: '0 0 10px rgba(0, 255, 136, 0.45)',
+                  }}
+                  dir="ltr"
+                >
+                  {formatPrice(activePrice)}
+                </p>
               </div>
             </div>
 
             {/* Action buttons */}
             <div className="flex gap-3 pb-1">
-              <button
+              <RippleButton
                 onClick={() => handleAddToCart(true)}
                 disabled={isAdding}
-                className="flex-1 min-h-[48px] bg-red-700 hover:bg-red-800 text-white font-black text-sm rounded-2xl transition-all active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-red-700/20"
+                rippleColor="rgba(255, 255, 255, 0.45)"
+                className="flex-1 min-h-[48px] bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-black text-sm rounded-2xl transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-[0_4px_16px_rgba(255,32,64,0.4)] cursor-pointer"
               >
                 {isAdding ? <Loader2 size={16} className="animate-spin" /> : <Zap size={16} className="fill-white" />}
                 شراء الآن
-              </button>
-              <button
+              </RippleButton>
+              <RippleButton
                 onClick={() => handleAddToCart(false)}
                 disabled={isAdding}
-                className="flex-1 min-h-[48px] bg-gray-100 dark:bg-[#0f1115] border border-gray-200 dark:border-gray-700 text-gray-800 dark:text-white font-black text-sm rounded-2xl transition-all active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2"
+                rippleColor="rgba(255, 32, 64, 0.25)"
+                className="flex-1 min-h-[48px] bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-800 dark:text-white font-black text-sm rounded-2xl transition-all disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer"
               >
                 <ShoppingCart size={16} />
                 أضف للسلة
-              </button>
+              </RippleButton>
             </div>
           </motion.div>
         )}

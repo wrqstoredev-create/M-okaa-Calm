@@ -55,14 +55,14 @@ const SupportChat = lazy(() => import('./components/SupportChat'));
 const ScrollToTop = lazy(() => import('./components/ScrollToTop'));
 const DevConsole  = lazy(() => import('./components/DevConsole'));
 
-/* ── Page transition wrapper ─────────────────────────────────────────── */
+/* ── Page transition wrapper — cinematic entrance ───────────────────── */
 function PageTransition({ children }: { children: React.ReactNode }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 6 }}
+      initial={{ opacity: 0, y: 18 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -6 }}
-      transition={{ duration: 0.22, ease: 'easeOut' }}
+      exit={{ opacity: 0, y: -10 }}
+      transition={{ duration: 0.28, ease: [0.25, 0.46, 0.45, 0.94] }}
       className="flex-1 flex flex-col"
     >
       {children}
@@ -70,13 +70,25 @@ function PageTransition({ children }: { children: React.ReactNode }) {
   );
 }
 
-/* ── Suspense fallback — minimal spinner ─────────────────────────────── */
+/* ── Suspense fallback — Neon Gaming Dual-Ring Spinner ───────────────── */
 function PageLoader() {
   return (
     <div className="flex-1 flex items-center justify-center min-h-[50vh]">
-      <div className="flex flex-col items-center gap-3">
-        <div className="w-8 h-8 border-2 border-red-700 border-t-transparent rounded-full animate-spin" />
-        <p className="text-xs font-black text-gray-400">جاري التحميل…</p>
+      <div className="flex flex-col items-center gap-4">
+        <div className="relative w-12 h-12">
+          <div
+            className="absolute inset-0 rounded-full border-2 border-transparent animate-spin"
+            style={{ borderTopColor: 'var(--neon-red)', boxShadow: '0 0 12px var(--neon-red)', animationDuration: '0.8s' }}
+          />
+          <div
+            className="absolute inset-1.5 rounded-full border-2 border-transparent animate-spin"
+            style={{ borderTopColor: 'var(--neon-purple)', boxShadow: '0 0 8px var(--neon-purple)', animationDuration: '1.2s', animationDirection: 'reverse' }}
+          />
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="w-2 h-2 rounded-full bg-red-500" style={{ boxShadow: '0 0 8px var(--neon-red)' }} />
+          </div>
+        </div>
+        <p className="text-[11px] font-black text-gray-400 dark:text-gray-500 tracking-widest uppercase">جاري التحميل…</p>
       </div>
     </div>
   );
@@ -157,7 +169,7 @@ function AppContent() {
 
   return (
     <div
-      className="min-h-screen flex flex-col font-sans w-full overflow-x-hidden relative bg-white dark:bg-[#1a1d24] text-black dark:text-white transition-colors duration-300 pb-16 lg:pb-0"
+      className="min-h-screen flex flex-col font-sans w-full overflow-x-hidden relative bg-[#f8f8fa] dark:bg-[#060608] text-black dark:text-white transition-colors duration-300 pb-16 lg:pb-0"
       dir="rtl"
     >
       {/* Always-needed UI — no lazy needed */}

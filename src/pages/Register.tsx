@@ -21,6 +21,7 @@ import {
   Loader2, CheckCircle2, ShieldCheck,
 } from 'lucide-react';
 import AuthLayout from '../components/AuthLayout';
+import RippleButton from '../components/ui/RippleButton';
 
 /* ── Error mapper ────────────────────────────────────────────────────────── */
 function mapError(msg: string): string {
@@ -314,10 +315,10 @@ export default function Register() {
         {/* Divider */}
         <div className="relative my-6">
           <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-gray-100 dark:border-gray-700" />
+            <div className="w-full border-t border-gray-200 dark:border-white/10" />
           </div>
           <div className="relative flex justify-center">
-            <span className="bg-white dark:bg-[#1a1d24] px-4 text-[11px] font-black text-gray-400 uppercase tracking-wider">
+            <span className="bg-white dark:bg-[#0c0c10] px-4 text-[11px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider">
               أو إنشاء حساب بالبريد
             </span>
           </div>
@@ -341,11 +342,11 @@ export default function Register() {
               onFocus={() => setFieldErr(prev => ({ ...prev, fullName: '' }))}
               placeholder="أحمد محمد"
               className={[
-                'w-full bg-gray-50 dark:bg-[#0f1115] border-2 rounded-xl py-3.5 px-4 text-sm font-bold',
-                'focus:outline-none transition-all placeholder:text-gray-300',
+                'w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white rounded-xl py-3.5 px-4 text-sm font-bold',
+                'focus:outline-none focus:border-red-500 dark:focus:border-red-500 focus:shadow-[0_0_15px_rgba(255,32,64,0.25)] transition-all placeholder:text-gray-400',
                 fieldErr.fullName
-                  ? 'border-red-400 bg-red-50/30 focus:border-red-600'
-                  : 'border-transparent focus:border-red-600',
+                  ? 'border-red-500 bg-red-50/30 dark:bg-red-950/20'
+                  : '',
               ].join(' ')}
             />
           </Field>
@@ -360,11 +361,11 @@ export default function Register() {
               placeholder="example@mail.com"
               dir="ltr"
               className={[
-                'w-full bg-gray-50 dark:bg-[#0f1115] border-2 rounded-xl py-3.5 px-4 text-sm font-bold',
-                'focus:outline-none transition-all placeholder:text-gray-300 text-left',
+                'w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white rounded-xl py-3.5 px-4 text-sm font-bold',
+                'focus:outline-none focus:border-red-500 dark:focus:border-red-500 focus:shadow-[0_0_15px_rgba(255,32,64,0.25)] transition-all placeholder:text-gray-400 text-left',
                 fieldErr.email
-                  ? 'border-red-400 bg-red-50/30 focus:border-red-600'
-                  : 'border-transparent focus:border-red-600',
+                  ? 'border-red-500 bg-red-50/30 dark:bg-red-950/20'
+                  : '',
               ].join(' ')}
             />
           </Field>
@@ -380,18 +381,18 @@ export default function Register() {
                 placeholder="••••••••"
                 dir="ltr"
                 className={[
-                  'w-full bg-gray-50 dark:bg-[#0f1115] border-2 rounded-xl py-3.5 pl-12 pr-4 text-sm font-bold',
-                  'focus:outline-none transition-all placeholder:text-gray-300 text-left',
+                  'w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white rounded-xl py-3.5 pl-12 pr-4 text-sm font-bold',
+                  'focus:outline-none focus:border-red-500 dark:focus:border-red-500 focus:shadow-[0_0_15px_rgba(255,32,64,0.25)] transition-all placeholder:text-gray-400 text-left',
                   fieldErr.password
-                    ? 'border-red-400 bg-red-50/30 focus:border-red-600'
-                    : 'border-transparent focus:border-red-600',
+                    ? 'border-red-500 bg-red-50/30 dark:bg-red-950/20'
+                    : '',
                 ].join(' ')}
               />
               <button
                 type="button"
                 onClick={() => setShowPass(v => !v)}
                 tabIndex={-1}
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors cursor-pointer"
               >
                 {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
               </button>
@@ -411,20 +412,20 @@ export default function Register() {
                 placeholder="••••••••"
                 dir="ltr"
                 className={[
-                  'w-full bg-gray-50 dark:bg-[#0f1115] border-2 rounded-xl py-3.5 pl-12 pr-4 text-sm font-bold',
-                  'focus:outline-none transition-all placeholder:text-gray-300 text-left',
+                  'w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white rounded-xl py-3.5 pl-12 pr-4 text-sm font-bold',
+                  'focus:outline-none focus:border-red-500 dark:focus:border-red-500 focus:shadow-[0_0_15px_rgba(255,32,64,0.25)] transition-all placeholder:text-gray-400 text-left',
                   fieldErr.confirmPassword
-                    ? 'border-red-400 bg-red-50/30 focus:border-red-600'
+                    ? 'border-red-500 bg-red-50/30 dark:bg-red-950/20'
                     : form.confirmPassword && form.confirmPassword === form.password
-                      ? 'border-emerald-400 focus:border-emerald-500'
-                      : 'border-transparent focus:border-red-600',
+                      ? 'border-emerald-500 focus:border-emerald-500'
+                      : '',
                 ].join(' ')}
               />
               <button
                 type="button"
                 onClick={() => setShowConfirm(v => !v)}
                 tabIndex={-1}
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors cursor-pointer"
               >
                 {showConfirm ? <EyeOff size={16} /> : <Eye size={16} />}
               </button>
@@ -436,7 +437,7 @@ export default function Register() {
           </Field>
 
           {/* Terms note */}
-          <p className="text-[10px] font-bold text-gray-400 leading-relaxed text-right">
+          <p className="text-[10px] font-bold text-gray-500 dark:text-gray-400 leading-relaxed text-right">
             بالتسجيل أنت توافق على{' '}
             <Link to="/terms" className="text-red-600 hover:underline">الشروط والأحكام</Link>
             {' '}و{' '}
@@ -444,22 +445,23 @@ export default function Register() {
           </p>
 
           {/* Submit */}
-          <button
+          <RippleButton
             type="submit"
             disabled={loading || !!oauthLoad}
+            rippleColor="rgba(255, 255, 255, 0.4)"
             className={[
-              'w-full min-h-[52px] bg-red-700 hover:bg-red-800',
+              'w-full min-h-[52px] bg-gradient-to-r from-red-600 via-rose-600 to-red-600 hover:from-red-500 hover:to-rose-500',
               'text-white font-black text-sm rounded-2xl',
-              'transition-all active:scale-[0.98]',
-              'shadow-lg shadow-red-700/20',
-              'disabled:opacity-50',
+              'transition-all',
+              'shadow-[0_4px_20px_rgba(255,32,64,0.35)] hover:shadow-[0_0_25px_rgba(255,32,64,0.65)]',
+              'disabled:opacity-50 cursor-pointer',
               'flex items-center justify-center gap-2',
             ].join(' ')}
           >
-            {loading
-              ? <><Loader2 size={18} className="animate-spin" /> جاري إنشاء الحساب...</>
-              : 'إنشاء الحساب'}
-          </button>
+            {loading ? (
+              <><Loader2 size={18} className="animate-spin" /> جاري الإنشاء...</>
+            ) : 'إنشاء الحساب 🚀'}
+          </RippleButton>
         </motion.form>
 
         {/* Login link */}
