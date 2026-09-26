@@ -30,6 +30,7 @@ import { AuthProvider }      from './contexts/AuthContext';
 import { CurrencyProvider }  from './contexts/CurrencyContext';
 import { CartProvider }      from './contexts/CartContext';
 import { FavoritesProvider } from './contexts/FavoritesContext';
+import CartDrawer from './components/CartDrawer';
 
 /* ── Eager (above-the-fold / always needed) ──────────────────────────── */
 import Home       from './pages/Home';
@@ -162,6 +163,7 @@ function AppContent() {
     >
       {/* Always-needed UI — no lazy needed */}
       {!isDashboard && <Header />}
+      {!isDashboard && <CartDrawer />}
 
       {/* Lazy non-critical layout helpers */}
       {!isDashboard && (
