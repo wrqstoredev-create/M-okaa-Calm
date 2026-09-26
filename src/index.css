@@ -4,13 +4,49 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* ============================================================
+   🎨 PHASE 1: GAMING DESIGN TOKENS — Neon Color System
+   ============================================================ */
+:root {
+  --neon-red:      #ff2040;
+  --neon-purple:   #9b5de5;
+  --neon-blue:     #00d4ff;
+  --neon-green:    #00ff88;
+  --neon-amber:    #ffaa00;
+
+  --glow-red:      0 0 12px rgba(255, 32, 64, 0.5), 0 0 30px rgba(255, 32, 64, 0.2);
+  --glow-purple:   0 0 12px rgba(155, 93, 229, 0.5), 0 0 30px rgba(155, 93, 229, 0.2);
+  --glow-blue:     0 0 12px rgba(0, 212, 255, 0.5), 0 0 30px rgba(0, 212, 255, 0.2);
+  --glow-green:    0 0 12px rgba(0, 255, 136, 0.5), 0 0 30px rgba(0, 255, 136, 0.2);
+
+  --glass-bg:      rgba(255, 255, 255, 0.06);
+  --glass-border:  rgba(255, 255, 255, 0.08);
+  --glass-blur:    blur(20px);
+
+  --card-bg-dark:  #0c0c10;
+  --oled-black:    #060608;
+}
+
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Outfit", sans-serif;
 }
 
+/* ============================================================
+   🌑 PHASE 1: OLED-DARK BODY — Deep Gaming Background
+   ============================================================ */
+html {
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100vw;
+  overscroll-behavior-x: none;
+  scroll-behavior: smooth;
+  scroll-padding-top: 80px;
+}
+
 body {
-  @apply font-sans bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-50 antialiased selection:bg-red-500/20 selection:text-red-700 transition-colors duration-300;
+  @apply font-sans bg-zinc-50 dark:text-zinc-50 antialiased selection:bg-red-500/20 selection:text-red-400 transition-colors duration-300;
+  background-color: #f8f8fa;
   position: relative;
   overflow-x: hidden;
   width: 100%;
@@ -18,51 +54,91 @@ body {
   overscroll-behavior-x: none;
 }
 
-html {
-  overflow-x: hidden;
-  width: 100%;
-  max-width: 100vw;
-  overscroll-behavior-x: none;
+/* OLED True Black in dark mode */
+html.dark body {
+  background-color: var(--oled-black);
+  color: #e8e8f0;
 }
 
+/* ============================================================
+   🔲 PHASE 1: DOT GRID — Neon Gaming Grid Pattern
+   ============================================================ */
 body::before {
   content: "";
   position: fixed;
   inset: 0;
   z-index: -1;
-  background-image: radial-gradient(#d4d4d8 1px, transparent 1px);
-  background-size: 24px 24px;
-  opacity: 0.5;
+  background-image: radial-gradient(#d1d1d8 1px, transparent 1px);
+  background-size: 28px 28px;
+  opacity: 0.45;
   pointer-events: none;
 }
 
 html.dark body::before {
-  background-image: radial-gradient(#3f3f46 1px, transparent 1px);
+  /* Subtle neon-purple dots on OLED black */
+  background-image: radial-gradient(rgba(155, 93, 229, 0.18) 1px, transparent 1px);
+  background-size: 28px 28px;
+  opacity: 1;
 }
 
+/* ============================================================
+   ✨ PHASE 1: AMBIENT NEON GLOW — Top Radial Lights
+   ============================================================ */
 body::after {
   content: "";
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  height: 60vh;
+  height: 70vh;
   z-index: -2;
-  background: radial-gradient(circle at 50% 0%, rgba(239, 68, 68, 0.05) 0%, rgba(255, 255, 255, 0) 70%);
+  /* Light mode: subtle red */
+  background: radial-gradient(circle at 50% 0%, rgba(239, 68, 68, 0.06) 0%, transparent 65%);
   pointer-events: none;
 }
 
+html.dark body::after {
+  /* Dark mode: red + purple dual neon halo */
+  background:
+    radial-gradient(ellipse at 20% -5%, rgba(155, 93, 229, 0.12) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% -5%, rgba(255, 32, 64, 0.10) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 0%, rgba(255, 32, 64, 0.06) 0%, transparent 70%);
+}
+
+/* ============================================================
+   🔤 TYPOGRAPHY
+   ============================================================ */
 h1, h2, h3, h4, .font-display {
   @apply font-display tracking-tight;
 }
 
+/* ============================================================
+   📜 SCROLLBAR — Neon Red Style
+   ============================================================ */
 @layer utilities {
   .no-scrollbar::-webkit-scrollbar {
-    display: none; /* Chrome, Safari and Opera */
+    display: none;
   }
   .no-scrollbar {
-    -ms-overflow-style: none; /* IE and Edge */
-    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  /* Global dark scrollbar */
+  ::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  html.dark ::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, var(--neon-red), var(--neon-purple));
+    border-radius: 99px;
+    box-shadow: var(--glow-red);
+  }
+  html.dark ::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #ff4060, #b06ef0);
   }
 
   .custom-scrollbar::-webkit-scrollbar {
@@ -74,22 +150,131 @@ h1, h2, h3, h4, .font-display {
   .custom-scrollbar::-webkit-scrollbar-thumb {
     @apply bg-zinc-800 rounded-full;
   }
+  html.dark .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, rgba(255,32,64,0.6), rgba(155,93,229,0.6));
+    border-radius: 99px;
+  }
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
     @apply bg-zinc-700;
   }
-  
+
+  /* ============================================================
+     🎬 PHASE 1: ANIMATION UTILITIES
+     ============================================================ */
   @keyframes slideIn {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Shimmer sweep for premium cards */
+  @keyframes shimmer-sweep {
+    0%   { transform: translateX(-100%) skewX(-15deg); }
+    100% { transform: translateX(250%) skewX(-15deg); }
+  }
+
+  /* Neon pulse glow ring */
+  @keyframes neon-pulse {
+    0%, 100% { box-shadow: 0 0 8px rgba(255, 32, 64, 0.4); }
+    50%       { box-shadow: 0 0 20px rgba(255, 32, 64, 0.8), 0 0 40px rgba(255, 32, 64, 0.3); }
+  }
+
+  /* Ripple */
+  @keyframes ripple-out {
+    0%   { transform: scale(0); opacity: 0.5; }
+    100% { transform: scale(4); opacity: 0; }
+  }
+
+  /* Scanlines overlay for hero */
+  @keyframes scanline-move {
+    0%   { background-position: 0 0; }
+    100% { background-position: 0 100px; }
+  }
+
+  /* ============================================================
+     🧩 PHASE 1: UTILITY CLASSES — Reusable Gaming Elements
+     ============================================================ */
+
+  /* Glassmorphism base */
+  .glass {
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+  }
+
+  /* Neon text glow */
+  .neon-text-red {
+    color: var(--neon-red);
+    text-shadow: 0 0 10px rgba(255, 32, 64, 0.7), 0 0 20px rgba(255, 32, 64, 0.4);
+  }
+  .neon-text-purple {
+    color: var(--neon-purple);
+    text-shadow: 0 0 10px rgba(155, 93, 229, 0.7), 0 0 20px rgba(155, 93, 229, 0.4);
+  }
+  .neon-text-green {
+    color: var(--neon-green);
+    text-shadow: 0 0 10px rgba(0, 255, 136, 0.7), 0 0 20px rgba(0, 255, 136, 0.4);
+  }
+
+  /* Neon border glow */
+  .neon-border-red {
+    border-color: rgba(255, 32, 64, 0.4) !important;
+    box-shadow: 0 0 12px rgba(255, 32, 64, 0.2), inset 0 0 12px rgba(255, 32, 64, 0.05);
+  }
+
+  /* Shimmer overlay — place as pseudo element inside parent */
+  .shimmer-card {
+    position: relative;
+    overflow: hidden;
+  }
+  .shimmer-card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      105deg,
+      transparent 40%,
+      rgba(255, 255, 255, 0.08) 50%,
+      transparent 60%
+    );
+    transform: translateX(-100%) skewX(-15deg);
+    pointer-events: none;
+  }
+  .shimmer-card:hover::after {
+    animation: shimmer-sweep 0.7s ease forwards;
+  }
+
+  /* Neon pulsing button */
+  .btn-neon {
+    animation: neon-pulse 2.5s ease-in-out infinite;
+  }
+
+  /* Scanline overlay */
+  .scanlines {
+    background-image: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0, 0, 0, 0.08) 2px,
+      rgba(0, 0, 0, 0.08) 4px
+    );
+    animation: scanline-move 8s linear infinite;
+    pointer-events: none;
+  }
+  html.dark .scanlines {
+    background-image: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0, 0, 0, 0.25) 2px,
+      rgba(0, 0, 0, 0.25) 4px
+    );
   }
 }
 
+/* ============================================================
+   🎨 THEME TOKENS
+   ============================================================ */
 @theme {
   --font-sans: "Cairo", ui-sans-serif, system-ui, sans-serif;
   --color-primary-500: #ef4444;
@@ -97,10 +282,10 @@ h1, h2, h3, h4, .font-display {
   --color-primary-700: #b91c1c;
   --color-primary-800: #991b1b;
   --color-brand-red: #A31621;
-  
+
   --animate-marquee: marquee 30s linear infinite;
   @keyframes marquee {
-    0% { transform: translateX(0%); }
+    0%   { transform: translateX(0%); }
     100% { transform: translateX(-50%); }
   }
 }

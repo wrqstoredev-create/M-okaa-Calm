@@ -144,7 +144,13 @@ export default function Header() {
   const discordUrl = settings?.instagram_url?.includes('instagram.com') ? 'https://discord.gg/HNss9cMfbG' : settings?.instagram_url || 'https://discord.gg/HNss9cMfbG';
 
   return (
-    <header className="border-b border-gray-100 dark:border-gray-700 shadow-sm bg-white dark:bg-[#1a1d24]/80 backdrop-blur-md sticky top-0 z-50 transition-all">
+    <header className="sticky top-0 z-50 transition-all duration-300
+      bg-white/90 backdrop-blur-xl border-b border-gray-200/60 shadow-sm
+      dark:bg-[#060608]/70 dark:backdrop-blur-2xl dark:border-transparent dark:shadow-[0_4px_32px_rgba(0,0,0,0.7)]
+      dark:[border-bottom:1px_solid_rgba(255,32,64,0.15)]
+      after:content-[''] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[1px]
+      after:bg-gradient-to-r after:from-transparent after:via-red-500/40 after:to-transparent
+      after:hidden dark:after:block after:pointer-events-none">
       {/* Main Header (Single Navigation Bar) */}
       <div className="max-w-7xl mx-auto flex items-center justify-between px-2 py-2 md:px-4 md:py-3 gap-1 md:gap-4">
         
@@ -169,22 +175,22 @@ export default function Header() {
           </div>
           
           <nav className="hidden lg:flex gap-4 text-[11px] md:text-[12px] font-black items-center">
-            <Link to="/" className={`${location.pathname === '/' ? 'text-red-700 border-b-2 border-red-700 pb-0.5' : 'text-gray-500 dark:text-gray-400 hover:text-red-700 transition-colors'}`}>الرئيسية</Link>
+            <Link to="/" className={`transition-all duration-200 ${location.pathname === '/' ? 'text-red-500 dark:neon-text-red border-b-2 border-red-500 dark:border-red-500/70 pb-0.5 dark:[text-shadow:0_0_10px_rgba(255,32,64,0.7)]' : 'text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400'}`}>الرئيسية</Link>
             {settings?.show_about_link !== false && (
-              <Link to="/about" className={`${location.pathname === '/about' ? 'text-red-700 border-b-2 border-red-700 pb-0.5' : 'text-gray-500 dark:text-gray-400 hover:text-red-700 transition-colors'}`}>من نحن</Link>
+              <Link to="/about" className={`transition-all duration-200 ${location.pathname === '/about' ? 'text-red-500 dark:neon-text-red border-b-2 border-red-500 pb-0.5 dark:[text-shadow:0_0_10px_rgba(255,32,64,0.7)]' : 'text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400'}`}>من نحن</Link>
             )}
-            <Link to="/store" className={`${location.pathname === '/store' ? 'text-red-700 border-b-2 border-red-700 pb-0.5' : 'text-gray-500 dark:text-gray-400 hover:text-red-700 transition-colors'}`}>المنتجات</Link>
+            <Link to="/store" className={`transition-all duration-200 ${location.pathname === '/store' ? 'text-red-500 dark:neon-text-red border-b-2 border-red-500 pb-0.5 dark:[text-shadow:0_0_10px_rgba(255,32,64,0.7)]' : 'text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400'}`}>المنتجات</Link>
             {settings?.show_terms_link !== false && (
-              <Link to="/terms" className={`${location.pathname === '/terms' ? 'text-red-700 border-b-2 border-red-700 pb-0.5' : 'text-gray-500 dark:text-gray-400 hover:text-red-700 transition-colors'}`}>الشروط والأحكام</Link>
+              <Link to="/terms" className={`transition-all duration-200 ${location.pathname === '/terms' ? 'text-red-500 dark:neon-text-red border-b-2 border-red-500 pb-0.5 dark:[text-shadow:0_0_10px_rgba(255,32,64,0.7)]' : 'text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400'}`}>الشروط والأحكام</Link>
             )}
             {settings?.show_privacy_link !== false && (
-              <Link to="/privacy" className={`${location.pathname === '/privacy' ? 'text-red-700 border-b-2 border-red-700 pb-0.5' : 'text-gray-500 dark:text-gray-400 hover:text-red-700 transition-colors'}`}>الخصوصية</Link>
+              <Link to="/privacy" className={`transition-all duration-200 ${location.pathname === '/privacy' ? 'text-red-500 dark:neon-text-red border-b-2 border-red-500 pb-0.5 dark:[text-shadow:0_0_10px_rgba(255,32,64,0.7)]' : 'text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400'}`}>الخصوصية</Link>
             )}
             {settings?.show_help_link !== false && (
-              <Link to="/help" className={`${location.pathname === '/help' ? 'text-red-700 border-b-2 border-red-700 pb-0.5' : 'text-gray-500 dark:text-gray-400 hover:text-red-700 transition-colors'}`}>المساعدة</Link>
+              <Link to="/help" className={`transition-all duration-200 ${location.pathname === '/help' ? 'text-red-500 dark:neon-text-red border-b-2 border-red-500 pb-0.5 dark:[text-shadow:0_0_10px_rgba(255,32,64,0.7)]' : 'text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400'}`}>المساعدة</Link>
             )}
             {settings?.show_contact_link !== false && (
-              <Link to="/contact" className={`${location.pathname === '/contact' ? 'text-red-700 border-b-2 border-red-700 pb-0.5' : 'text-gray-500 dark:text-gray-400 hover:text-red-700 transition-colors'}`}>اتصل بنا</Link>
+              <Link to="/contact" className={`transition-all duration-200 ${location.pathname === '/contact' ? 'text-red-500 dark:neon-text-red border-b-2 border-red-500 pb-0.5 dark:[text-shadow:0_0_10px_rgba(255,32,64,0.7)]' : 'text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400'}`}>اتصل بنا</Link>
             )}
           </nav>
         </div>
@@ -258,11 +264,15 @@ export default function Header() {
               onClick={() => setIsFavoritesOpen(!isFavoritesOpen)}
               className="relative cursor-pointer group focus:outline-none"
             >
-            <div className={`w-9 h-9 md:w-12 md:h-12 flex items-center justify-center rounded-xl transition-all border shadow-sm ${isFavoritesOpen ? 'bg-red-50 text-red-700 border-red-200' : 'bg-white dark:bg-[#1a1d24] border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:bg-[#0f1115] dark:hover:bg-gray-700 dark:bg-gray-800 dark:hover:bg-zinc-800 dark:bg-zinc-800 text-gray-800 dark:text-white hover:border-gray-200 dark:border-gray-700 hover:shadow-md'}`}>
-                <Heart className={`w-5 h-5 md:w-6 md:h-6 ${isFavoritesOpen ? 'fill-red-500 text-red-600' : 'text-gray-700 dark:text-gray-300'}`} />
+            <div className={`w-9 h-9 md:w-12 md:h-12 flex items-center justify-center rounded-xl transition-all duration-200 border shadow-sm ${
+              isFavoritesOpen
+                ? 'bg-red-500/10 text-red-500 border-red-500/40 shadow-[0_0_15px_rgba(255,32,64,0.2)] dark:shadow-[0_0_15px_rgba(255,32,64,0.3)]'
+                : 'bg-white dark:bg-white/5 border-gray-200 dark:border-white/8 text-gray-700 dark:text-gray-300 hover:border-red-500/40 hover:bg-red-50 dark:hover:bg-red-500/10 dark:hover:shadow-[0_0_15px_rgba(255,32,64,0.2)] hover:shadow-md'
+            }`}>
+                <Heart className={`w-5 h-5 md:w-6 md:h-6 transition-colors ${isFavoritesOpen ? 'fill-red-500 text-red-500' : 'text-gray-700 dark:text-gray-300 group-hover:text-red-500'}`} />
               </div>
               {favoritesCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-red-700 text-white text-[10px] w-4.5 h-4.5 rounded-full flex items-center justify-center font-black border-2 border-white group-hover:scale-110 transition-transform animate-pulse">
+                <span className="absolute -top-1 -right-1 bg-red-600 dark:bg-red-500 dark:shadow-[0_0_8px_rgba(255,32,64,0.8)] text-white text-[10px] w-4.5 h-4.5 rounded-full flex items-center justify-center font-black border-2 border-white dark:border-[#060608] group-hover:scale-110 transition-transform">
                   {favoritesCount}
                 </span>
               )}
@@ -276,10 +286,10 @@ export default function Header() {
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 15, scale: 0.95 }}
                   transition={{ duration: 0.15 }}
-                  className="absolute left-0 mt-3 w-80 md:w-96 bg-white dark:bg-[#1a1d24] border border-gray-100 dark:border-gray-700 rounded-2xl shadow-2xl z-50 overflow-hidden text-right"
+                  className="absolute left-0 mt-3 w-80 md:w-96 bg-white/95 dark:bg-[#0c0c10]/90 dark:backdrop-blur-2xl border border-gray-100 dark:border-white/8 dark:shadow-[0_8px_40px_rgba(0,0,0,0.8),0_0_1px_rgba(255,32,64,0.15)] rounded-2xl shadow-2xl z-50 overflow-hidden text-right"
                   dir="rtl"
                 >
-                  <div className="p-4 border-b border-gray-50 bg-gray-50 dark:bg-[#0f1115]/50 flex items-center justify-between">
+                  <div className="p-4 border-b border-gray-100 dark:border-white/5 bg-gray-50/80 dark:bg-white/3 flex items-center justify-between">
                     <span className="text-xs font-black text-gray-500 dark:text-gray-400">
                       قائمة المفضلة ({favoritesCount})
                     </span>
@@ -367,11 +377,11 @@ export default function Header() {
           </div>
 
           <Link to="/cart" className="relative cursor-pointer group">
-            <div className="bg-white dark:bg-[#1a1d24] w-9 h-9 md:w-12 md:h-12 flex items-center justify-center rounded-xl border border-gray-100 dark:border-gray-700 group-hover:bg-gray-50 dark:bg-[#0f1115] dark:hover:bg-gray-700 dark:bg-gray-800 dark:hover:bg-zinc-800 dark:bg-zinc-800 group-hover:border-gray-200 dark:border-gray-700 transition-all shadow-sm hover:shadow-md">
-              <ShoppingCart className="w-5 h-5 md:w-6 md:h-6 text-gray-700 dark:text-gray-300 group-hover:text-red-700" />
+            <div className="bg-white dark:bg-white/5 w-9 h-9 md:w-12 md:h-12 flex items-center justify-center rounded-xl border border-gray-200 dark:border-white/8 group-hover:border-red-500/40 group-hover:bg-red-50 dark:group-hover:bg-red-500/10 dark:group-hover:shadow-[0_0_15px_rgba(255,32,64,0.2)] transition-all duration-200 shadow-sm">
+              <ShoppingCart className="w-5 h-5 md:w-6 md:h-6 text-gray-700 dark:text-gray-300 group-hover:text-red-500 transition-colors" />
             </div>
             {totalItems > 0 && (
-              <span className="absolute -top-1 -right-1 bg-red-700 text-white text-[10px] w-4.5 h-4.5 rounded-full flex items-center justify-center font-black border-2 border-white group-hover:scale-110 transition-transform">
+              <span className="absolute -top-1 -right-1 bg-red-600 dark:bg-red-500 dark:shadow-[0_0_8px_rgba(255,32,64,0.8)] text-white text-[10px] w-4.5 h-4.5 rounded-full flex items-center justify-center font-black border-2 border-white dark:border-[#060608] group-hover:scale-110 transition-transform">
                 {totalItems}
               </span>
             )}
@@ -380,11 +390,11 @@ export default function Header() {
           {/* Requests Icon (Box) */}
           <Link 
             to="/profile?tab=orders" 
-            className="w-9 h-9 md:w-12 md:h-12 flex items-center justify-center rounded-xl bg-white dark:bg-[#1a1d24] border border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:bg-[#0f1115] dark:hover:bg-gray-700 dark:bg-gray-800 dark:hover:bg-zinc-800 dark:bg-zinc-800 hover:border-gray-200 dark:border-gray-700 transition-all shadow-sm hover:shadow-md relative group"
+            className="w-9 h-9 md:w-12 md:h-12 flex items-center justify-center rounded-xl bg-white dark:bg-white/5 border border-gray-200 dark:border-white/8 hover:border-red-500/40 hover:bg-red-50 dark:hover:bg-red-500/10 dark:hover:shadow-[0_0_15px_rgba(255,32,64,0.15)] transition-all duration-200 shadow-sm relative group"
             title="طلباتي"
           >
-            <Package className="w-5 h-5 md:w-6 md:h-6 text-gray-600 dark:text-gray-400 group-hover:text-red-600 transition-colors" />
-            <div className="absolute -top-1 -right-1 bg-red-600 text-white text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center border-2 border-white shadow-sm opacity-0 group-hover:opacity-100 transition-opacity">
+            <Package className="w-5 h-5 md:w-6 md:h-6 text-gray-600 dark:text-gray-400 group-hover:text-red-500 transition-colors" />
+            <div className="absolute -top-1 -right-1 bg-red-500 dark:bg-red-500 dark:shadow-[0_0_6px_rgba(255,32,64,0.8)] text-white text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center border-2 border-white dark:border-[#060608] shadow-sm opacity-0 group-hover:opacity-100 transition-opacity">
               !
             </div>
           </Link>
@@ -398,7 +408,7 @@ export default function Header() {
             >
               <button 
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                className="flex items-center gap-2 bg-white dark:bg-[#1a1d24] hover:bg-red-50 p-1.5 pr-2 rounded-xl transition-all border border-gray-100 dark:border-gray-700 hover:border-red-200 shadow-sm hover:shadow-md active:scale-95 group"
+                className="flex items-center gap-2 bg-white dark:bg-white/5 hover:bg-red-50 dark:hover:bg-red-500/10 p-1.5 pr-2 rounded-xl transition-all duration-200 border border-gray-200 dark:border-white/8 hover:border-red-200 dark:hover:border-red-500/40 dark:hover:shadow-[0_0_15px_rgba(255,32,64,0.15)] shadow-sm active:scale-95 group"
               >
                 <div className="text-right hidden sm:block">
                   <p className="text-[10px] font-bold text-gray-400 leading-none group-hover:text-red-400 transition-colors">مرحباً بك</p>
@@ -426,9 +436,9 @@ export default function Header() {
                       initial={{ opacity: 0, y: 10, scale: 0.95 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                      className="absolute left-0 mt-2 w-56 bg-white dark:bg-[#1a1d24] border border-gray-100 dark:border-gray-700 rounded-2xl shadow-2xl z-50 overflow-hidden"
+                      className="absolute left-0 mt-2 w-56 bg-white/95 dark:bg-[#0c0c10]/90 dark:backdrop-blur-2xl border border-gray-100 dark:border-white/8 dark:shadow-[0_8px_40px_rgba(0,0,0,0.8),0_0_1px_rgba(255,32,64,0.15)] rounded-2xl shadow-2xl z-50 overflow-hidden"
                     >
-                      <div className="p-4 border-b border-gray-50 bg-gray-50 dark:bg-[#0f1115]/50 text-right">
+                      <div className="p-4 border-b border-gray-100 dark:border-white/5 bg-gray-50/80 dark:bg-white/3 text-right">
                          <p className="text-xs font-bold text-gray-400">البريد الإلكتروني</p>
                          <p className="text-xs font-black truncate text-gray-900 dark:text-white">{user.email}</p>
                       </div>
@@ -436,7 +446,7 @@ export default function Header() {
                         <Link 
                           to="/profile" 
                           onClick={() => setIsDropdownOpen(false)}
-                          className="flex items-center justify-end gap-3 px-4 py-2.5 text-xs font-bold text-gray-600 dark:text-gray-400 hover:bg-red-50 hover:text-red-700 rounded-xl transition-all"
+                          className="flex items-center justify-end gap-3 px-4 py-2.5 text-xs font-bold text-gray-600 dark:text-gray-400 hover:bg-red-50 dark:hover:bg-red-500/10 hover:text-red-700 dark:hover:text-red-400 rounded-xl transition-all"
                         >
                            الملف الشخصي <UserCircle size={18} />
                         </Link>
@@ -444,7 +454,7 @@ export default function Header() {
                         <Link 
                           to="/profile?tab=settings" 
                           onClick={() => setIsDropdownOpen(false)}
-                          className="flex items-center justify-end gap-3 px-4 py-2.5 text-xs font-bold text-gray-600 dark:text-gray-400 hover:bg-red-50 hover:text-red-700 rounded-xl transition-all"
+                          className="flex items-center justify-end gap-3 px-4 py-2.5 text-xs font-bold text-gray-600 dark:text-gray-400 hover:bg-red-50 dark:hover:bg-red-500/10 hover:text-red-700 dark:hover:text-red-400 rounded-xl transition-all"
                         >
                            إعدادات الحساب <Settings size={18} />
                         </Link>
@@ -454,7 +464,7 @@ export default function Header() {
                           <Link 
                             to="/dashboard" 
                             onClick={() => setIsDropdownOpen(false)}
-                            className="flex items-center justify-end gap-3 px-4 py-2.5 text-xs font-bold text-red-600 hover:bg-red-50 rounded-xl transition-all border-b border-gray-50 pb-2 mb-1"
+                            className="flex items-center justify-end gap-3 px-4 py-2.5 text-xs font-bold text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-xl transition-all border-b border-gray-100 dark:border-white/5 pb-2 mb-1"
                           >
                              لوحة التحكم <ShieldCheck size={18} />
                           </Link>
@@ -463,7 +473,7 @@ export default function Header() {
                         <Link 
                           to="/profile?tab=orders" 
                           onClick={() => setIsDropdownOpen(false)}
-                          className="flex items-center justify-end gap-3 px-4 py-2.5 text-xs font-bold text-gray-600 dark:text-gray-400 hover:bg-red-50 hover:text-red-700 rounded-xl transition-all"
+                          className="flex items-center justify-end gap-3 px-4 py-2.5 text-xs font-bold text-gray-600 dark:text-gray-400 hover:bg-red-50 dark:hover:bg-red-500/10 hover:text-red-700 dark:hover:text-red-400 rounded-xl transition-all"
                         >
                            طلباتي <Package size={18} />
                         </Link>
@@ -471,15 +481,15 @@ export default function Header() {
                           href="https://wa.me/mokaa3" 
                           target="_blank" 
                           rel="noopener noreferrer"
-                          className="flex items-center justify-end gap-3 px-4 py-2.5 text-xs font-bold text-gray-600 dark:text-gray-400 hover:bg-red-50 hover:text-red-700 rounded-xl transition-all"
+                          className="flex items-center justify-end gap-3 px-4 py-2.5 text-xs font-bold text-gray-600 dark:text-gray-400 hover:bg-red-50 dark:hover:bg-red-500/10 hover:text-red-700 dark:hover:text-red-400 rounded-xl transition-all"
                           onClick={() => setIsDropdownOpen(false)}
                         >
                            الدعم الفني <HeadphonesIcon size={18} />
                         </a>
-                        <div className="border-t border-gray-50 my-1"></div>
+                        <div className="border-t border-gray-100 dark:border-white/5 my-1"></div>
                         <button 
                           onClick={handleLogout}
-                          className="w-full flex items-center justify-end gap-3 px-4 py-2.5 text-xs font-bold text-red-600 hover:bg-red-50 rounded-xl transition-all"
+                          className="w-full flex items-center justify-end gap-3 px-4 py-2.5 text-xs font-bold text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-xl transition-all"
                         >
                            تسجيل الخروج <LogOut size={18} />
                         </button>
@@ -490,7 +500,7 @@ export default function Header() {
               </AnimatePresence>
             </div>
           ) : (
-            <Link to="/login" className="text-[10px] md:text-xs font-black bg-red-700 text-white px-3 py-1.5 md:px-5 md:py-2.5 rounded-xl hover:bg-red-800 transition-all shadow-lg shadow-red-100 active:scale-95 whitespace-nowrap">
+            <Link to="/login" className="text-[10px] md:text-xs font-black bg-gradient-to-r from-red-600 to-rose-500 text-white px-3 py-1.5 md:px-5 md:py-2.5 rounded-xl hover:from-red-500 hover:to-rose-400 transition-all shadow-lg shadow-red-500/20 dark:shadow-[0_4px_20px_rgba(255,32,64,0.35)] active:scale-95 whitespace-nowrap">
               دخول
             </Link>
           )}
