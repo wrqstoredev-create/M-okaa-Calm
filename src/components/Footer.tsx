@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Instagram, Mail, Phone, MessageCircle, Facebook, Loader2 } from 'lucide-react';
+import { Mail, Phone, Facebook, Loader2 } from 'lucide-react';
 import { supabase } from '../lib/supabaseClient';
 
 const TikTokIcon = ({ size = 20 }: { size?: number }) => (
@@ -25,7 +25,7 @@ export default function Footer() {
 
   const fetchSettings = async () => {
     try {
-      const { data, error } = await supabase.from('settings').select('*').single();
+      const { data } = await supabase.from('settings').select('*').single();
       if (data) setSettings(data);
     } catch (err) {
       console.error('Error fetching settings for footer:', err);
@@ -36,7 +36,7 @@ export default function Footer() {
 
   if (loading) {
     return (
-      <footer className="bg-[#f0efef] py-10 flex justify-center">
+      <footer className="bg-zinc-100 dark:bg-[#08080c] py-10 flex justify-center border-t border-zinc-200 dark:border-white/5 transition-colors duration-300">
         <Loader2 className="animate-spin text-zinc-400" size={24} />
       </footer>
     );
@@ -53,64 +53,85 @@ export default function Footer() {
   const email = settings?.support_email || 'support@games-store.ae';
 
   return (
-    <footer className="bg-[#f0efef] text-zinc-900 dark:text-white pt-16 pb-8 px-6 border-t border-zinc-200 mt-20" dir="rtl">
-      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-12 text-right">
+    <footer className="bg-[#f4f4f7] dark:bg-[#08080c] text-zinc-900 dark:text-white pt-16 pb-12 px-6 border-t border-zinc-200 dark:border-white/5 mt-20 transition-colors duration-300 relative overflow-hidden" dir="rtl">
+      {/* Top subtle neon line in dark mode */}
+      <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-red-500/20 dark:via-red-500/50 to-transparent pointer-events-none" />
+
+      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-12 text-right relative z-10">
         
         {/* Explore Section */}
         <div className="space-y-6">
-          <h3 className="text-xl font-black text-gray-900 dark:text-white select-none">استكشف</h3>
+          <h3 className="text-xl font-black text-gray-900 dark:text-white select-none border-r-4 border-red-600 pr-3">
+            استكشف
+          </h3>
           <ul className="space-y-3">
             <li>
-              <Link to="/" className="text-red-700 hover:text-red-800 font-bold transition-colors">الرئيسية</Link>
+              <Link to="/" className="text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 font-bold transition-colors">
+                الرئيسية
+              </Link>
             </li>
             {settings?.show_about_link !== false ? (
               <li>
-                <Link to="/about" className="text-zinc-600 hover:text-red-700 font-bold transition-colors">من نحن</Link>
+                <Link to="/about" className="text-zinc-600 dark:text-zinc-400 hover:text-red-600 dark:hover:text-red-400 font-bold transition-colors">
+                  من نحن
+                </Link>
               </li>
             ) : (
-              <li className="text-zinc-300 font-bold cursor-not-allowed select-none">من نحن</li>
+              <li className="text-zinc-400 dark:text-zinc-600 font-bold cursor-not-allowed select-none">من نحن</li>
             )}
             <li>
-              <Link to="/store" className="text-zinc-600 hover:text-red-700 font-bold transition-colors">المنتجات</Link>
+              <Link to="/store" className="text-zinc-600 dark:text-zinc-400 hover:text-red-600 dark:hover:text-red-400 font-bold transition-colors">
+                المنتجات
+              </Link>
             </li>
             {settings?.show_terms_link !== false ? (
               <li>
-                <Link to="/terms" className="text-zinc-600 hover:text-red-700 font-bold transition-colors">الشروط والاحكام</Link>
+                <Link to="/terms" className="text-zinc-600 dark:text-zinc-400 hover:text-red-600 dark:hover:text-red-400 font-bold transition-colors">
+                  الشروط والاحكام
+                </Link>
               </li>
             ) : (
-              <li className="text-zinc-300 font-bold cursor-not-allowed select-none">الشروط والاحكام</li>
+              <li className="text-zinc-400 dark:text-zinc-600 font-bold cursor-not-allowed select-none">الشروط والاحكام</li>
             )}
             {settings?.show_privacy_link !== false ? (
               <li>
-                <Link to="/privacy" className="text-zinc-600 hover:text-red-700 font-bold transition-colors">سياسة الخصوصية</Link>
+                <Link to="/privacy" className="text-zinc-600 dark:text-zinc-400 hover:text-red-600 dark:hover:text-red-400 font-bold transition-colors">
+                  سياسة الخصوصية
+                </Link>
               </li>
             ) : (
-              <li className="text-zinc-300 font-bold cursor-not-allowed select-none">سياسة الخصوصية</li>
+              <li className="text-zinc-400 dark:text-zinc-600 font-bold cursor-not-allowed select-none">سياسة الخصوصية</li>
             )}
             {settings?.show_help_link !== false ? (
               <li>
-                <Link to="/help" className="text-zinc-600 hover:text-red-700 font-bold transition-colors">المساعدة</Link>
+                <Link to="/help" className="text-zinc-600 dark:text-zinc-400 hover:text-red-600 dark:hover:text-red-400 font-bold transition-colors">
+                  المساعدة
+                </Link>
               </li>
             ) : (
-              <li className="text-zinc-300 font-bold cursor-not-allowed select-none">المساعدة</li>
+              <li className="text-zinc-400 dark:text-zinc-600 font-bold cursor-not-allowed select-none">المساعدة</li>
             )}
             {settings?.show_contact_link !== false ? (
               <li>
-                 <Link to="/contact" className="text-green-700 hover:text-green-800 font-bold transition-colors">اتصل بنا</Link>
+                 <Link to="/contact" className="text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 font-bold transition-colors">
+                   اتصل بنا
+                 </Link>
               </li>
             ) : (
-              <li className="text-zinc-300 font-bold cursor-not-allowed select-none">اتصل بنا</li>
+              <li className="text-zinc-400 dark:text-zinc-600 font-bold cursor-not-allowed select-none">اتصل بنا</li>
             )}
           </ul>
         </div>
 
         {/* Follow Us Section */}
         <div className="space-y-6">
-          <h3 className="text-xl font-black text-gray-900 dark:text-white">تابعنا</h3>
+          <h3 className="text-xl font-black text-gray-900 dark:text-white border-r-4 border-red-600 pr-3">
+            تابعنا
+          </h3>
           <ul className="space-y-4">
             {discordUrl && (
               <li>
-                <a href={discordUrl} target="_blank" rel="noopener noreferrer" className="flex items-center justify-start gap-3 text-zinc-600 hover:text-indigo-500 transition-colors group">
+                <a href={discordUrl} target="_blank" rel="noopener noreferrer" className="flex items-center justify-start gap-3 text-zinc-600 dark:text-zinc-400 hover:text-indigo-500 dark:hover:text-indigo-400 transition-colors group">
                   <svg className="w-5 h-5 group-hover:scale-110 transition-transform" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z" />
                   </svg>
@@ -120,7 +141,7 @@ export default function Footer() {
             )}
             {tiktokHandle && (
               <li>
-                <a href={tiktokUrl} target="_blank" rel="noopener noreferrer" className="flex items-center justify-start gap-3 text-zinc-600 hover:text-red-700 transition-colors group">
+                <a href={tiktokUrl} target="_blank" rel="noopener noreferrer" className="flex items-center justify-start gap-3 text-zinc-600 dark:text-zinc-400 hover:text-red-600 dark:hover:text-red-400 transition-colors group">
                   <TikTokIcon size={20} />
                   <span className="font-bold">{tiktokHandle}</span>
                 </a>
@@ -128,7 +149,7 @@ export default function Footer() {
             )}
             {fbHandle && (
               <li>
-                <a href={fbUrl} target="_blank" rel="noopener noreferrer" className="flex items-center justify-start gap-3 text-zinc-600 hover:text-red-700 transition-colors group">
+                <a href={fbUrl} target="_blank" rel="noopener noreferrer" className="flex items-center justify-start gap-3 text-zinc-600 dark:text-zinc-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors group">
                   <Facebook size={20} className="group-hover:scale-110 transition-transform" />
                   <span className="font-bold">{fbHandle}</span>
                 </a>
@@ -136,7 +157,7 @@ export default function Footer() {
             )}
             {waNumber && (
               <li>
-                <a href="https://wa.me/mokaa3" target="_blank" rel="noopener noreferrer" className="flex items-center justify-start gap-3 text-zinc-600 hover:text-emerald-600 transition-colors group">
+                <a href="https://wa.me/mokaa3" target="_blank" rel="noopener noreferrer" className="flex items-center justify-start gap-3 text-zinc-600 dark:text-zinc-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors group">
                   <WhatsAppIcon size={20} className="group-hover:scale-110 transition-transform" />
                   <span className="font-bold">{waNumber}</span>
                 </a>
@@ -147,26 +168,28 @@ export default function Footer() {
 
         {/* Stay in Touch Section */}
         <div className="space-y-6">
-          <h3 className="text-xl font-black text-gray-900 dark:text-white">ابق على تواصل</h3>
+          <h3 className="text-xl font-black text-gray-900 dark:text-white border-r-4 border-red-600 pr-3">
+            ابق على تواصل
+          </h3>
           <ul className="space-y-4">
             <li>
-              <a href={`mailto:${email}`} className="flex items-center justify-start gap-3 text-red-700 hover:text-red-800 transition-colors group">
-                <Mail size={20} className="group-hover:scale-110 transition-transform" />
-                <span className="font-black">{email}</span>
+              <a href={`mailto:${email}`} className="flex items-center justify-start gap-3 text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 transition-colors group">
+                <Mail size={20} className="group-hover:scale-110 transition-transform flex-shrink-0" />
+                <span className="font-black text-sm" dir="ltr">{email}</span>
               </a>
             </li>
             {phone1 && (
               <li>
-                <a href={`tel:${phone1.replace(/[^0-9+]/g, '')}`} className="flex items-center justify-start gap-3 text-zinc-600 hover:text-red-700 transition-colors group">
-                  <Phone size={20} className="group-hover:scale-110 transition-transform transform rotate-[-15deg]" />
+                <a href={`tel:${phone1.replace(/[^0-9+]/g, '')}`} className="flex items-center justify-start gap-3 text-zinc-600 dark:text-zinc-400 hover:text-red-600 dark:hover:text-red-400 transition-colors group">
+                  <Phone size={20} className="group-hover:scale-110 transition-transform transform rotate-[-15deg] flex-shrink-0" />
                   <span className="font-bold" dir="ltr">{phone1}</span>
                 </a>
               </li>
             )}
             {phone2 && (
               <li>
-                <a href={`tel:${phone2.replace(/[^0-9+]/g, '')}`} className="flex items-center justify-start gap-3 text-zinc-600 hover:text-red-700 transition-colors group">
-                  <Phone size={20} className="group-hover:scale-110 transition-transform" />
+                <a href={`tel:${phone2.replace(/[^0-9+]/g, '')}`} className="flex items-center justify-start gap-3 text-zinc-600 dark:text-zinc-400 hover:text-red-600 dark:hover:text-red-400 transition-colors group">
+                  <Phone size={20} className="group-hover:scale-110 transition-transform flex-shrink-0" />
                   <span className="font-bold" dir="ltr">{phone2}</span>
                 </a>
               </li>
@@ -175,14 +198,14 @@ export default function Footer() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto mt-20 pt-8 border-t border-zinc-200 flex flex-col md:flex-row justify-between items-center gap-4 text-zinc-500 font-bold text-xs">
+      <div className="max-w-7xl mx-auto mt-16 pt-8 border-t border-zinc-200 dark:border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-zinc-500 dark:text-zinc-400 font-bold text-xs relative z-10">
         <p>© 2026 {settings?.store_name || 'GamesStore'} - جميع الحقوق محفوظة.</p>
-        <div className="flex gap-6">
-           {settings?.show_about_link !== false && <Link to="/about" className="hover:text-red-700 transition-colors">من نحن</Link>}
-           {settings?.show_terms_link !== false && <Link to="/terms" className="hover:text-red-700 transition-colors">الشروط والأحكام</Link>}
-           {settings?.show_privacy_link !== false && <Link to="/privacy" className="hover:text-red-700 transition-colors">سياسة الخصوصية</Link>}
-           {settings?.show_help_link !== false && <Link to="/help" className="hover:text-red-700 transition-colors">المساعدة</Link>}
-           {settings?.show_contact_link !== false && <Link to="/contact" className="hover:text-red-700 transition-colors">اتصل بنا</Link>}
+        <div className="flex gap-6 flex-wrap justify-center">
+           {settings?.show_about_link !== false && <Link to="/about" className="hover:text-red-600 dark:hover:text-red-400 transition-colors">من نحن</Link>}
+           {settings?.show_terms_link !== false && <Link to="/terms" className="hover:text-red-600 dark:hover:text-red-400 transition-colors">الشروط والأحكام</Link>}
+           {settings?.show_privacy_link !== false && <Link to="/privacy" className="hover:text-red-600 dark:hover:text-red-400 transition-colors">سياسة الخصوصية</Link>}
+           {settings?.show_help_link !== false && <Link to="/help" className="hover:text-red-600 dark:hover:text-red-400 transition-colors">المساعدة</Link>}
+           {settings?.show_contact_link !== false && <Link to="/contact" className="hover:text-red-600 dark:hover:text-red-400 transition-colors">اتصل بنا</Link>}
         </div>
       </div>
     </footer>

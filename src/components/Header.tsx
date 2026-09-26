@@ -47,6 +47,7 @@ import { useCart } from '../contexts/CartContext';
 import { useFavorites } from '../contexts/FavoritesContext';
 import { motion, AnimatePresence } from 'motion/react';
 import { supabase } from '../lib/supabaseClient';
+import Tooltip from './ui/Tooltip';
 
 /* ─── Inline social-icon SVGs (unchanged from original) ─────────────────── */
 
@@ -78,16 +79,16 @@ const FacebookIcon = ({ size = 20 }: { size?: number }) => (
 
 /** Standard icon-button: square, rounded, bordered */
 const iconBtn =
-  'flex items-center justify-center rounded-xl border transition-all shadow-sm ' +
-  'bg-white dark:bg-[#1a1d24] border-gray-100 dark:border-gray-700 ' +
-  'hover:bg-gray-50 dark:hover:bg-[#0f1115] hover:shadow-md ' +
-  'text-gray-700 dark:text-gray-300';
+  'flex items-center justify-center rounded-xl border transition-all duration-200 shadow-sm ' +
+  'bg-white dark:bg-white/5 border-gray-200 dark:border-white/10 ' +
+  'hover:bg-gray-50 dark:hover:bg-white/10 hover:border-red-400 dark:hover:border-red-500/40 hover:shadow-md ' +
+  'text-gray-700 dark:text-gray-200 dark:hover:shadow-[0_0_15px_rgba(255,32,64,0.2)]';
 
 /** Active nav link */
-const navLinkActive = 'text-red-700 border-b-2 border-red-700 pb-0.5';
+const navLinkActive = 'text-red-600 dark:text-red-400 border-b-2 border-red-600 dark:border-red-500 pb-0.5 font-black drop-shadow-[0_0_8px_rgba(255,32,64,0.4)]';
 /** Idle nav link */
 const navLinkIdle =
-  'text-gray-500 dark:text-gray-400 hover:text-red-700 transition-colors';
+  'text-gray-600 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors font-bold';
 
 /* ═══════════════════════════════════════════════════════════════════════════ */
 export default function Header() {
@@ -229,7 +230,7 @@ export default function Header() {
   /* ════════════════════════════════════════════════════════════════════════ */
   return (
     <>
-      <header className="border-b border-gray-100 dark:border-gray-700 shadow-sm bg-white dark:bg-[#1a1d24] backdrop-blur-md sticky top-0 z-50 transition-colors">
+      <header className="border-b border-gray-200/80 dark:border-white/10 shadow-sm bg-white/95 dark:bg-[#060608]/90 backdrop-blur-2xl sticky top-0 z-50 transition-colors duration-300">
         <div className="max-w-7xl mx-auto flex items-center justify-between px-2 py-2 md:px-4 md:py-3 gap-1 md:gap-4">
 
           {/* ── Logo + Calm toggle ─────────────────────────────────────── */}
@@ -350,13 +351,19 @@ export default function Header() {
             </div>
 
             {/* Theme toggle */}
-            <button
-              onClick={() => setIsDark(!isDark)}
-              className={`${iconBtn} w-12 h-12 hover:text-red-600 mr-1 cursor-pointer`}
-              title={isDark ? 'الوضع الفاتح' : 'الوضع الداكن'}
-            >
-              {isDark ? <Sun size={24} /> : <Moon size={24} />}
-            </button>
+            <Tooltip content={isDark ? 'التبديل إلى الوضع الفاتح ☀️' : 'التبديل إلى الوضع الداكن 🌙'} position="bottom">
+              <button
+                onClick={() => setIsDark(!isDark)}
+                className={`${iconBtn} w-9 h-9 md:w-12 md:h-12 mr-1 cursor-pointer transition-transform active:scale-95`}
+                aria-label={isDark ? 'الوضع الفاتح' : 'الوضع الداكن'}
+              >
+                {isDark ? (
+                  <Sun size={20} className="text-amber-400 drop-shadow-[0_0_8px_rgba(251,191,36,0.6)]" />
+                ) : (
+                  <Moon size={20} className="text-gray-700 hover:text-red-600" />
+                )}
+              </button>
+            </Tooltip>
           </div>
 
           {/* ── Action icons (all screen sizes) ───────────────────────── */}
@@ -499,28 +506,31 @@ export default function Header() {
             </div>
 
             {/* Cart */}
-            <Link to="/cart" className="relative cursor-pointer group">
-              <div className={`${iconBtn} w-9 h-9 md:w-12 md:h-12 hover:text-red-700`}>
-                <ShoppingCart className="w-5 h-5 md:w-6 md:h-6" />
-              </div>
-              {totalItems > 0 && (
-                <span className="absolute -top-1 -right-1 bg-red-700 text-white text-[10px] w-4.5 h-4.5 rounded-full flex items-center justify-center font-black border-2 border-white group-hover:scale-110 transition-transform">
-                  {totalItems}
-                </span>
-              )}
-            </Link>
+            <Tooltip content="سلة المشتريات" position="bottom">
+              <Link to="/cart" className="relative cursor-pointer group">
+                <div className="bg-white dark:bg-white/5 w-9 h-9 md:w-12 md:h-12 flex items-center justify-center rounded-xl border border-gray-200 dark:border-white/8 group-hover:border-red-500/40 group-hover:bg-red-50 dark:group-hover:bg-red-500/10 dark:group-hover:shadow-[0_0_15px_rgba(255,32,64,0.2)] transition-all duration-200 shadow-sm">
+                  <ShoppingCart className="w-5 h-5 md:w-6 md:h-6 text-gray-700 dark:text-gray-300 group-hover:text-red-500 transition-colors" />
+                </div>
+                {totalItems > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-red-600 dark:bg-red-500 dark:shadow-[0_0_8px_rgba(255,32,64,0.8)] text-white text-[10px] w-4.5 h-4.5 rounded-full flex items-center justify-center font-black border-2 border-white dark:border-[#060608] group-hover:scale-110 transition-transform">
+                    {totalItems}
+                  </span>
+                )}
+              </Link>
+            </Tooltip>
 
             {/* My Orders */}
-            <Link
-              to="/profile?tab=orders"
-              className={`${iconBtn} w-9 h-9 md:w-12 md:h-12 relative group hover:text-red-600`}
-              title="طلباتي"
-            >
-              <Package className="w-5 h-5 md:w-6 md:h-6" />
-              <div className="absolute -top-1 -right-1 bg-red-600 text-white text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center border-2 border-white shadow-sm opacity-0 group-hover:opacity-100 transition-opacity">
-                !
-              </div>
-            </Link>
+            <Tooltip content="طلباتي" position="bottom">
+              <Link
+                to="/profile?tab=orders"
+                className="w-9 h-9 md:w-12 md:h-12 flex items-center justify-center rounded-xl bg-white dark:bg-white/5 border border-gray-200 dark:border-white/8 hover:border-red-500/40 hover:bg-red-50 dark:hover:bg-red-500/10 dark:hover:shadow-[0_0_15px_rgba(255,32,64,0.15)] transition-all duration-200 shadow-sm relative group"
+              >
+                <Package className="w-5 h-5 md:w-6 md:h-6 text-gray-600 dark:text-gray-400 group-hover:text-red-500 transition-colors" />
+                <div className="absolute -top-1 -right-1 bg-red-500 dark:shadow-[0_0_6px_rgba(255,32,64,0.8)] text-white text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center border-2 border-white dark:border-[#060608] shadow-sm opacity-0 group-hover:opacity-100 transition-opacity">
+                  !
+                </div>
+              </Link>
+            </Tooltip>
 
             {/* Profile / Login */}
             {user ? (
@@ -714,11 +724,11 @@ export default function Header() {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-              className="fixed top-0 right-0 h-full w-72 bg-white dark:bg-[#1a1d24] shadow-2xl z-[70] flex flex-col lg:hidden"
+              className="fixed top-0 right-0 h-full w-72 bg-white dark:bg-[#0c0c10] border-l border-gray-200 dark:border-white/10 shadow-2xl z-[70] flex flex-col lg:hidden"
               dir="rtl"
             >
               {/* Drawer header */}
-              <div className="flex items-center justify-between p-4 border-b border-gray-100 dark:border-gray-700">
+              <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-white/10">
                 <div className="flex items-center gap-3">
                   <img
                     src="https://i.postimg.cc/X7NjBvxn/content.png"

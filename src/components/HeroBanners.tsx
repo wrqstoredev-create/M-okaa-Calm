@@ -175,6 +175,9 @@ export default function HeroBanners() {
           </motion.div>
         </AnimatePresence>
 
+        {/* Scanlines neon overlay */}
+        <div className="absolute inset-0 z-[1] pointer-events-none scanlines opacity-0 dark:opacity-100" />
+
         <div className="z-10 relative pointer-events-none max-w-xl text-center md:text-end flex flex-col items-center md:items-end w-full">
           {currentSlide.title && (
             <h2 className="text-2xl md:text-3xl font-black mb-2 leading-tight tracking-tighter !text-white drop-shadow-lg" dangerouslySetInnerHTML={{ __html: currentSlide.title.replace(/\n/g, '<br />') }} />
@@ -185,33 +188,46 @@ export default function HeroBanners() {
           {currentSlide.button_text && (
             <a 
               href={currentSlide.button_link || '#'} 
-              className="pointer-events-auto inline-block bg-white dark:bg-[#1a1d24] text-black dark:text-white font-black px-8 py-3.5 rounded-xl hover:bg-red-600 hover:text-white transition-all duration-300 transform active:scale-95 shadow-xl w-max"
+              className="
+                pointer-events-auto inline-block font-black px-8 py-3.5 rounded-xl w-max
+                transition-all duration-300 transform active:scale-95 shadow-xl
+                bg-white dark:bg-white/10 dark:backdrop-blur-md
+                text-black dark:text-white
+                border border-transparent dark:border-white/15
+                hover:bg-red-600 hover:text-white
+                dark:hover:bg-red-500/80 dark:hover:border-red-500/40
+                dark:hover:shadow-[0_0_25px_rgba(255,32,64,0.5)]
+              "
             >
               {currentSlide.button_text}
             </a>
           )}
         </div>
 
-        {/* Carousel Controls */}
+        {/* Carousel Controls — Glassmorphism */}
         {slides.length > 1 && (
           <div className="hidden md:flex absolute right-4 left-4 justify-between items-center z-20 pointer-events-none">
-             <button onClick={prevSlide} className="pointer-events-auto w-10 h-10 bg-black/30 hover:bg-black/60 rounded-full flex items-center justify-center backdrop-blur-md transition-all text-white border border-white/10">
+             <button onClick={prevSlide} className="pointer-events-auto w-10 h-10 bg-black/30 dark:bg-white/8 hover:bg-black/60 dark:hover:bg-red-500/20 rounded-full flex items-center justify-center backdrop-blur-md transition-all text-white border border-white/10 dark:hover:border-red-500/40 dark:hover:shadow-[0_0_15px_rgba(255,32,64,0.3)]">
                 <ChevronRight size={24} />
              </button>
-             <button onClick={nextSlide} className="pointer-events-auto w-10 h-10 bg-black/30 hover:bg-black/60 rounded-full flex items-center justify-center backdrop-blur-md transition-all text-white border border-white/10">
+             <button onClick={nextSlide} className="pointer-events-auto w-10 h-10 bg-black/30 dark:bg-white/8 hover:bg-black/60 dark:hover:bg-red-500/20 rounded-full flex items-center justify-center backdrop-blur-md transition-all text-white border border-white/10 dark:hover:border-red-500/40 dark:hover:shadow-[0_0_15px_rgba(255,32,64,0.3)]">
                 <ChevronLeft size={24} />
              </button>
           </div>
         )}
 
-        {/* Indicators */}
+        {/* Indicators — Neon Red Dots */}
         {slides.length > 1 && (
           <div className="absolute bottom-6 left-0 right-0 flex justify-center gap-2 z-20">
             {slides.map((_, i) => (
               <button 
                 key={i} 
                 onClick={() => setCurrentSlideIndex(i)}
-                className={`h-2 rounded-full transition-all duration-300 ${i === currentSlideIndex ? 'w-8 bg-white dark:bg-[#1a1d24]' : 'w-2 bg-white dark:bg-[#1a1d24]/40'}`}
+                className={`h-2 rounded-full transition-all duration-300 ${
+                  i === currentSlideIndex
+                    ? 'w-8 bg-white dark:bg-red-500 dark:shadow-[0_0_10px_rgba(255,32,64,0.9),0_0_20px_rgba(255,32,64,0.5)]'
+                    : 'w-2 bg-white/40 dark:bg-white/20 hover:bg-white/70 dark:hover:bg-red-500/50'
+                }`}
               />
             ))}
           </div>

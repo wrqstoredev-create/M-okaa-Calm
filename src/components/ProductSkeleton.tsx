@@ -1,47 +1,63 @@
 /**
  * ProductSkeleton — GamePay
- *
- * Updated to mirror the new ProductCard layout:
- * • 1:1 aspect-ratio image placeholder
- * • Game-name chip placeholder
- * • Title (2 lines)
- * • Price row
- * • Two CTA button placeholders
+ * Phase 4: Neon Gaming Shimmer Skeleton
+ * Dark OLED base with animated neon shimmer sweep
  */
 
 import React from 'react';
 
 export default function ProductSkeleton() {
   return (
-    <div className="flex flex-col h-full bg-white dark:bg-[#1a1d24] border border-gray-100 dark:border-gray-700/60 rounded-2xl overflow-hidden shadow-sm animate-pulse">
+    <div className="
+      flex flex-col h-full rounded-2xl overflow-hidden shadow-sm
+      bg-white dark:bg-[#0c0c10]
+      border border-gray-100 dark:border-white/5
+      relative
+    ">
+      {/* Neon shimmer sweep overlay */}
+      <div
+        className="absolute inset-0 z-10 pointer-events-none overflow-hidden rounded-2xl"
+        style={{
+          background: 'linear-gradient(105deg, transparent 20%, rgba(255,255,255,0.04) 40%, rgba(155,93,229,0.06) 50%, transparent 60%)',
+          backgroundSize: '200% 100%',
+          animation: 'shimmer-bg 1.8s ease-in-out infinite',
+        }}
+      />
 
       {/* Image placeholder — 1:1 */}
-      <div className="w-full aspect-square bg-gray-200 dark:bg-[#0f1115]" />
+      <div className="w-full aspect-square bg-gray-200 dark:bg-[#141418] animate-pulse" />
 
       {/* Info region */}
       <div className="flex flex-col flex-1 p-3 gap-2.5">
 
         {/* Game-name chip */}
-        <div className="h-3 w-16 bg-gray-200 dark:bg-gray-700 rounded-full" />
+        <div className="h-3 w-16 bg-gray-200 dark:bg-white/5 rounded-full animate-pulse" />
 
         {/* Title — 2 lines */}
         <div className="space-y-1.5">
-          <div className="h-3.5 w-full  bg-gray-200 dark:bg-gray-700 rounded" />
-          <div className="h-3.5 w-4/5   bg-gray-200 dark:bg-gray-700 rounded" />
+          <div className="h-3.5 w-full  bg-gray-200 dark:bg-white/5 rounded animate-pulse" />
+          <div className="h-3.5 w-4/5   bg-gray-200 dark:bg-white/5 rounded animate-pulse" />
         </div>
 
         {/* Price row */}
         <div className="flex items-center gap-2 mt-auto">
-          <div className="h-5 w-20 bg-gray-200 dark:bg-gray-700 rounded" />
-          <div className="h-3 w-12 bg-gray-100 dark:bg-gray-800 rounded" />
+          <div className="h-5 w-20 bg-gray-200 dark:bg-white/5 rounded animate-pulse" />
+          <div className="h-3 w-12 bg-gray-100 dark:bg-white/3 rounded animate-pulse" />
         </div>
 
         {/* CTA buttons */}
         <div className="flex flex-col gap-1.5">
-          <div className="h-11 w-full bg-gray-200 dark:bg-gray-700 rounded-xl" />
-          <div className="h-10 w-full bg-gray-100 dark:bg-gray-800 rounded-xl" />
+          <div className="h-11 w-full bg-gray-200 dark:bg-red-500/10 rounded-full animate-pulse" />
+          <div className="h-10 w-full bg-gray-100 dark:bg-white/4 rounded-full animate-pulse" />
         </div>
       </div>
+
+      <style>{`
+        @keyframes shimmer-bg {
+          0%   { background-position: -200% 0; }
+          100% { background-position: 200% 0; }
+        }
+      `}</style>
     </div>
   );
 }

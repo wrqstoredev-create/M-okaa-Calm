@@ -18,6 +18,7 @@ import { authApi } from '../services/api/authApi';
 import { motion, AnimatePresence } from 'motion/react';
 import { Eye, EyeOff, Mail, Lock, AlertCircle, Loader2 } from 'lucide-react';
 import AuthLayout from '../components/AuthLayout';
+import RippleButton from '../components/ui/RippleButton';
 
 /* ── Error mapper ────────────────────────────────────────────────────────── */
 function mapError(msg: string): string {
@@ -209,10 +210,10 @@ export default function Login() {
         {/* Divider */}
         <div className="relative my-6">
           <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-gray-100 dark:border-gray-700" />
+            <div className="w-full border-t border-gray-200 dark:border-white/10" />
           </div>
           <div className="relative flex justify-center">
-            <span className="bg-white dark:bg-[#1a1d24] px-4 text-[11px] font-black text-gray-400 uppercase tracking-wider">
+            <span className="bg-white dark:bg-[#0c0c10] px-4 text-[11px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider">
               أو عبر البريد الإلكتروني
             </span>
           </div>
@@ -237,12 +238,12 @@ export default function Login() {
               placeholder="example@mail.com"
               dir="ltr"
               className={[
-                'w-full bg-gray-50 dark:bg-[#0f1115]',
-                'border-2 rounded-xl py-3.5 px-4 text-sm font-bold',
-                'focus:outline-none transition-all placeholder:text-gray-300 text-left',
+                'w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white',
+                'rounded-xl py-3.5 px-4 text-sm font-bold',
+                'focus:outline-none focus:border-red-500 dark:focus:border-red-500 focus:shadow-[0_0_15px_rgba(255,32,64,0.25)] transition-all placeholder:text-gray-400 text-left',
                 fieldErr.email
-                  ? 'border-red-400 bg-red-50/30 focus:border-red-600'
-                  : 'border-transparent focus:border-red-600',
+                  ? 'border-red-500 bg-red-50/30 dark:bg-red-950/20'
+                  : '',
               ].join(' ')}
             />
           </Field>
@@ -258,18 +259,18 @@ export default function Login() {
                 placeholder="••••••••"
                 dir="ltr"
                 className={[
-                  'w-full bg-gray-50 dark:bg-[#0f1115]',
-                  'border-2 rounded-xl py-3.5 pl-12 pr-4 text-sm font-bold',
-                  'focus:outline-none transition-all placeholder:text-gray-300 text-left',
+                  'w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white',
+                  'rounded-xl py-3.5 pl-12 pr-4 text-sm font-bold',
+                  'focus:outline-none focus:border-red-500 dark:focus:border-red-500 focus:shadow-[0_0_15px_rgba(255,32,64,0.25)] transition-all placeholder:text-gray-400 text-left',
                   fieldErr.password
-                    ? 'border-red-400 bg-red-50/30 focus:border-red-600'
-                    : 'border-transparent focus:border-red-600',
+                    ? 'border-red-500 bg-red-50/30 dark:bg-red-950/20'
+                    : '',
                 ].join(' ')}
               />
               <button
                 type="button"
                 onClick={() => setShowPass(v => !v)}
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors cursor-pointer"
                 tabIndex={-1}
               >
                 {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
@@ -277,29 +278,30 @@ export default function Login() {
             </div>
             {/* Forgot password */}
             <div className="flex justify-start mt-1">
-              <Link to="/forgot-password" className="text-[10px] font-black text-red-600 hover:underline">
+              <Link to="/forgot-password" className="text-[10px] font-black text-red-600 dark:text-red-400 hover:underline">
                 نسيت كلمة المرور؟
               </Link>
             </div>
           </Field>
 
           {/* Submit */}
-          <button
+          <RippleButton
             type="submit"
             disabled={loading || !!oauthLoad}
+            rippleColor="rgba(255, 255, 255, 0.4)"
             className={[
-              'w-full min-h-[52px] bg-red-700 hover:bg-red-800',
+              'w-full min-h-[52px] bg-gradient-to-r from-red-600 via-rose-600 to-red-600 hover:from-red-500 hover:to-rose-500',
               'text-white font-black text-sm rounded-2xl',
-              'transition-all active:scale-[0.98]',
-              'shadow-lg shadow-red-700/20',
-              'disabled:opacity-50',
+              'transition-all',
+              'shadow-[0_4px_20px_rgba(255,32,64,0.35)] hover:shadow-[0_0_25px_rgba(255,32,64,0.65)]',
+              'disabled:opacity-50 cursor-pointer',
               'flex items-center justify-center gap-2',
             ].join(' ')}
           >
             {loading ? (
               <><Loader2 size={18} className="animate-spin" /> جاري الدخول...</>
-            ) : 'تسجيل الدخول'}
-          </button>
+            ) : 'تسجيل الدخول ⚡'}
+          </RippleButton>
         </motion.form>
 
         {/* Register link */}

@@ -17,6 +17,7 @@ interface OrderItem {
   player_username?: string;
   player_social?: string;
   player_phone?: string;
+  notes?: string;
   products: {
     title: string;
     image_url: string;
@@ -612,39 +613,104 @@ export default function OrdersView() {
                   <div className="space-y-3">
                     <h4 className="text-[10px] font-black text-zinc-400 uppercase tracking-widest px-2">الأصناف المطلوبة</h4>
                     <div className="space-y-3">
-                      {selectedOrder.order_items.map((item) => (
-                        <div key={item.id} className="flex items-center justify-between p-4 bg-zinc-50 dark:bg-[#0f1115] rounded-2xl border border-zinc-100">
-                          <div className="flex items-center gap-3">
-                            <img src={item.products?.image_url || undefined} alt="" className="w-10 h-10 rounded-lg object-cover" />
-                            <div>
-                              <p className="text-xs font-black text-zinc-900 dark:text-white">{item.products?.title}</p>
-                              <div className="flex flex-wrap gap-1.5 items-center mt-1">
-                                <span className="text-[10px] font-bold text-zinc-400">الكمية: {item.quantity}</span>
-                                {(() => {
-                                  const basePrice = Number(item.products?.price) || 1;
-                                  const baseRobux = Number(item.products?.robux_quantity) || 0;
-                                  const unitPrice = Number(item.unit_price) || basePrice;
-                                  const itemRobux = baseRobux > 0 ? Math.round((unitPrice / basePrice) * baseRobux) : 0;
-                                  if (itemRobux > 0) {
-                                    return (
-                                      <span className="inline-flex items-center gap-0.5 bg-amber-50 text-amber-700 px-1.5 py-0.5 rounded text-[9px] font-black border border-amber-100">
-                                        🎮 {(itemRobux * (item.quantity || 1)).toLocaleString('en-US')} Robux
-                                      </span>
-                                    );
-                                  }
-                                  return null;
-                                })()}
+                      {selectedOrder.order_items.map((item) => {
+                        let parsedNotes: any = null;
+                        if (item.notes) {
+                          try {
+                            parsedNotes = JSON.parse(item.notes);
+                          } catch {
+                            parsedNotes = null;
+                          }
+                        }
+
+                        const username = item.player_username || parsedNotes?.username || (parsedNotes as any)?.player_username;
+                        const playerId = item.player_id || parsedNotes?.id || (parsedNotes as any)?.player_id;
+                        const phone = item.player_phone || parsedNotes?.phone || (parsedNotes as any)?.player_phone;
+                        const social = item.player_social || parsedNotes?.social || (parsedNotes as any)?.player_social;
+                        const hasPlayerData = !!(username || playerId || phone || social);
+
+                        return (
+                          <div key={item.id} className="flex flex-col gap-3 p-4 bg-zinc-50 dark:bg-[#0f1115] rounded-2xl border border-zinc-100 dark:border-white/5">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-3">
+                                <img src={item.products?.image_url || undefined} alt="" className="w-11 h-11 rounded-xl object-contain bg-white dark:bg-white/5 p-1 border border-zinc-200 dark:border-white/10" />
+                                <div>
+                                  <p className="text-xs font-black text-zinc-900 dark:text-white">{item.products?.title}</p>
+                                  <div className="flex flex-wrap gap-1.5 items-center mt-1">
+                                    <span className="text-[10px] font-bold text-zinc-400">الكمية: {item.quantity}</span>
+                                    {(() => {
+                                      const basePrice = Number(item.products?.price) || 1;
+                                      const baseRobux = Number(item.products?.robux_quantity) || 0;
+                                      const unitPrice = Number(item.unit_price) || basePrice;
+                                      const itemRobux = baseRobux > 0 ? Math.round((unitPrice / basePrice) * baseRobux) : 0;
+                                      if (itemRobux > 0) {
+                                        return (
+                                          <span className="inline-flex items-center gap-0.5 bg-amber-50 text-amber-700 px-1.5 py-0.5 rounded text-[9px] font-black border border-amber-100">
+                                            🎮 {(itemRobux * (item.quantity || 1)).toLocaleString('en-US')} Robux
+                                          </span>
+                                        );
+                                      }
+                                      return null;
+                                    })()}
+                                  </div>
+                                </div>
                               </div>
+                              <p className="text-sm font-black text-zinc-900 dark:text-white" dir="ltr">
+                                 {(() => {
+                                   const [pm, cur] = (selectedOrder.payment_method || '').split('___');
+                                   return formatPriceByCurrency(item.unit_price * item.quantity, (cur as Currency) || 'EGY');
+                                 })()}
+                              </p>
                             </div>
+
+                            {/* Player Info Card */}
+                            {hasPlayerData && (
+                              <div className="bg-white/90 dark:bg-zinc-900/60 rounded-xl p-3 border border-zinc-200/80 dark:border-white/10 space-y-2">
+                                <div className="flex items-center justify-between text-[10px] font-black text-red-600 dark:text-red-400 pb-1.5 border-b border-zinc-150 dark:border-white/5">
+                                  <span className="flex items-center gap-1.5">
+                                    <User size={12} /> بيانات حساب اللاعب للشحن:
+                                  </span>
+                                  {item.notes && (
+                                    <span className="text-[9px] text-zinc-400 font-mono">Attributes JSON ✅</span>
+                                  )}
+                                </div>
+
+                                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 text-[11px]">
+                                  {username && (
+                                    <div className="flex items-center justify-between bg-purple-50/70 dark:bg-purple-950/30 px-2.5 py-1.5 rounded-lg border border-purple-200/60 dark:border-purple-800/30">
+                                      <span className="text-purple-700 dark:text-purple-300 font-bold">اليوزر:</span>
+                                      <span className="font-mono font-black text-purple-900 dark:text-purple-200 select-all" dir="ltr">{username}</span>
+                                    </div>
+                                  )}
+
+                                  {playerId && (
+                                    <div className="flex items-center justify-between bg-red-50/70 dark:bg-red-950/30 px-2.5 py-1.5 rounded-lg border border-red-200/60 dark:border-red-800/30">
+                                      <span className="text-red-700 dark:text-red-300 font-bold">الـ ID:</span>
+                                      <span className="font-mono font-black text-red-900 dark:text-red-200 select-all" dir="ltr">{playerId}</span>
+                                    </div>
+                                  )}
+
+                                  {phone && (
+                                    <div className="flex items-center justify-between bg-emerald-50/70 dark:bg-emerald-950/30 px-2.5 py-1.5 rounded-lg border border-emerald-200/60 dark:border-emerald-800/30">
+                                      <span className="text-emerald-700 dark:text-emerald-300 font-bold">الهاتف:</span>
+                                      <span className="font-mono font-black text-emerald-900 dark:text-emerald-200 select-all" dir="ltr">{phone}</span>
+                                    </div>
+                                  )}
+
+                                  {social && (
+                                    <div className="flex items-center justify-between bg-blue-50/70 dark:bg-blue-950/30 px-2.5 py-1.5 rounded-lg border border-blue-200/60 dark:border-blue-800/30 sm:col-span-2 md:col-span-3">
+                                      <span className="text-blue-700 dark:text-blue-300 font-bold">رابط الحساب:</span>
+                                      <a href={social} target="_blank" rel="noopener noreferrer" className="font-bold text-blue-600 dark:text-blue-400 hover:underline truncate max-w-[280px]" dir="ltr">
+                                        {social}
+                                      </a>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            )}
                           </div>
-                          <p className="text-sm font-black text-zinc-900 dark:text-white">
-                             {(() => {
-                               const [pm, cur] = (selectedOrder.payment_method || '').split('___');
-                               return formatPriceByCurrency(item.unit_price * item.quantity, (cur as Currency) || 'EGY');
-                             })()}
-                          </p>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   </div>
 
