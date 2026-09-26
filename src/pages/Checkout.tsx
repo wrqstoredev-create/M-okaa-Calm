@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Checkout.tsx â€” GamePay  (UI redesign â€” zero logic changes)
  *
  * What changed vs. original (UI only):
@@ -384,13 +384,22 @@ export default function Checkout() {
             rel="noopener noreferrer"
             className="w-full sm:flex-1 bg-[#25D366] hover:bg-[#20ba59] text-white px-6 py-4 rounded-2xl font-black shadow-lg shadow-emerald-500/25 active:scale-95 transition-all flex items-center justify-center gap-2 text-xs sm:text-sm cursor-pointer whitespace-nowrap"
           >
-            ط§ظ„ط¹ظˆط¯ط© ظ„ظ„ط±ط¦ظٹط³ظٹط©
-          </Link>
+            <WhatsAppIcon size={18} />
+            <span>تتبع الطلب بالواتساب 💬</span>
+          </a>
+
           <Link
             to="/profile"
             className="w-full sm:w-auto bg-gray-100 dark:bg-[#1a1d24] hover:bg-gray-200 dark:hover:bg-zinc-800 border border-gray-200 dark:border-gray-700 text-gray-800 dark:text-white px-6 py-4 rounded-2xl font-black active:scale-95 transition-all text-xs sm:text-sm"
           >
-            ط·ظ„ط¨ط§طھظٹ
+            متابعة طلباتي
+          </Link>
+
+          <Link
+            to="/"
+            className="w-full sm:w-auto bg-white dark:bg-white/5 hover:bg-gray-50 dark:hover:bg-white/10 border border-gray-200 dark:border-white/10 text-gray-700 dark:text-gray-300 px-5 py-4 rounded-2xl font-bold active:scale-95 transition-all text-xs sm:text-sm"
+          >
+            الرئيسية
           </Link>
         </motion.div>
       </div>

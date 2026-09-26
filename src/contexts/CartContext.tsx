@@ -50,6 +50,7 @@ interface CartContextType {
   isCartDrawerOpen?: boolean;
   openCartDrawer?: () => void;
   closeCartDrawer?: () => void;
+  toggleCartDrawer?: () => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -74,6 +75,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [isCartDrawerOpen, setIsCartDrawerOpen] = useState(false);
   const openCartDrawer = () => setIsCartDrawerOpen(true);
   const closeCartDrawer = () => setIsCartDrawerOpen(false);
+  const toggleCartDrawer = () => setIsCartDrawerOpen((prev) => !prev);
 
   useEffect(() => {
     localStorage.setItem('cart', JSON.stringify(items));
@@ -214,7 +216,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       finalPrice,
       isCartDrawerOpen,
       openCartDrawer,
-      closeCartDrawer
+      closeCartDrawer,
+      toggleCartDrawer
     }}>
       {children}
     </CartContext.Provider>
