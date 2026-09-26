@@ -286,33 +286,33 @@ export default function Profile() {
   return (
     <div className="flex-1 w-full bg-gray-50 dark:bg-[#0f1115]" dir="rtl">
 
-        {/* ?? Banned Banner ?? */}
+                {/* â”€â”€ Banned Banner â”€â”€ */}
         {profile?.is_banned && (
           <div className="bg-red-600 text-white p-4">
             <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="flex items-center gap-3">
                 <AlertCircle size={24} className="shrink-0" />
                 <div>
-                  <h3 className="font-black text-lg">ÚİæÇğ¡ Êã ÍÙÑ ÍÓÇÈß</h3>
+                  <h3 className="font-black text-lg">Ø¹ÙÙˆØ§Ù‹ØŒ ØªÙ… Ø­Ø¸Ø± Ø­Ø³Ø§Ø¨Ùƒ</h3>
                   <p className="text-sm font-bold opacity-90">
-                    áÇ íãßäß ÅÊãÇã Ãí ØáÈÇÊ ÔÑÇÁ ÌÏíÏÉ İí ÇáæŞÊ ÇáÍÇáí. íãßäß ÊÕİÍ ÇáãæŞÚ æãÑÇÌÚÉ ØáÈÇÊß ÇáÓÇÈŞÉ.
+                    Ù„Ø§ ÙŠÙ…ÙƒÙ†Ùƒ Ø¥ØªÙ…Ø§Ù… Ø£ÙŠ Ø·Ù„Ø¨Ø§Øª Ø´Ø±Ø§Ø¡ Ø¬Ø¯ÙŠØ¯Ø© ÙÙŠ Ø§Ù„ÙˆÙ‚Øª Ø§Ù„Ø­Ø§Ù„ÙŠ. ÙŠÙ…ÙƒÙ†Ùƒ ØªØµÙØ­ Ø§Ù„Ù…ÙˆÙ‚Ø¹ ÙˆÙ…Ø±Ø§Ø¬Ø¹Ø© Ø·Ù„Ø¨Ø§ØªÙƒ Ø§Ù„Ø³Ø§Ø¨Ù‚Ø©.
                   </p>
                 </div>
               </div>
               <a 
-                href="https://wa.me/201000000000"
+                href="https://wa.me/201557957800"
                 target="_blank" 
                 rel="noreferrer"
                 className="shrink-0 bg-white text-red-600 px-5 py-2.5 rounded-xl font-black text-sm hover:bg-red-50 transition-colors shadow-sm"
               >
-                ÊÍÏË ãÚ ÇáÏÚã Çáİäí
+                ØªØ­Ø¯Ø« Ù…Ø¹ Ø§Ù„Ø¯Ø¹Ù… Ø§Ù„ÙÙ†ÙŠ
               </a>
             </div>
           </div>
         )}
 
-      {/* â”€â”€ Hero Header â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
-      <div className="relative bg-gradient-to-bl from-red-700 via-red-800 to-zinc-900 overflow-hidden">
+        {/* â”€â”€ Hero Header â”€â”€ */}
+        <div className="relative bg-gradient-to-bl from-red-700 via-red-800 to-zinc-900 overflow-hidden">
         {/* Dot grid */}
         <div
           className="absolute inset-0 opacity-10 pointer-events-none"

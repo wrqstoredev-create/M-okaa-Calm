@@ -1,22 +1,22 @@
-/**
- * Checkout.tsx — GamePay  (UI redesign — zero logic changes)
+﻿/**
+ * Checkout.tsx â€” GamePay  (UI redesign â€” zero logic changes)
  *
  * What changed vs. original (UI only):
- * ───────────────────────────────────────────────────────────────────────
+ * â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
  * Layout
- *   • One-Step: everything on one page — no wizard steps.
- *   • Left (lg): sticky Order Summary with item list, price breakdown,
+ *   â€¢ One-Step: everything on one page â€” no wizard steps.
+ *   â€¢ Left (lg): sticky Order Summary with item list, price breakdown,
  *     coupon badge, terms checkbox, and the CTA confirm button.
- *   • Right (lg): Payment method picker + dynamic panel per method.
- *   • On mobile: Order Summary collapses at bottom; form first.
+ *   â€¢ Right (lg): Payment method picker + dynamic panel per method.
+ *   â€¢ On mobile: Order Summary collapses at bottom; form first.
  *
  * Payment method cards
- *   • Bigger, clearer card tiles — icon + label + description.
- *   • Colour-coded per method (visa=blue, apple=black, fawry=yellow, …).
- *   • Animated selection ring using layoutId spring.
+ *   â€¢ Bigger, clearer card tiles â€” icon + label + description.
+ *   â€¢ Colour-coded per method (visa=blue, apple=black, fawry=yellow, â€¦).
+ *   â€¢ Animated selection ring using layoutId spring.
  *
  * Empty / Success states
- *   • Richer success animation + confetti dots.
+ *   â€¢ Richer success animation + confetti dots.
  *
  * All backend logic (handlePayment, screenshot upload, Discord notify,
  * Supabase order/order_items inserts) is preserved 1-to-1.
@@ -37,28 +37,28 @@ import {
   Zap, Tag, AlertTriangle,
 } from 'lucide-react';
 
-/* ─── Payment method config ──────────────────────────────────────────────── */
+/* â”€â”€â”€ Payment method config â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 interface PayMethod {
   id: string;
   label: string;
   description: string;
   icon: React.ReactNode;
-  color: string;        // tailwind bg class — active icon bg
-  border: string;       // tailwind border class — active card border
-  bg: string;           // tailwind bg class — active card bg
+  color: string;        // tailwind bg class â€” active icon bg
+  border: string;       // tailwind border class â€” active card border
+  bg: string;           // tailwind bg class â€” active card bg
   auto: boolean;        // true = automatic / false = manual
   settingKey: string;   // key in settings table
 }
 
 const PAY_METHODS: PayMethod[] = [
   {
-    id: 'visa', label: 'فيزا / ماستركارد', description: 'دفع فوري ومباشر',
+    id: 'visa', label: 'ظپظٹط²ط§ / ظ…ط§ط³طھط±ظƒط§ط±ط¯', description: 'ط¯ظپط¹ ظپظˆط±ظٹ ظˆظ…ط¨ط§ط´ط±',
     icon: <CreditCard size={20} />,
     color: 'bg-blue-600', border: 'border-blue-600', bg: 'bg-blue-50/40 dark:bg-blue-900/10',
     auto: true, settingKey: 'enable_visa',
   },
   {
-    id: 'apple-pay', label: 'Apple Pay', description: 'من هاتفك مباشرة',
+    id: 'apple-pay', label: 'Apple Pay', description: 'ظ…ظ† ظ‡ط§طھظپظƒ ظ…ط¨ط§ط´ط±ط©',
     icon: (
       <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current">
         <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
@@ -68,40 +68,40 @@ const PAY_METHODS: PayMethod[] = [
     auto: true, settingKey: 'enable_apple_pay',
   },
   {
-    id: 'phone-cash', label: 'تليفون كاش', description: 'فودافون / اتصالات / أورنج',
+    id: 'phone-cash', label: 'طھظ„ظٹظپظˆظ† ظƒط§ط´', description: 'ظپظˆط¯ط§ظپظˆظ† / ط§طھطµط§ظ„ط§طھ / ط£ظˆط±ظ†ط¬',
     icon: <Smartphone size={20} />,
     color: 'bg-orange-500', border: 'border-orange-500', bg: 'bg-orange-50/40 dark:bg-orange-900/10',
     auto: false, settingKey: 'enable_phone_cash',
   },
   {
-    id: 'instapay', label: 'InstaPay', description: 'تحويل إلكتروني فوري',
+    id: 'instapay', label: 'InstaPay', description: 'طھط­ظˆظٹظ„ ط¥ظ„ظƒطھط±ظˆظ†ظٹ ظپظˆط±ظٹ',
     icon: <Wallet size={20} />,
     color: 'bg-purple-600', border: 'border-purple-600', bg: 'bg-purple-50/40 dark:bg-purple-900/10',
     auto: false, settingKey: 'enable_instapay',
   },
   {
-    id: 'fawry', label: 'فوري', description: 'ادفع من أقرب فرع فوري',
+    id: 'fawry', label: 'ظپظˆط±ظٹ', description: 'ط§ط¯ظپط¹ ظ…ظ† ط£ظ‚ط±ط¨ ظپط±ط¹ ظپظˆط±ظٹ',
     icon: <Wallet size={20} />,
     color: 'bg-yellow-500', border: 'border-yellow-500', bg: 'bg-yellow-50/40 dark:bg-yellow-900/10',
     auto: false, settingKey: 'enable_fawry',
   },
 ];
 
-/* ─── Helpers ────────────────────────────────────────────────────────────── */
+/* â”€â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function getAccountNumber(settings: any, method: string): string {
-  if (method === 'phone-cash') return settings?.phone_cash_number || '–';
-  if (method === 'instapay')   return settings?.instapay_id       || '–';
-  if (method === 'fawry')      return settings?.fawry_number      || '–';
-  return '–';
+  if (method === 'phone-cash') return settings?.phone_cash_number || 'â€“';
+  if (method === 'instapay')   return settings?.instapay_id       || 'â€“';
+  if (method === 'fawry')      return settings?.fawry_number      || 'â€“';
+  return 'â€“';
 }
 
-/* ═══════════════════════════════════════════════════════════════════════════
+/* â•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گ
    Main Component
-═══════════════════════════════════════════════════════════════════════════ */
+â•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گ */
 export default function Checkout() {
   const navigate         = useNavigate();
   const { user, profile } = useAuth();
-  if (profile?.is_banned) { navigate('/profile', { replace: true }); }
+  useEffect(() => { if (profile?.is_banned) { navigate('/profile', { replace: true }); } }, [profile, navigate]);
   const { formatPrice, currency } = useCurrency();
   const { items, totalPrice, finalPrice, discountAmount, shippingFee, appliedCoupon, clearCart } = useCart();
   const { addToast }     = useToast();
@@ -139,23 +139,23 @@ export default function Checkout() {
   const isAutomatic = paymentMethod === 'visa' || paymentMethod === 'apple-pay';
   const isManual    = !isAutomatic;
 
-  /* ── handlePayment ────────────────────────────────────────────────── */
+  /* â”€â”€ handlePayment â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
   const handlePayment = async () => {
     if (hasOutOfStock) {
-      addToast('سلتك تحتوي على منتجات غير متوفرة، يرجى إزالتها أولاً ⚠️', 'error');
+      addToast('ط³ظ„طھظƒ طھط­طھظˆظٹ ط¹ظ„ظ‰ ظ…ظ†طھط¬ط§طھ ط؛ظٹط± ظ…طھظˆظپط±ط©طŒ ظٹط±ط¬ظ‰ ط¥ط²ط§ظ„طھظ‡ط§ ط£ظˆظ„ط§ظ‹ âڑ ï¸ڈ', 'error');
       navigate('/cart');
       return;
     }
     if (!paymentMethod) {
-      addToast('يرجى اختيار وسيلة الدفع', 'error');
+      addToast('ظٹط±ط¬ظ‰ ط§ط®طھظٹط§ط± ظˆط³ظٹظ„ط© ط§ظ„ط¯ظپط¹', 'error');
       return;
     }
     if (!termsAccepted) {
-      addToast('يرجى الموافقة على الشروط والأحكام للمتابعة 📄', 'error');
+      addToast('ظٹط±ط¬ظ‰ ط§ظ„ظ…ظˆط§ظپظ‚ط© ط¹ظ„ظ‰ ط§ظ„ط´ط±ظˆط· ظˆط§ظ„ط£ط­ظƒط§ظ… ظ„ظ„ظ…طھط§ط¨ط¹ط© ًں“„', 'error');
       return;
     }
     if (isManual && !paymentScreenshot) {
-      addToast('يرجى رفع صورة إيصال التحويل لضمان تأكيد طلبك 📸', 'error');
+      addToast('ظٹط±ط¬ظ‰ ط±ظپط¹ طµظˆط±ط© ط¥ظٹطµط§ظ„ ط§ظ„طھط­ظˆظٹظ„ ظ„ط¶ظ…ط§ظ† طھط£ظƒظٹط¯ ط·ظ„ط¨ظƒ ًں“¸', 'error');
       return;
     }
 
@@ -165,7 +165,7 @@ export default function Checkout() {
     try {
       const { data: { session }, error: sessionError } = await supabase.auth.getSession();
       if (sessionError || !session) {
-        addToast('انتهت صلاحية الجلسة، يرجى تسجيل الدخول مرة أخرى', 'error');
+        addToast('ط§ظ†طھظ‡طھ طµظ„ط§ط­ظٹط© ط§ظ„ط¬ظ„ط³ط©طŒ ظٹط±ط¬ظ‰ طھط³ط¬ظٹظ„ ط§ظ„ط¯ط®ظˆظ„ ظ…ط±ط© ط£ط®ط±ظ‰', 'error');
         navigate('/login');
         return;
       }
@@ -266,18 +266,18 @@ export default function Checkout() {
 
       setIsProcessing(false);
       setIsSuccess(true);
-      addToast('تم استلام طلبك وبانتظار مراجعة التحويل ✅', 'success');
+      addToast('طھظ… ط§ط³طھظ„ط§ظ… ط·ظ„ط¨ظƒ ظˆط¨ط§ظ†طھط¸ط§ط± ظ…ط±ط§ط¬ط¹ط© ط§ظ„طھط­ظˆظٹظ„ âœ…', 'success');
       clearCart();
 
     } catch (error) {
       console.error('Payment error:', error);
-      addToast('حدث خطأ أثناء معالجة الطلب ❌', 'error');
+      addToast('ط­ط¯ط« ط®ط·ط£ ط£ط«ظ†ط§ط، ظ…ط¹ط§ظ„ط¬ط© ط§ظ„ط·ظ„ط¨ â‌Œ', 'error');
       setIsProcessing(false);
       setIsUploading(false);
     }
   };
 
-  /* ── Empty cart state ───────────────────────────────────────────────── */
+  /* â”€â”€ Empty cart state â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
   if (items.length === 0 && !isSuccess) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center py-20 px-4 text-center gap-6" dir="rtl">
@@ -285,20 +285,20 @@ export default function Checkout() {
           <ShoppingBag size={36} className="text-gray-400" />
         </div>
         <div>
-          <h1 className="text-xl font-black text-gray-900 dark:text-white mb-2">السلة فارغة</h1>
-          <p className="text-sm font-bold text-gray-400">لا توجد منتجات للدفع حالياً</p>
+          <h1 className="text-xl font-black text-gray-900 dark:text-white mb-2">ط§ظ„ط³ظ„ط© ظپط§ط±ط؛ط©</h1>
+          <p className="text-sm font-bold text-gray-400">ظ„ط§ طھظˆط¬ط¯ ظ…ظ†طھط¬ط§طھ ظ„ظ„ط¯ظپط¹ ط­ط§ظ„ظٹط§ظ‹</p>
         </div>
         <Link
           to="/store"
           className="bg-red-700 hover:bg-red-800 text-white px-8 py-3.5 rounded-2xl font-black transition-all active:scale-95 shadow-lg shadow-red-700/20"
         >
-          تصفح المتجر
+          طھطµظپط­ ط§ظ„ظ…طھط¬ط±
         </Link>
       </div>
     );
   }
 
-  /* ── Success state ──────────────────────────────────────────────────── */
+  /* â”€â”€ Success state â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
   if (isSuccess) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center py-20 px-4 text-center gap-6" dir="rtl">
@@ -329,11 +329,11 @@ export default function Checkout() {
           transition={{ delay: 0.3 }}
           className="space-y-2"
         >
-          <h1 className="text-3xl font-black text-gray-900 dark:text-white">شكراً لطلبك! 🎉</h1>
+          <h1 className="text-3xl font-black text-gray-900 dark:text-white">ط´ظƒط±ط§ظ‹ ظ„ط·ظ„ط¨ظƒ! ًںژ‰</h1>
           <p className="text-sm font-bold text-gray-500 max-w-sm leading-relaxed">
             {isManual
-              ? 'تم استلام طلبك وهو قيد المراجعة. سيتم شحن منتجاتك خلال دقائق بعد تأكيد التحويل.'
-              : 'تمت معالجة طلبك بنجاح وسيتم شحن منتجاتك إلى حسابك فوراً.'}
+              ? 'طھظ… ط§ط³طھظ„ط§ظ… ط·ظ„ط¨ظƒ ظˆظ‡ظˆ ظ‚ظٹط¯ ط§ظ„ظ…ط±ط§ط¬ط¹ط©. ط³ظٹطھظ… ط´ط­ظ† ظ…ظ†طھط¬ط§طھظƒ ط®ظ„ط§ظ„ ط¯ظ‚ط§ط¦ظ‚ ط¨ط¹ط¯ طھط£ظƒظٹط¯ ط§ظ„طھط­ظˆظٹظ„.'
+              : 'طھظ…طھ ظ…ط¹ط§ظ„ط¬ط© ط·ظ„ط¨ظƒ ط¨ظ†ط¬ط§ط­ ظˆط³ظٹطھظ… ط´ط­ظ† ظ…ظ†طھط¬ط§طھظƒ ط¥ظ„ظ‰ ط­ط³ط§ط¨ظƒ ظپظˆط±ط§ظ‹.'}
           </p>
         </motion.div>
 
@@ -347,34 +347,34 @@ export default function Checkout() {
             to="/"
             className="bg-red-700 hover:bg-red-800 text-white px-8 py-4 rounded-2xl font-black shadow-lg shadow-red-700/20 active:scale-95 transition-all"
           >
-            العودة للرئيسية
+            ط§ظ„ط¹ظˆط¯ط© ظ„ظ„ط±ط¦ظٹط³ظٹط©
           </Link>
           <Link
             to="/profile"
             className="bg-gray-100 dark:bg-[#1a1d24] border border-gray-200 dark:border-gray-700 text-gray-800 dark:text-white px-6 py-4 rounded-2xl font-black active:scale-95 transition-all"
           >
-            طلباتي
+            ط·ظ„ط¨ط§طھظٹ
           </Link>
         </motion.div>
       </div>
     );
   }
 
-  /* ── Available methods filter ───────────────────────────────────────── */
+  /* â”€â”€ Available methods filter â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
   const availableMethods = PAY_METHODS.filter(m => settings?.[m.settingKey]);
   const autoMethods      = availableMethods.filter(m => m.auto);
   const manualMethods    = availableMethods.filter(m => !m.auto);
   const selectedMethod   = PAY_METHODS.find(m => m.id === paymentMethod);
   const accountNumber    = getAccountNumber(settings, paymentMethod);
 
-  /* ════════════════════════════════════════════════════════════════════
+  /* â•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گ
      Render
-  ════════════════════════════════════════════════════════════════════ */
+  â•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گ */
   return (
     <div className="flex-1 w-full bg-gray-50 dark:bg-[#0f1115]" dir="rtl">
       <div className="max-w-6xl mx-auto px-4 md:px-6 py-6 md:py-10">
 
-        {/* ── Page header ────────────────────────────────────────────── */}
+        {/* â”€â”€ Page header â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
         <div className="flex items-center gap-3 mb-8">
           <Link
             to="/cart"
@@ -383,13 +383,13 @@ export default function Checkout() {
             <ChevronRight size={20} />
           </Link>
           <div>
-            <h1 className="text-xl font-black text-gray-900 dark:text-white">إتمام الطلب</h1>
-            <p className="text-[11px] font-bold text-gray-400 mt-0.5">{items.length} منتج في سلتك</p>
+            <h1 className="text-xl font-black text-gray-900 dark:text-white">ط¥طھظ…ط§ظ… ط§ظ„ط·ظ„ط¨</h1>
+            <p className="text-[11px] font-bold text-gray-400 mt-0.5">{items.length} ظ…ظ†طھط¬ ظپظٹ ط³ظ„طھظƒ</p>
           </div>
           {/* Security badge */}
           <div className="mr-auto flex items-center gap-1.5 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 text-emerald-700 text-[11px] font-black px-3 py-1.5 rounded-full">
             <ShieldCheck size={13} />
-            دفع آمن 100%
+            ط¯ظپط¹ ط¢ظ…ظ† 100%
           </div>
         </div>
 
@@ -399,26 +399,26 @@ export default function Checkout() {
             <div className="flex items-center gap-3">
               <AlertTriangle size={24} className="flex-shrink-0 animate-bounce text-red-500" />
               <div>
-                <h4 className="font-black text-sm">تنبيه: سلتك تحتوي على منتجات نفدت كميتها!</h4>
-                <p className="text-xs font-bold opacity-90">لا يمكنك إتمام الدفع حتى تقوم بإزالة هذه المنتجات من سلتك أولاً.</p>
+                <h4 className="font-black text-sm">طھظ†ط¨ظٹظ‡: ط³ظ„طھظƒ طھط­طھظˆظٹ ط¹ظ„ظ‰ ظ…ظ†طھط¬ط§طھ ظ†ظپط¯طھ ظƒظ…ظٹطھظ‡ط§!</h4>
+                <p className="text-xs font-bold opacity-90">ظ„ط§ ظٹظ…ظƒظ†ظƒ ط¥طھظ…ط§ظ… ط§ظ„ط¯ظپط¹ ط­طھظ‰ طھظ‚ظˆظ… ط¨ط¥ط²ط§ظ„ط© ظ‡ط°ظ‡ ط§ظ„ظ…ظ†طھط¬ط§طھ ظ…ظ† ط³ظ„طھظƒ ط£ظˆظ„ط§ظ‹.</p>
               </div>
             </div>
             <Link to="/cart" className="bg-red-600 hover:bg-red-700 text-white text-xs font-black px-4 py-2 rounded-xl transition-colors self-start sm:self-auto">
-              العودة للسلة والحذف
+              ط§ظ„ط¹ظˆط¯ط© ظ„ظ„ط³ظ„ط© ظˆط§ظ„ط­ط°ظپ
             </Link>
           </div>
         )}
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-          {/* ── RIGHT: Payment methods + dynamic panel ───────────────── */}
+          {/* â”€â”€ RIGHT: Payment methods + dynamic panel â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
           <div className="lg:col-span-7 space-y-5 order-2 lg:order-1">
 
             {/* Payment method selector */}
             <div className="bg-white dark:bg-[#1a1d24] border border-gray-100 dark:border-gray-700 rounded-3xl p-6 shadow-sm">
               <h2 className="text-base font-black text-gray-900 dark:text-white mb-5 flex items-center gap-2">
                 <CreditCard size={18} className="text-red-600" />
-                اختر وسيلة الدفع
+                ط§ط®طھط± ظˆط³ظٹظ„ط© ط§ظ„ط¯ظپط¹
               </h2>
 
               <LayoutGroup>
@@ -426,7 +426,7 @@ export default function Checkout() {
                 {autoMethods.length > 0 && (
                   <div className="mb-5">
                     <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3 flex items-center gap-1.5">
-                      <Zap size={10} className="text-emerald-500" /> دفع تلقائي فوري
+                      <Zap size={10} className="text-emerald-500" /> ط¯ظپط¹ طھظ„ظ‚ط§ط¦ظٹ ظپظˆط±ظٹ
                     </p>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       {autoMethods.map(m => (
@@ -445,7 +445,7 @@ export default function Checkout() {
                 {manualMethods.length > 0 && (
                   <div>
                     <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3 flex items-center gap-1.5">
-                      <Upload size={10} /> دفع يدوي (تأكيد بشري)
+                      <Upload size={10} /> ط¯ظپط¹ ظٹط¯ظˆظٹ (طھط£ظƒظٹط¯ ط¨ط´ط±ظٹ)
                     </p>
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                       {manualMethods.map(m => (
@@ -462,7 +462,7 @@ export default function Checkout() {
               </LayoutGroup>
             </div>
 
-            {/* ── Dynamic panel per selected method ─────────────────── */}
+            {/* â”€â”€ Dynamic panel per selected method â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
             <AnimatePresence mode="wait">
               {/* Visa card form */}
               {paymentMethod === 'visa' && (
@@ -475,11 +475,11 @@ export default function Checkout() {
                   className="bg-white dark:bg-[#1a1d24] border border-gray-100 dark:border-gray-700 rounded-3xl p-6 shadow-sm"
                 >
                   <h3 className="text-sm font-black text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-                    <CreditCard size={15} className="text-blue-600" /> بيانات البطاقة
+                    <CreditCard size={15} className="text-blue-600" /> ط¨ظٹط§ظ†ط§طھ ط§ظ„ط¨ط·ط§ظ‚ط©
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="sm:col-span-2">
-                      <label className="block text-[10px] font-black text-gray-500 mb-1.5 uppercase tracking-wider">رقم البطاقة</label>
+                      <label className="block text-[10px] font-black text-gray-500 mb-1.5 uppercase tracking-wider">ط±ظ‚ظ… ط§ظ„ط¨ط·ط§ظ‚ط©</label>
                       <input
                         type="text"
                         className="w-full bg-gray-50 dark:bg-[#0f1115] border-2 border-transparent focus:border-blue-500 rounded-xl py-3.5 px-4 outline-none transition-all text-sm font-black text-left"
@@ -489,7 +489,7 @@ export default function Checkout() {
                       />
                     </div>
                     <div>
-                      <label className="block text-[10px] font-black text-gray-500 mb-1.5 uppercase tracking-wider">تاريخ الانتهاء</label>
+                      <label className="block text-[10px] font-black text-gray-500 mb-1.5 uppercase tracking-wider">طھط§ط±ظٹط® ط§ظ„ط§ظ†طھظ‡ط§ط،</label>
                       <input
                         type="text"
                         className="w-full bg-gray-50 dark:bg-[#0f1115] border-2 border-transparent focus:border-blue-500 rounded-xl py-3.5 px-4 outline-none transition-all text-sm font-black text-left"
@@ -499,11 +499,11 @@ export default function Checkout() {
                       />
                     </div>
                     <div>
-                      <label className="block text-[10px] font-black text-gray-500 mb-1.5 uppercase tracking-wider">رمز CVV</label>
+                      <label className="block text-[10px] font-black text-gray-500 mb-1.5 uppercase tracking-wider">ط±ظ…ط² CVV</label>
                       <input
                         type="password"
                         className="w-full bg-gray-50 dark:bg-[#0f1115] border-2 border-transparent focus:border-blue-500 rounded-xl py-3.5 px-4 outline-none transition-all text-sm font-black text-left"
-                        placeholder="•••"
+                        placeholder="â€¢â€¢â€¢"
                         dir="ltr"
                         maxLength={4}
                       />
@@ -511,7 +511,7 @@ export default function Checkout() {
                   </div>
                   <div className="mt-4 flex items-center gap-2 text-[10px] font-bold text-gray-400">
                     <ShieldCheck size={12} className="text-emerald-500" />
-                    بياناتك محمية بتشفير SSL 256-bit
+                    ط¨ظٹط§ظ†ط§طھظƒ ظ…ط­ظ…ظٹط© ط¨طھط´ظپظٹط± SSL 256-bit
                   </div>
                 </motion.div>
               )}
@@ -529,13 +529,13 @@ export default function Checkout() {
                   {/* Steps */}
                   <div>
                     <h3 className="text-sm font-black text-gray-900 dark:text-white mb-4">
-                      خطوات الدفع عبر {selectedMethod?.label}
+                      ط®ط·ظˆط§طھ ط§ظ„ط¯ظپط¹ ط¹ط¨ط± {selectedMethod?.label}
                     </h3>
                     <div className="space-y-3">
                       {[
-                        { n: '١', text: `حوّل المبلغ الإجمالي (${formatPrice(finalPrice)}) إلى الرقم أدناه.` },
-                        { n: '٢', text: 'التقط صورة إيصال التحويل.' },
-                        { n: '٣', text: 'ارفع الصورة وانقر "تأكيد الدفع" — سيصلك شحنك خلال دقائق.' },
+                        { n: 'ظ،', text: `ط­ظˆظ‘ظ„ ط§ظ„ظ…ط¨ظ„ط؛ ط§ظ„ط¥ط¬ظ…ط§ظ„ظٹ (${formatPrice(finalPrice)}) ط¥ظ„ظ‰ ط§ظ„ط±ظ‚ظ… ط£ط¯ظ†ط§ظ‡.` },
+                        { n: 'ظ¢', text: 'ط§ظ„طھظ‚ط· طµظˆط±ط© ط¥ظٹطµط§ظ„ ط§ظ„طھط­ظˆظٹظ„.' },
+                        { n: 'ظ£', text: 'ط§ط±ظپط¹ ط§ظ„طµظˆط±ط© ظˆط§ظ†ظ‚ط± "طھط£ظƒظٹط¯ ط§ظ„ط¯ظپط¹" â€” ط³ظٹطµظ„ظƒ ط´ط­ظ†ظƒ ط®ظ„ط§ظ„ ط¯ظ‚ط§ط¦ظ‚.' },
                       ].map(step => (
                         <div key={step.n} className="flex items-start gap-3">
                           <div className="w-7 h-7 bg-red-700 text-white rounded-xl flex items-center justify-center font-black text-[11px] flex-shrink-0">
@@ -550,7 +550,7 @@ export default function Checkout() {
                   {/* Account number card */}
                   <div className="bg-gray-50 dark:bg-[#0f1115] border border-gray-200 dark:border-gray-700 rounded-2xl p-4">
                     <p className="text-[10px] font-black text-gray-400 uppercase tracking-wider mb-2">
-                      رقم الحساب / المحفظة
+                      ط±ظ‚ظ… ط§ظ„ط­ط³ط§ط¨ / ط§ظ„ظ…ط­ظپط¸ط©
                     </p>
                     <div className="flex items-center justify-between gap-3">
                       <span className="text-xl font-black tracking-widest text-gray-900 dark:text-white" dir="ltr">
@@ -559,16 +559,16 @@ export default function Checkout() {
                       <button
                         onClick={() => {
                           navigator.clipboard.writeText(accountNumber);
-                          addToast('تم نسخ الرقم ✨', 'success');
+                          addToast('طھظ… ظ†ط³ط® ط§ظ„ط±ظ‚ظ… âœ¨', 'success');
                         }}
                         className="flex items-center gap-1.5 bg-gray-900 dark:bg-white text-white dark:text-gray-900 font-black text-[11px] px-3 py-2 rounded-xl hover:opacity-80 transition-all active:scale-95"
                       >
-                        <Copy size={12} /> نسخ
+                        <Copy size={12} /> ظ†ط³ط®
                       </button>
                     </div>
                     {paymentMethod === 'phone-cash' && (
                       <p className="text-[10px] font-bold text-orange-600 mt-2">
-                        فودافون كاش · اتصالات كاش · أورنج كاش
+                        ظپظˆط¯ط§ظپظˆظ† ظƒط§ط´ آ· ط§طھطµط§ظ„ط§طھ ظƒط§ط´ آ· ط£ظˆط±ظ†ط¬ ظƒط§ط´
                       </p>
                     )}
                   </div>
@@ -576,7 +576,7 @@ export default function Checkout() {
                   {/* Screenshot upload */}
                   <div>
                     <p className="text-[10px] font-black text-gray-500 uppercase tracking-wider mb-3">
-                      رفع إيصال التحويل <span className="text-red-600">(مطلوب)</span>
+                      ط±ظپط¹ ط¥ظٹطµط§ظ„ ط§ظ„طھط­ظˆظٹظ„ <span className="text-red-600">(ظ…ط·ظ„ظˆط¨)</span>
                     </p>
                     <label
                       className={[
@@ -598,7 +598,7 @@ export default function Checkout() {
                             onClick={(e) => { e.preventDefault(); setPaymentScreenshot(null); }}
                             className="text-[10px] font-bold text-red-600 hover:underline"
                           >
-                            تغيير الصورة
+                            طھط؛ظٹظٹط± ط§ظ„طµظˆط±ط©
                           </button>
                         </div>
                       ) : (
@@ -606,8 +606,8 @@ export default function Checkout() {
                           <div className="w-10 h-10 bg-gray-100 dark:bg-gray-800 rounded-xl flex items-center justify-center">
                             <Upload size={18} className="text-gray-400" />
                           </div>
-                          <p className="text-xs font-black text-gray-700 dark:text-gray-300">اضغط لرفع الإيصال</p>
-                          <p className="text-[10px] font-bold text-gray-400">PNG, JPG — حتى 5MB</p>
+                          <p className="text-xs font-black text-gray-700 dark:text-gray-300">ط§ط¶ط؛ط· ظ„ط±ظپط¹ ط§ظ„ط¥ظٹطµط§ظ„</p>
+                          <p className="text-[10px] font-bold text-gray-400">PNG, JPG â€” ط­طھظ‰ 5MB</p>
                         </div>
                       )}
                       <input
@@ -623,7 +623,7 @@ export default function Checkout() {
             </AnimatePresence>
           </div>
 
-          {/* ── LEFT: Order summary (sticky) ────────────────────────── */}
+          {/* â”€â”€ LEFT: Order summary (sticky) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
           <div className="lg:col-span-5 order-1 lg:order-2">
             <div className="bg-white dark:bg-[#1a1d24] border border-gray-100 dark:border-gray-700 rounded-3xl p-6 shadow-sm lg:sticky lg:top-20 space-y-5">
 
@@ -631,7 +631,7 @@ export default function Checkout() {
               <div>
                 <h2 className="text-base font-black text-gray-900 dark:text-white mb-4 flex items-center gap-2">
                   <ShoppingBag size={16} className="text-red-600" />
-                  ملخص الطلب
+                  ظ…ظ„ط®طµ ط§ظ„ط·ظ„ط¨
                 </h2>
                 <div className="space-y-3 max-h-52 overflow-y-auto pr-1">
                   {items.map((item, idx) => {
@@ -645,14 +645,14 @@ export default function Checkout() {
                           <img src={item.image_url || undefined} alt="" className="w-full h-full object-cover" />
                           {isOos && (
                             <span className="absolute inset-0 bg-red-950/70 flex items-center justify-center text-white text-[9px] font-black">
-                              نفد
+                              ظ†ظپط¯
                             </span>
                           )}
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-[11px] font-black text-gray-900 dark:text-white truncate">{item.title}</p>
                           <div className="flex flex-wrap items-center gap-1.5 mt-0.5">
-                            <span className="text-[10px] font-bold text-gray-400">×{item.quantity}</span>
+                            <span className="text-[10px] font-bold text-gray-400">أ—{item.quantity}</span>
                             {username && (
                               <span className="text-[9px] font-black text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-950/40 px-1.5 py-0.2 rounded border border-purple-200 dark:border-purple-800/40 truncate max-w-[120px]" dir="ltr">
                                 {username}
@@ -666,7 +666,7 @@ export default function Checkout() {
                           </div>
                           {isOos && (
                             <p className="text-[9px] font-black text-red-600 dark:text-red-400 mt-0.5">
-                              ⚠️ نفد من المخزون
+                              âڑ ï¸ڈ ظ†ظپط¯ ظ…ظ† ط§ظ„ظ…ط®ط²ظˆظ†
                             </p>
                           )}
                         </div>
@@ -683,30 +683,30 @@ export default function Checkout() {
               <div className="border-t border-gray-100 dark:border-gray-700 pt-4 space-y-2.5">
                 <div className="flex justify-between text-xs font-bold text-gray-500">
                   <span>{formatPrice(totalPrice)}</span>
-                  <span>المجموع الفرعي</span>
+                  <span>ط§ظ„ظ…ط¬ظ…ظˆط¹ ط§ظ„ظپط±ط¹ظٹ</span>
                 </div>
 
                 {appliedCoupon && (
                   <div className="flex justify-between text-xs font-black">
-                    <span className="text-emerald-600">−{formatPrice(discountAmount)}</span>
+                    <span className="text-emerald-600">âˆ’{formatPrice(discountAmount)}</span>
                     <span className="flex items-center gap-1 text-emerald-600">
-                      <Tag size={11} /> كوبون ({appliedCoupon.code})
+                      <Tag size={11} /> ظƒظˆط¨ظˆظ† ({appliedCoupon.code})
                     </span>
                   </div>
                 )}
 
                 <div className="flex justify-between text-xs font-bold text-gray-500">
                   <span className={shippingFee === 0 ? 'text-emerald-600' : ''}>
-                    {shippingFee === 0 ? 'مجاني 🎉' : formatPrice(shippingFee)}
+                    {shippingFee === 0 ? 'ظ…ط¬ط§ظ†ظٹ ًںژ‰' : formatPrice(shippingFee)}
                   </span>
-                  <span>رسوم الشحن والمعالجة</span>
+                  <span>ط±ط³ظˆظ… ط§ظ„ط´ط­ظ† ظˆط§ظ„ظ…ط¹ط§ظ„ط¬ط©</span>
                 </div>
 
                 <div className="flex justify-between items-baseline border-t border-gray-100 dark:border-gray-700 pt-3 mt-1">
                   <span className="text-2xl font-black text-red-700 tracking-tight">
                     {formatPrice(finalPrice)}
                   </span>
-                  <span className="text-sm font-black text-gray-900 dark:text-white">الإجمالي النهائي</span>
+                  <span className="text-sm font-black text-gray-900 dark:text-white">ط§ظ„ط¥ط¬ظ…ط§ظ„ظٹ ط§ظ„ظ†ظ‡ط§ط¦ظٹ</span>
                 </div>
               </div>
 
@@ -726,13 +726,13 @@ export default function Checkout() {
                   </div>
                 </div>
                 <p className="text-[11px] font-bold text-gray-600 dark:text-gray-400 leading-relaxed">
-                  لقد قرأت وأوافق على{' '}
+                  ظ„ظ‚ط¯ ظ‚ط±ط£طھ ظˆط£ظˆط§ظپظ‚ ط¹ظ„ظ‰{' '}
                   <button
                     type="button"
                     onClick={() => setShowTermsModal(true)}
                     className="text-red-600 font-black underline underline-offset-2 hover:text-red-800"
                   >
-                    الشروط والأحكام وسياسة الاسترجاع
+                    ط§ظ„ط´ط±ظˆط· ظˆط§ظ„ط£ط­ظƒط§ظ… ظˆط³ظٹط§ط³ط© ط§ظ„ط§ط³طھط±ط¬ط§ط¹
                   </button>
                 </p>
               </label>
@@ -752,24 +752,24 @@ export default function Checkout() {
                 ].join(' ')}
               >
                 {isProcessing || isUploading ? (
-                  <><Loader2 size={20} className="animate-spin" /> {isUploading ? 'جاري الرفع...' : 'جاري المعالجة...'}</>
+                  <><Loader2 size={20} className="animate-spin" /> {isUploading ? 'ط¬ط§ط±ظٹ ط§ظ„ط±ظپط¹...' : 'ط¬ط§ط±ظٹ ط§ظ„ظ…ط¹ط§ظ„ط¬ط©...'}</>
                 ) : hasOutOfStock ? (
-                  <><AlertTriangle size={18} className="text-red-500" /> يرجى إزالة المنتجات غير المتوفرة</>
+                  <><AlertTriangle size={18} className="text-red-500" /> ظٹط±ط¬ظ‰ ط¥ط²ط§ظ„ط© ط§ظ„ظ…ظ†طھط¬ط§طھ ط؛ظٹط± ط§ظ„ظ…طھظˆظپط±ط©</>
                 ) : (
-                  <><ShieldCheck size={18} /> تأكيد الدفع وإتمام الطلب</>
+                  <><ShieldCheck size={18} /> طھط£ظƒظٹط¯ ط§ظ„ط¯ظپط¹ ظˆط¥طھظ…ط§ظ… ط§ظ„ط·ظ„ط¨</>
                 )}
               </button>
 
               <p className="text-center text-[10px] font-bold text-gray-400 flex items-center justify-center gap-1.5">
                 <ShieldCheck size={11} className="text-emerald-500" />
-                جميع المدفوعات محمية وآمنة بالكامل
+                ط¬ظ…ظٹط¹ ط§ظ„ظ…ط¯ظپظˆط¹ط§طھ ظ…ط­ظ…ظٹط© ظˆط¢ظ…ظ†ط© ط¨ط§ظ„ظƒط§ظ…ظ„
               </p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* ── Terms Modal ────────────────────────────────────────────────── */}
+      {/* â”€â”€ Terms Modal â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <AnimatePresence>
         {showTermsModal && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
@@ -789,8 +789,8 @@ export default function Checkout() {
             >
               <div className="flex items-center justify-between p-6 border-b border-gray-100 dark:border-gray-700">
                 <div>
-                  <h2 className="text-lg font-black text-gray-900 dark:text-white">الشروط والأحكام</h2>
-                  <p className="text-[11px] font-bold text-gray-400 mt-0.5">يرجى القراءة بعناية</p>
+                  <h2 className="text-lg font-black text-gray-900 dark:text-white">ط§ظ„ط´ط±ظˆط· ظˆط§ظ„ط£ط­ظƒط§ظ…</h2>
+                  <p className="text-[11px] font-bold text-gray-400 mt-0.5">ظٹط±ط¬ظ‰ ط§ظ„ظ‚ط±ط§ط،ط© ط¨ط¹ظ†ط§ظٹط©</p>
                 </div>
                 <button
                   onClick={() => setShowTermsModal(false)}
@@ -802,10 +802,10 @@ export default function Checkout() {
 
               <div className="p-6 max-h-[55vh] overflow-y-auto space-y-5">
                 {[
-                  { n: '١', title: 'سياسة الاسترجاع', body: 'لا يحق للعميل طلب استرجاع المبلغ بعد بدء معالجة الطلب، سواء كان الدفع يدوياً أو من خلال بوابة الدفع الآلية.' },
-                  { n: '٢', title: 'دقة البيانات', body: 'العميل مسؤول مسؤولية كاملة عن صحة البيانات المدخلة، مثل اسم المستخدم أو الـ ID الخاص بالحساب.' },
-                  { n: '٣', title: 'مدة المعالجة', body: 'تتم معالجة الطلبات وتنفيذها خلال فترة تتراوح بين 15 دقيقة و12 ساعة عمل كحد أقصى.' },
-                  { n: '٤', title: 'الإقرار القانوني', body: 'بإتمامك لعملية الشحن، فأنت تقر بصحة العملية وتوافق على كافة الشروط المذكورة.' },
+                  { n: 'ظ،', title: 'ط³ظٹط§ط³ط© ط§ظ„ط§ط³طھط±ط¬ط§ط¹', body: 'ظ„ط§ ظٹط­ظ‚ ظ„ظ„ط¹ظ…ظٹظ„ ط·ظ„ط¨ ط§ط³طھط±ط¬ط§ط¹ ط§ظ„ظ…ط¨ظ„ط؛ ط¨ط¹ط¯ ط¨ط¯ط، ظ…ط¹ط§ظ„ط¬ط© ط§ظ„ط·ظ„ط¨طŒ ط³ظˆط§ط، ظƒط§ظ† ط§ظ„ط¯ظپط¹ ظٹط¯ظˆظٹط§ظ‹ ط£ظˆ ظ…ظ† ط®ظ„ط§ظ„ ط¨ظˆط§ط¨ط© ط§ظ„ط¯ظپط¹ ط§ظ„ط¢ظ„ظٹط©.' },
+                  { n: 'ظ¢', title: 'ط¯ظ‚ط© ط§ظ„ط¨ظٹط§ظ†ط§طھ', body: 'ط§ظ„ط¹ظ…ظٹظ„ ظ…ط³ط¤ظˆظ„ ظ…ط³ط¤ظˆظ„ظٹط© ظƒط§ظ…ظ„ط© ط¹ظ† طµط­ط© ط§ظ„ط¨ظٹط§ظ†ط§طھ ط§ظ„ظ…ط¯ط®ظ„ط©طŒ ظ…ط«ظ„ ط§ط³ظ… ط§ظ„ظ…ط³طھط®ط¯ظ… ط£ظˆ ط§ظ„ظ€ ID ط§ظ„ط®ط§طµ ط¨ط§ظ„ط­ط³ط§ط¨.' },
+                  { n: 'ظ£', title: 'ظ…ط¯ط© ط§ظ„ظ…ط¹ط§ظ„ط¬ط©', body: 'طھطھظ… ظ…ط¹ط§ظ„ط¬ط© ط§ظ„ط·ظ„ط¨ط§طھ ظˆطھظ†ظپظٹط°ظ‡ط§ ط®ظ„ط§ظ„ ظپطھط±ط© طھطھط±ط§ظˆط­ ط¨ظٹظ† 15 ط¯ظ‚ظٹظ‚ط© ظˆ12 ط³ط§ط¹ط© ط¹ظ…ظ„ ظƒط­ط¯ ط£ظ‚طµظ‰.' },
+                  { n: 'ظ¤', title: 'ط§ظ„ط¥ظ‚ط±ط§ط± ط§ظ„ظ‚ط§ظ†ظˆظ†ظٹ', body: 'ط¨ط¥طھظ…ط§ظ…ظƒ ظ„ط¹ظ…ظ„ظٹط© ط§ظ„ط´ط­ظ†طŒ ظپط£ظ†طھ طھظ‚ط± ط¨طµط­ط© ط§ظ„ط¹ظ…ظ„ظٹط© ظˆطھظˆط§ظپظ‚ ط¹ظ„ظ‰ ظƒط§ظپط© ط§ظ„ط´ط±ظˆط· ط§ظ„ظ…ط°ظƒظˆط±ط©.' },
                 ].map(t => (
                   <div key={t.n} className="flex gap-4">
                     <div className="w-8 h-8 bg-red-50 dark:bg-red-900/20 rounded-xl flex items-center justify-center text-red-600 font-black text-sm flex-shrink-0">
@@ -824,7 +824,7 @@ export default function Checkout() {
                   onClick={() => { setTermsAccepted(true); setShowTermsModal(false); }}
                   className="w-full bg-red-700 hover:bg-red-800 text-white font-black py-4 rounded-2xl transition-all active:scale-[0.98] shadow-lg shadow-red-700/20"
                 >
-                  قرأت وأوافق على جميع الشروط ✓
+                  ظ‚ط±ط£طھ ظˆط£ظˆط§ظپظ‚ ط¹ظ„ظ‰ ط¬ظ…ظٹط¹ ط§ظ„ط´ط±ظˆط· âœ“
                 </button>
               </div>
             </motion.div>
@@ -835,7 +835,7 @@ export default function Checkout() {
   );
 }
 
-/* ─── PayCard sub-component ──────────────────────────────────────────────── */
+/* â”€â”€â”€ PayCard sub-component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function PayCard({
   method, selected, onSelect,
 }: { method: PayMethod; selected: boolean; onSelect: () => void; key?: React.Key }) {
@@ -887,3 +887,5 @@ function PayCard({
     </button>
   );
 }
+
+
