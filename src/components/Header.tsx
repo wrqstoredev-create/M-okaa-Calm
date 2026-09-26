@@ -1,16 +1,16 @@
-/**
- * Header — GamePay
+﻿/**
+ * Header أ¢â‚¬â€‌ GamePay
  *
  * Changes vs. original:
- * ─────────────────────
- * • Merged all conflicting dark:bg-* classes into a consistent surface token
+ * أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬
+ * أ¢â‚¬آ¢ Merged all conflicting dark:bg-* classes into a consistent surface token
  *   pattern (dark:bg-[#1a1d24] / dark:bg-[#0f1115]).
- * • Added responsive Hamburger Menu (≡) with an animated full-screen Mobile
+ * أ¢â‚¬آ¢ Added responsive Hamburger Menu (أ¢â€°طŒ) with an animated full-screen Mobile
  *   Drawer that mirrors the desktop nav links.
- * • Extracted repeated button / link class strings into small helper vars to
+ * أ¢â‚¬آ¢ Extracted repeated button / link class strings into small helper vars to
  *   keep JSX readable.
- * • All existing features (Favorites drawer, Cart badge, Robux counter,
- *   Currency switcher, Dark-mode toggle, Calm mode, Profile dropdown …)
+ * أ¢â‚¬آ¢ All existing features (Favorites drawer, Cart badge, Robux counter,
+ *   Currency switcher, Dark-mode toggle, Calm mode, Profile dropdown أ¢â‚¬آ¦)
  *   are preserved 1-to-1.
  */
 
@@ -49,7 +49,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { supabase } from '../lib/supabaseClient';
 import Tooltip from './ui/Tooltip';
 
-/* ─── Inline social-icon SVGs (unchanged from original) ─────────────────── */
+/* أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬ Inline social-icon SVGs (unchanged from original) أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬ */
 
 const TikTokIcon = ({ size = 20 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
@@ -75,7 +75,7 @@ const FacebookIcon = ({ size = 20 }: { size?: number }) => (
   </svg>
 );
 
-/* ─── Shared class helpers ───────────────────────────────────────────────── */
+/* أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬ Shared class helpers أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬ */
 
 /** Standard icon-button: square, rounded, bordered */
 const iconBtn =
@@ -90,12 +90,12 @@ const navLinkActive = 'text-red-600 dark:text-red-400 border-b-2 border-red-600 
 const navLinkIdle =
   'text-gray-600 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors font-bold';
 
-/* ═══════════════════════════════════════════════════════════════════════════ */
+/* أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯ */
 export default function Header() {
-  /* ── State ────────────────────────────────────────────────────────────── */
+  /* أ¢â€‌â‚¬أ¢â€‌â‚¬ State أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬ */
   const [isDropdownOpen,  setIsDropdownOpen]  = useState(false);
   const [isFavoritesOpen, setIsFavoritesOpen] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // ← NEW
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // أ¢â€ ع¯ NEW
 
   const dropdownRef  = useRef<HTMLDivElement>(null);
   const favoritesRef = useRef<HTMLDivElement>(null);
@@ -123,18 +123,18 @@ export default function Header() {
     () => localStorage.getItem('theme') === 'dark'
   );
 
-  /* ── Close mobile menu on route change ──────────────────────────────── */
+  /* أ¢â€‌â‚¬أ¢â€‌â‚¬ Close mobile menu on route change أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬ */
   useEffect(() => {
     setIsMobileMenuOpen(false);
   }, [location.pathname]);
 
-  /* ── Lock body scroll when mobile menu is open ──────────────────────── */
+  /* أ¢â€‌â‚¬أ¢â€‌â‚¬ Lock body scroll when mobile menu is open أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬ */
   useEffect(() => {
     document.body.style.overflow = isMobileMenuOpen ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
   }, [isMobileMenuOpen]);
 
-  /* ── Dark-mode persistence ──────────────────────────────────────────── */
+  /* أ¢â€‌â‚¬أ¢â€‌â‚¬ Dark-mode persistence أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬ */
   useEffect(() => {
     const root = window.document.documentElement;
     if (isDark) {
@@ -146,7 +146,7 @@ export default function Header() {
     }
   }, [isDark]);
 
-  /* ── Calm-mode audio ────────────────────────────────────────────────── */
+  /* أ¢â€‌â‚¬أ¢â€‌â‚¬ Calm-mode audio أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬ */
   useEffect(() => {
     if (isCalmActive) {
       if (!audioRef.current) {
@@ -171,7 +171,7 @@ export default function Header() {
     return () => { audioRef.current?.pause(); };
   }, [isCalmActive, isMuted]);
 
-  /* ── Settings fetch ─────────────────────────────────────────────────── */
+  /* أ¢â€‌â‚¬أ¢â€‌â‚¬ Settings fetch أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬ */
   useEffect(() => {
     async function getSettings() {
       try {
@@ -191,7 +191,7 @@ export default function Header() {
     return () => clearInterval(interval);
   }, [location.pathname]);
 
-  /* ── Click-outside handler ──────────────────────────────────────────── */
+  /* أ¢â€‌â‚¬أ¢â€‌â‚¬ Click-outside handler أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬ */
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
@@ -216,24 +216,24 @@ export default function Header() {
       ? 'https://discord.gg/HNss9cMfbG'
       : settings?.instagram_url || 'https://discord.gg/HNss9cMfbG';
 
-  /* ── Nav links data — single source used by both desktop & mobile nav ── */
+  /* أ¢â€‌â‚¬أ¢â€‌â‚¬ Nav links data أ¢â‚¬â€‌ single source used by both desktop & mobile nav أ¢â€‌â‚¬أ¢â€‌â‚¬ */
   const navLinks = [
-    { to: '/',        label: 'الرئيسية',      show: true },
-    { to: '/about',   label: 'من نحن',        show: settings?.show_about_link   !== false },
-    { to: '/store',   label: 'المنتجات',      show: true },
-    { to: '/terms',   label: 'الشروط والأحكام', show: settings?.show_terms_link   !== false },
-    { to: '/privacy', label: 'الخصوصية',      show: settings?.show_privacy_link  !== false },
-    { to: '/help',    label: 'المساعدة',      show: settings?.show_help_link     !== false },
-    { to: '/contact', label: 'اتصل بنا',      show: settings?.show_contact_link  !== false },
+    { to: '/',        label: 'ط·آ§ط¸â€‍ط·آ±ط·آ¦ط¸ظ¹ط·آ³ط¸ظ¹ط·آ©',      show: true },
+    { to: '/about',   label: 'ط¸â€¦ط¸â€  ط¸â€ ط·آ­ط¸â€ ',        show: settings?.show_about_link   !== false },
+    { to: '/store',   label: 'ط·آ§ط¸â€‍ط¸â€¦ط¸â€ ط·ع¾ط·آ¬ط·آ§ط·ع¾',      show: true },
+    { to: '/terms',   label: 'ط·آ§ط¸â€‍ط·آ´ط·آ±ط¸ث†ط·آ· ط¸ث†ط·آ§ط¸â€‍ط·آ£ط·آ­ط¸ئ’ط·آ§ط¸â€¦', show: settings?.show_terms_link   !== false },
+    { to: '/privacy', label: 'ط·آ§ط¸â€‍ط·آ®ط·آµط¸ث†ط·آµط¸ظ¹ط·آ©',      show: settings?.show_privacy_link  !== false },
+    { to: '/help',    label: 'ط·آ§ط¸â€‍ط¸â€¦ط·آ³ط·آ§ط·آ¹ط·آ¯ط·آ©',      show: settings?.show_help_link     !== false },
+    { to: '/contact', label: 'ط·آ§ط·ع¾ط·آµط¸â€‍ ط·آ¨ط¸â€ ط·آ§',      show: settings?.show_contact_link  !== false },
   ].filter((l) => l.show);
 
-  /* ════════════════════════════════════════════════════════════════════════ */
+  /* أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯ */
   return (
     <>
       <header className="border-b border-gray-200/80 dark:border-white/10 shadow-sm bg-white/95 dark:bg-[#060608]/90 backdrop-blur-2xl sticky top-0 z-50 transition-colors duration-300">
         <div className="max-w-7xl mx-auto flex items-center justify-between px-2 py-2 md:px-4 md:py-3 gap-1 md:gap-4">
 
-          {/* ── Logo + Calm toggle ─────────────────────────────────────── */}
+          {/* أ¢â€‌â‚¬أ¢â€‌â‚¬ Logo + Calm toggle أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬ */}
           <div className="flex items-center gap-4">
             <div className="flex flex-col items-start">
               <Link to="/" className="flex items-center cursor-pointer hover:opacity-90">
@@ -252,13 +252,13 @@ export default function Header() {
                     ? 'bg-emerald-50 border-emerald-200 text-emerald-700 animate-pulse'
                     : 'bg-zinc-50 dark:bg-[#0f1115] border-zinc-200 dark:border-zinc-700 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-800',
                 ].join(' ')}
-                title="تفعيل وضع الهدوء"
+                title="ط·ع¾ط¸ظ¾ط·آ¹ط¸ظ¹ط¸â€‍ ط¸ث†ط·آ¶ط·آ¹ ط·آ§ط¸â€‍ط¸â€،ط·آ¯ط¸ث†ط·طŒ"
               >
                 <Coffee
                   size={9}
                   className={isCalmActive ? 'animate-bounce text-emerald-600' : 'text-zinc-400'}
                 />
-                <span>M̵̓̔okaa Calm</span>
+                <span>Mط¬آµط¬â€œط¬â€‌okaa Calm</span>
               </button>
             </div>
 
@@ -276,7 +276,7 @@ export default function Header() {
             </nav>
           </div>
 
-          {/* ── Socials + Currency + Theme (xl only) ──────────────────── */}
+          {/* أ¢â€‌â‚¬أ¢â€‌â‚¬ Socials + Currency + Theme (xl only) أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬ */}
           <div className="hidden xl:flex items-center gap-3 px-2">
             {/* Phone */}
             <div className="flex items-center gap-1.5 group cursor-pointer">
@@ -344,18 +344,18 @@ export default function Header() {
                 onChange={(e) => setCurrency(e.target.value as Currency)}
                 className="text-[10px] font-black text-gray-700 dark:text-gray-300 bg-transparent outline-none cursor-pointer"
               >
-                <option value="EGY">EGY (ج.م)</option>
-                <option value="SAR">SAR (ر.س)</option>
+                <option value="EGY">EGY (ط·آ¬.ط¸â€¦)</option>
+                <option value="SAR">SAR (ط·آ±.ط·آ³)</option>
                 <option value="USD">USD ($)</option>
               </select>
             </div>
 
             {/* Theme toggle */}
-            <Tooltip content={isDark ? 'التبديل إلى الوضع الفاتح ☀️' : 'التبديل إلى الوضع الداكن 🌙'} position="bottom">
+            <Tooltip content={isDark ? 'ط·آ§ط¸â€‍ط·ع¾ط·آ¨ط·آ¯ط¸ظ¹ط¸â€‍ ط·آ¥ط¸â€‍ط¸â€° ط·آ§ط¸â€‍ط¸ث†ط·آ¶ط·آ¹ ط·آ§ط¸â€‍ط¸ظ¾ط·آ§ط·ع¾ط·آ­ أ¢ع©â‚¬أ¯آ¸عˆ' : 'ط·آ§ط¸â€‍ط·ع¾ط·آ¨ط·آ¯ط¸ظ¹ط¸â€‍ ط·آ¥ط¸â€‍ط¸â€° ط·آ§ط¸â€‍ط¸ث†ط·آ¶ط·آ¹ ط·آ§ط¸â€‍ط·آ¯ط·آ§ط¸ئ’ط¸â€  ظ‹ع؛إ’â„¢'} position="bottom">
               <button
                 onClick={() => setIsDark(!isDark)}
                 className={`${iconBtn} w-9 h-9 md:w-12 md:h-12 mr-1 cursor-pointer transition-transform active:scale-95`}
-                aria-label={isDark ? 'الوضع الفاتح' : 'الوضع الداكن'}
+                aria-label={isDark ? 'ط·آ§ط¸â€‍ط¸ث†ط·آ¶ط·آ¹ ط·آ§ط¸â€‍ط¸ظ¾ط·آ§ط·ع¾ط·آ­' : 'ط·آ§ط¸â€‍ط¸ث†ط·آ¶ط·آ¹ ط·آ§ط¸â€‍ط·آ¯ط·آ§ط¸ئ’ط¸â€ '}
               >
                 {isDark ? (
                   <Sun size={20} className="text-amber-400 drop-shadow-[0_0_8px_rgba(251,191,36,0.6)]" />
@@ -366,18 +366,18 @@ export default function Header() {
             </Tooltip>
           </div>
 
-          {/* ── Action icons (all screen sizes) ───────────────────────── */}
+          {/* أ¢â€‌â‚¬أ¢â€‌â‚¬ Action icons (all screen sizes) أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬ */}
           <div className="flex items-center gap-1 md:gap-2">
 
             {/* Robux balance */}
             {roboCoinsEnabled && (
               <div
                 className="flex items-center gap-1 md:gap-1.5 bg-amber-50 border border-amber-200/80 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-xl text-amber-800 shadow-sm text-right cursor-default select-none"
-                title="رصيدك المتبقي من الروبوكس"
+                title="ط·آ±ط·آµط¸ظ¹ط·آ¯ط¸ئ’ ط·آ§ط¸â€‍ط¸â€¦ط·ع¾ط·آ¨ط¸â€ڑط¸ظ¹ ط¸â€¦ط¸â€  ط·آ§ط¸â€‍ط·آ±ط¸ث†ط·آ¨ط¸ث†ط¸ئ’ط·آ³"
               >
-                <span className="text-[10px] md:text-[12px]">🪙</span>
+                <span className="text-[10px] md:text-[12px]">ظ‹ع؛ع¾â„¢</span>
                 <span className="hidden md:inline text-[10px] font-black text-amber-900 whitespace-nowrap">
-                  متبقي:
+                  ط¸â€¦ط·ع¾ط·آ¨ط¸â€ڑط¸ظ¹:
                 </span>
                 <span className="text-[9px] md:text-[11px] font-black font-mono tracking-tight text-amber-700">
                   {roboCoinsBalance.toLocaleString('en-US')}
@@ -424,14 +424,14 @@ export default function Header() {
                     {/* Header */}
                     <div className="p-4 border-b border-gray-50 dark:border-gray-700 bg-gray-50 dark:bg-[#0f1115]/50 flex items-center justify-between">
                       <span className="text-xs font-black text-gray-500 dark:text-gray-400">
-                        قائمة المفضلة ({favoritesCount})
+                        ط¸â€ڑط·آ§ط·آ¦ط¸â€¦ط·آ© ط·آ§ط¸â€‍ط¸â€¦ط¸ظ¾ط·آ¶ط¸â€‍ط·آ© ({favoritesCount})
                       </span>
                       <button
                         onClick={clearFavorites}
                         className="text-[10px] font-black text-red-600 hover:text-red-800 transition-colors"
                         disabled={favoritesCount === 0}
                       >
-                        مسح الكل
+                        ط¸â€¦ط·آ³ط·آ­ ط·آ§ط¸â€‍ط¸ئ’ط¸â€‍
                       </button>
                     </div>
 
@@ -448,7 +448,7 @@ export default function Header() {
                               <button
                                 onClick={(e) => { e.stopPropagation(); removeFavorite(prod.id); }}
                                 className="text-gray-300 hover:text-red-700 p-1.5 rounded-lg hover:bg-red-50 transition-all"
-                                title="إزالة من المفضلة"
+                                title="ط·آ¥ط·آ²ط·آ§ط¸â€‍ط·آ© ط¸â€¦ط¸â€  ط·آ§ط¸â€‍ط¸â€¦ط¸ظ¾ط·آ¶ط¸â€‍ط·آ©"
                               >
                                 <Heart className="w-4 h-4 fill-red-500 text-red-500" />
                               </button>
@@ -456,7 +456,7 @@ export default function Header() {
                                 onClick={() => { setIsFavoritesOpen(false); navigate(`/product/${prod.id}`); }}
                                 className="bg-red-700 hover:bg-red-800 text-white text-[10px] font-black px-3 py-1.5 rounded-lg transition-all active:scale-95 whitespace-nowrap"
                               >
-                                طلب المنتج
+                                ط·آ·ط¸â€‍ط·آ¨ ط·آ§ط¸â€‍ط¸â€¦ط¸â€ ط·ع¾ط·آ¬
                               </button>
                             </div>
 
@@ -492,10 +492,10 @@ export default function Header() {
                             <Heart className="w-6 h-6 text-red-700 fill-red-200" />
                           </div>
                           <p className="text-xs font-black text-gray-800 dark:text-white">
-                            قائمة المفضلة فارغة 💔
+                            ط¸â€ڑط·آ§ط·آ¦ط¸â€¦ط·آ© ط·آ§ط¸â€‍ط¸â€¦ط¸ظ¾ط·آ¶ط¸â€‍ط·آ© ط¸ظ¾ط·آ§ط·آ±ط·ط›ط·آ© ظ‹ع؛â€™â€‌
                           </p>
                           <p className="text-[10px] font-bold text-gray-400 mt-1">
-                            تصفح متجرنا واضغط ❤️ لحفظ منتجاتك المفضلة هنا!
+                            ط·ع¾ط·آµط¸ظ¾ط·آ­ ط¸â€¦ط·ع¾ط·آ¬ط·آ±ط¸â€ ط·آ§ ط¸ث†ط·آ§ط·آ¶ط·ط›ط·آ· أ¢â€Œآ¤أ¯آ¸عˆ ط¸â€‍ط·آ­ط¸ظ¾ط·آ¸ ط¸â€¦ط¸â€ ط·ع¾ط·آ¬ط·آ§ط·ع¾ط¸ئ’ ط·آ§ط¸â€‍ط¸â€¦ط¸ظ¾ط·آ¶ط¸â€‍ط·آ© ط¸â€،ط¸â€ ط·آ§!
                           </p>
                         </div>
                       )}
@@ -506,7 +506,7 @@ export default function Header() {
             </div>
 
             {/* Cart */}
-            <Tooltip content="سلة المشتريات" position="bottom">
+            <Tooltip content="ط·آ³ط¸â€‍ط·آ© ط·آ§ط¸â€‍ط¸â€¦ط·آ´ط·ع¾ط·آ±ط¸ظ¹ط·آ§ط·ع¾" position="bottom">
               <Link to="/cart" className="relative cursor-pointer group">
                 <div className="bg-white dark:bg-white/5 w-9 h-9 md:w-12 md:h-12 flex items-center justify-center rounded-xl border border-gray-200 dark:border-white/8 group-hover:border-red-500/40 group-hover:bg-red-50 dark:group-hover:bg-red-500/10 dark:group-hover:shadow-[0_0_15px_rgba(255,32,64,0.2)] transition-all duration-200 shadow-sm">
                   <ShoppingCart className="w-5 h-5 md:w-6 md:h-6 text-gray-700 dark:text-gray-300 group-hover:text-red-500 transition-colors" />
@@ -520,7 +520,7 @@ export default function Header() {
             </Tooltip>
 
             {/* My Orders */}
-            <Tooltip content="طلباتي" position="bottom">
+            <Tooltip content="ط·آ·ط¸â€‍ط·آ¨ط·آ§ط·ع¾ط¸ظ¹" position="bottom">
               <Link
                 to="/profile?tab=orders"
                 className="w-9 h-9 md:w-12 md:h-12 flex items-center justify-center rounded-xl bg-white dark:bg-white/5 border border-gray-200 dark:border-white/8 hover:border-red-500/40 hover:bg-red-50 dark:hover:bg-red-500/10 dark:hover:shadow-[0_0_15px_rgba(255,32,64,0.15)] transition-all duration-200 shadow-sm relative group"
@@ -544,16 +544,16 @@ export default function Header() {
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                   className="flex items-center gap-2 bg-white dark:bg-[#1a1d24] hover:bg-red-50 p-1.5 pr-2 rounded-xl transition-all border border-gray-100 dark:border-gray-700 hover:border-red-200 shadow-sm hover:shadow-md active:scale-95 group"
                 >
-                  <div className="text-right hidden sm:block">
+                  <div className="text-right hidden sm:block min-w-0">
                     <p className="text-[10px] font-bold text-gray-400 leading-none group-hover:text-red-400 transition-colors">
-                      مرحباً بك
+                      ط¸â€¦ط·آ±ط·آ­ط·آ¨ط·آ§ط¸â€¹ ط·آ¨ط¸ئ’
                     </p>
                     <p className="text-xs font-black truncate max-w-[100px] text-gray-900 dark:text-white group-hover:text-red-700 transition-colors">
                       {profile?.full_name || user.email?.split('@')[0]}
                     </p>
                   </div>
                   {profile?.avatar_url && profile.avatar_url !== '' ? (
-                    <div className="relative">
+                    <div className="relative shrink-0 flex-none min-w-[36px]">
                       <img
                         src={profile.avatar_url}
                         alt="Profile"
@@ -563,7 +563,7 @@ export default function Header() {
                       <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 border-2 border-white rounded-full" />
                     </div>
                   ) : (
-                    <div className="w-9 h-9 rounded-full bg-red-100 text-red-700 flex items-center justify-center font-black text-xs border-2 border-white shadow-sm group-hover:bg-red-200 transition-all">
+                    <div className="w-9 h-9 shrink-0 flex-none min-w-[36px] rounded-full bg-red-100 text-red-700 flex items-center justify-center font-black text-xs border-2 border-white shadow-sm group-hover:bg-red-200 transition-all">
                       {user.email?.[0].toUpperCase()}
                     </div>
                   )}
@@ -582,16 +582,16 @@ export default function Header() {
                         className="absolute left-0 mt-2 w-56 bg-white dark:bg-[#1a1d24] border border-gray-100 dark:border-gray-700 rounded-2xl shadow-2xl z-50 overflow-hidden"
                       >
                         <div className="p-4 border-b border-gray-50 dark:border-gray-700 bg-gray-50 dark:bg-[#0f1115]/50 text-right">
-                          <p className="text-xs font-bold text-gray-400">البريد الإلكتروني</p>
+                          <p className="text-xs font-bold text-gray-400">ط·آ§ط¸â€‍ط·آ¨ط·آ±ط¸ظ¹ط·آ¯ ط·آ§ط¸â€‍ط·آ¥ط¸â€‍ط¸ئ’ط·ع¾ط·آ±ط¸ث†ط¸â€ ط¸ظ¹</p>
                           <p className="text-xs font-black truncate text-gray-900 dark:text-white">
                             {user.email}
                           </p>
                         </div>
                         <div className="py-2 p-2 space-y-1">
                           {[
-                            { to: '/profile',           label: 'الملف الشخصي',    icon: <UserCircle size={18} /> },
-                            { to: '/profile?tab=settings', label: 'إعدادات الحساب', icon: <Settings size={18} /> },
-                            { to: '/profile?tab=orders',   label: 'طلباتي',          icon: <Package size={18} /> },
+                            { to: '/profile',           label: 'ط·آ§ط¸â€‍ط¸â€¦ط¸â€‍ط¸ظ¾ ط·آ§ط¸â€‍ط·آ´ط·آ®ط·آµط¸ظ¹',    icon: <UserCircle size={18} /> },
+                            { to: '/profile?tab=settings', label: 'ط·آ¥ط·آ¹ط·آ¯ط·آ§ط·آ¯ط·آ§ط·ع¾ ط·آ§ط¸â€‍ط·آ­ط·آ³ط·آ§ط·آ¨', icon: <Settings size={18} /> },
+                            { to: '/profile?tab=orders',   label: 'ط·آ·ط¸â€‍ط·آ¨ط·آ§ط·ع¾ط¸ظ¹',          icon: <Package size={18} /> },
                           ].map(({ to, label, icon }) => (
                             <Link
                               key={to}
@@ -609,7 +609,7 @@ export default function Header() {
                               onClick={() => setIsDropdownOpen(false)}
                               className="flex items-center justify-end gap-3 px-4 py-2.5 text-xs font-bold text-red-600 hover:bg-red-50 rounded-xl transition-all border-b border-gray-50 dark:border-gray-700 pb-2 mb-1"
                             >
-                              لوحة التحكم <ShieldCheck size={18} />
+                              ط¸â€‍ط¸ث†ط·آ­ط·آ© ط·آ§ط¸â€‍ط·ع¾ط·آ­ط¸ئ’ط¸â€¦ <ShieldCheck size={18} />
                             </Link>
                           )}
 
@@ -620,7 +620,7 @@ export default function Header() {
                             onClick={() => setIsDropdownOpen(false)}
                             className="flex items-center justify-end gap-3 px-4 py-2.5 text-xs font-bold text-gray-600 dark:text-gray-400 hover:bg-red-50 hover:text-red-700 rounded-xl transition-all"
                           >
-                            الدعم الفني <HeadphonesIcon size={18} />
+                            ط·آ§ط¸â€‍ط·آ¯ط·آ¹ط¸â€¦ ط·آ§ط¸â€‍ط¸ظ¾ط¸â€ ط¸ظ¹ <HeadphonesIcon size={18} />
                           </a>
 
                           <div className="border-t border-gray-50 dark:border-gray-700 my-1" />
@@ -629,7 +629,7 @@ export default function Header() {
                             onClick={handleLogout}
                             className="w-full flex items-center justify-end gap-3 px-4 py-2.5 text-xs font-bold text-red-600 hover:bg-red-50 rounded-xl transition-all"
                           >
-                            تسجيل الخروج <LogOut size={18} />
+                            ط·ع¾ط·آ³ط·آ¬ط¸ظ¹ط¸â€‍ ط·آ§ط¸â€‍ط·آ®ط·آ±ط¸ث†ط·آ¬ <LogOut size={18} />
                           </button>
                         </div>
                       </motion.div>
@@ -642,22 +642,22 @@ export default function Header() {
                 to="/login"
                 className="text-[10px] md:text-xs font-black bg-red-700 text-white px-3 py-1.5 md:px-5 md:py-2.5 rounded-xl hover:bg-red-800 transition-all shadow-lg shadow-red-100 active:scale-95 whitespace-nowrap"
               >
-                دخول
+                ط·آ¯ط·آ®ط¸ث†ط¸â€‍
               </Link>
             )}
 
-            {/* ── Hamburger (mobile only — shown below lg) ──────────── */}
+            {/* أ¢â€‌â‚¬أ¢â€‌â‚¬ Hamburger (mobile only أ¢â‚¬â€‌ shown below lg) أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬ */}
             <button
               className={`lg:hidden ${iconBtn} w-9 h-9 md:w-10 md:h-10 hover:text-red-600`}
               onClick={() => setIsMobileMenuOpen(true)}
-              aria-label="فتح القائمة"
+              aria-label="ط¸ظ¾ط·ع¾ط·آ­ ط·آ§ط¸â€‍ط¸â€ڑط·آ§ط·آ¦ط¸â€¦ط·آ©"
             >
               <Menu size={20} />
             </button>
           </div>
         </div>
 
-        {/* ── Calm-mode floating panel ─────────────────────────────────── */}
+        {/* أ¢â€‌â‚¬أ¢â€‌â‚¬ Calm-mode floating panel أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬أ¢â€‌â‚¬ */}
         <AnimatePresence>
           {isCalmActive && (
             <motion.div
@@ -671,8 +671,8 @@ export default function Header() {
                 <Coffee size={16} className="animate-bounce" />
               </div>
               <div className="flex-grow">
-                <p className="text-[10px] font-black text-emerald-400">مفعّل: وضع موكا الهادئ ☕</p>
-                <p className="text-[11px] font-bold text-zinc-300">محيط مريح ولطيف لتناول الطعام</p>
+                <p className="text-[10px] font-black text-emerald-400">ط¸â€¦ط¸ظ¾ط·آ¹ط¸â€کط¸â€‍: ط¸ث†ط·آ¶ط·آ¹ ط¸â€¦ط¸ث†ط¸ئ’ط·آ§ ط·آ§ط¸â€‍ط¸â€،ط·آ§ط·آ¯ط·آ¦ أ¢ع©â€¢</p>
+                <p className="text-[11px] font-bold text-zinc-300">ط¸â€¦ط·آ­ط¸ظ¹ط·آ· ط¸â€¦ط·آ±ط¸ظ¹ط·آ­ ط¸ث†ط¸â€‍ط·آ·ط¸ظ¹ط¸ظ¾ ط¸â€‍ط·ع¾ط¸â€ ط·آ§ط¸ث†ط¸â€‍ ط·آ§ط¸â€‍ط·آ·ط·آ¹ط·آ§ط¸â€¦</p>
               </div>
               <div className="flex items-center gap-2 border-r border-white/10 pr-3">
                 <button
@@ -682,16 +682,16 @@ export default function Header() {
                       ? 'bg-zinc-800 text-zinc-400'
                       : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-900/40'
                   }`}
-                  title={isMuted ? 'تشغيل الصوت' : 'كتم الصوت'}
+                  title={isMuted ? 'ط·ع¾ط·آ´ط·ط›ط¸ظ¹ط¸â€‍ ط·آ§ط¸â€‍ط·آµط¸ث†ط·ع¾' : 'ط¸ئ’ط·ع¾ط¸â€¦ ط·آ§ط¸â€‍ط·آµط¸ث†ط·ع¾'}
                 >
                   {isMuted ? <VolumeX size={18} /> : <Volume2 size={18} className="animate-pulse" />}
                 </button>
                 <button
                   onClick={() => setIsCalmActive(false)}
                   className="w-10 h-10 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-400 hover:text-white flex items-center justify-center transition-all text-sm font-black"
-                  title="إغلاق وضع الهدوء"
+                  title="ط·آ¥ط·ط›ط¸â€‍ط·آ§ط¸â€ڑ ط¸ث†ط·آ¶ط·آ¹ ط·آ§ط¸â€‍ط¸â€،ط·آ¯ط¸ث†ط·طŒ"
                 >
-                  ✕
+                  أ¢إ“â€¢
                 </button>
               </div>
             </motion.div>
@@ -699,10 +699,10 @@ export default function Header() {
         </AnimatePresence>
       </header>
 
-      {/* ════════════════════════════════════════════════════════════════════
-          MOBILE MENU DRAWER — full-screen overlay, slides from the right
+      {/* أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯
+          MOBILE MENU DRAWER أ¢â‚¬â€‌ full-screen overlay, slides from the right
           Visible on: < lg (i.e., phones & tablets)
-      ════════════════════════════════════════════════════════════════════ */}
+      أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯أ¢â€¢ع¯ */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <>
@@ -742,7 +742,7 @@ export default function Header() {
                 <button
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="w-9 h-9 flex items-center justify-center rounded-xl bg-gray-100 dark:bg-[#0f1115] text-gray-600 dark:text-gray-400 hover:bg-red-50 hover:text-red-700 transition-all"
-                  aria-label="إغلاق القائمة"
+                  aria-label="ط·آ¥ط·ط›ط¸â€‍ط·آ§ط¸â€ڑ ط·آ§ط¸â€‍ط¸â€ڑط·آ§ط·آ¦ط¸â€¦ط·آ©"
                 >
                   <X size={18} />
                 </button>
@@ -774,7 +774,7 @@ export default function Header() {
                 {/* Currency */}
                 <div className="flex items-center justify-between bg-gray-50 dark:bg-[#0f1115] rounded-xl px-4 py-3 border border-gray-100 dark:border-gray-700">
                   <span className="text-xs font-black text-gray-500 dark:text-gray-400">
-                    العملة
+                    ط·آ§ط¸â€‍ط·آ¹ط¸â€¦ط¸â€‍ط·آ©
                   </span>
                   <div className="flex items-center gap-1">
                     <Globe size={12} className="text-gray-400" />
@@ -783,8 +783,8 @@ export default function Header() {
                       onChange={(e) => setCurrency(e.target.value as Currency)}
                       className="text-xs font-black text-gray-700 dark:text-gray-300 bg-transparent outline-none cursor-pointer"
                     >
-                      <option value="EGY">EGY (ج.م)</option>
-                      <option value="SAR">SAR (ر.س)</option>
+                      <option value="EGY">EGY (ط·آ¬.ط¸â€¦)</option>
+                      <option value="SAR">SAR (ط·آ±.ط·آ³)</option>
                       <option value="USD">USD ($)</option>
                     </select>
                   </div>
@@ -796,7 +796,7 @@ export default function Header() {
                   className="w-full flex items-center justify-between bg-gray-50 dark:bg-[#0f1115] rounded-xl px-4 py-3 border border-gray-100 dark:border-gray-700 transition-all hover:border-red-200 hover:bg-red-50 dark:hover:bg-[#0f1115]"
                 >
                   <span className="text-xs font-black text-gray-500 dark:text-gray-400">
-                    {isDark ? 'الوضع الفاتح' : 'الوضع الداكن'}
+                    {isDark ? 'ط·آ§ط¸â€‍ط¸ث†ط·آ¶ط·آ¹ ط·آ§ط¸â€‍ط¸ظ¾ط·آ§ط·ع¾ط·آ­' : 'ط·آ§ط¸â€‍ط¸ث†ط·آ¶ط·آ¹ ط·آ§ط¸â€‍ط·آ¯ط·آ§ط¸ئ’ط¸â€ '}
                   </span>
                   {isDark
                     ? <Sun size={18} className="text-amber-500" />
@@ -831,3 +831,5 @@ export default function Header() {
     </>
   );
 }
+
+
