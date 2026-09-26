@@ -4,10 +4,13 @@ import { useNavigate } from 'react-router-dom';
 import { X, Trash2, ShoppingBag, ArrowLeft, ShieldCheck, Check, ExternalLink } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
 import { useCurrency } from '../contexts/CurrencyContext';
+import { useAuth } from '../contexts/AuthContext';
+import { Ban } from 'lucide-react';
 
 export default function CartDrawer() {
   const { isCartDrawerOpen, toggleCartDrawer, items, removeItem, updateQuantity, totalItems, totalPrice } = useCart();
   const { formatPriceByCurrency } = useCurrency();
+  const { profile } = useAuth();
   const navigate = useNavigate();
   
   const [showTerms, setShowTerms] = useState(false);
@@ -140,18 +143,37 @@ export default function CartDrawer() {
                     <span className="text-red-600">{formatPriceByCurrency(totalPrice)}</span>
                   </div>
                   
-                  <div className="flex items-center gap-2 text-[10px] text-gray-500 dark:text-gray-400 bg-white/50 dark:bg-white/5 p-3 rounded-xl border border-gray-200 dark:border-white/10">
-                    <ShieldCheck size={14} className="text-emerald-500 shrink-0" />
-                    <p>بإتمام الطلب، أنت توافق على شروط الخدمة وسياسة الاسترجاع.</p>
-                  </div>
+                  {profile?.is_banned ? (
+                    <div className="flex flex-col gap-3">
+                      <div className="flex items-center gap-2 text-xs font-black text-red-500 bg-red-50 dark:bg-red-900/20 p-4 rounded-xl border border-red-200 dark:border-red-900/50">
+                        <Ban size={18} className="shrink-0" />
+                        <p>عفواً، حسابك محظور من الشراء مؤقتاً.</p>
+                      </div>
+                      <a 
+                        href="https://wa.me/201000000000" // Example whatsapp, change as needed
+                        target="_blank" 
+                        rel="noreferrer"
+                        className="w-full flex items-center justify-center gap-2 bg-zinc-900 dark:bg-white dark:text-black text-white py-3 rounded-2xl font-black transition-all active:scale-95"
+                      >
+                        تواصل مع الدعم الفني
+                      </a>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="flex items-center gap-2 text-[10px] text-gray-500 dark:text-gray-400 bg-white/50 dark:bg-white/5 p-3 rounded-xl border border-gray-200 dark:border-white/10">
+                        <ShieldCheck size={14} className="text-emerald-500 shrink-0" />
+                        <p>بإتمام الطلب، أنت توافق على شروط الخدمة وسياسة الاسترجاع.</p>
+                      </div>
 
-                  <button
-                    onClick={handleCheckoutClick}
-                    className="w-full flex items-center justify-center gap-2 bg-red-600 text-white py-4 rounded-2xl font-black shadow-lg shadow-red-600/30 hover:shadow-red-600/50 hover:-translate-y-1 transition-all active:scale-95 glow-red"
-                  >
-                    <ArrowLeft size={18} />
-                    إتمام الطلب والدفع
-                  </button>
+                      <button
+                        onClick={handleCheckoutClick}
+                        className="w-full flex items-center justify-center gap-2 bg-red-600 text-white py-4 rounded-2xl font-black shadow-lg shadow-red-600/30 hover:shadow-red-600/50 hover:-translate-y-1 transition-all active:scale-95 glow-red"
+                      >
+                        <ArrowLeft size={18} />
+                        إتمام الطلب والدفع
+                      </button>
+                    </>
+                  )}
                 </div>
               )}
             </motion.div>

@@ -295,8 +295,33 @@ export default function Profile() {
   return (
     <div className="flex-1 w-full bg-gray-50 dark:bg-[#0f1115]" dir="rtl">
 
-      {/* ── Hero Header ──────────────────────────────────────────────── */}
-      <div className="relative bg-gradient-to-bl from-red-700 via-red-800 to-zinc-900 overflow-hidden">
+                {/* ── Banned Banner ── */}
+        {profile?.is_banned && (
+          <div className="bg-red-600 text-white p-4">
+            <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <AlertCircle size={24} className="shrink-0" />
+                <div>
+                  <h3 className="font-black text-lg">عفواً، تم حظر حسابك</h3>
+                  <p className="text-sm font-bold opacity-90">
+                    لا يمكنك إتمام أي طلبات شراء جديدة في الوقت الحالي. يمكنك تصفح الموقع ومراجعة طلباتك السابقة.
+                  </p>
+                </div>
+              </div>
+              <a 
+                href="https://wa.me/201557957800"
+                target="_blank" 
+                rel="noreferrer"
+                className="shrink-0 bg-white text-red-600 px-5 py-2.5 rounded-xl font-black text-sm hover:bg-red-50 transition-colors shadow-sm"
+              >
+                تحدث مع الدعم الفني
+              </a>
+            </div>
+          </div>
+        )}
+
+        {/* ── Hero Header ── */}
+        <div className="relative bg-gradient-to-bl from-red-700 via-red-800 to-zinc-900 overflow-hidden">
         {/* Dot grid */}
         <div
           className="absolute inset-0 opacity-10 pointer-events-none"

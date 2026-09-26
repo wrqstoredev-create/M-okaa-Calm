@@ -8,6 +8,7 @@ interface Profile {
   avatar_url: string | null;
   gender: 'male' | 'female' | 'other' | null;
   role?: 'user' | 'admin' | 'owner';
+  is_banned?: boolean;
 }
 
 interface AuthContextType {
