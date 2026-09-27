@@ -169,14 +169,14 @@ export default function HeroBanners() {
             <SmartImage 
               src={currentSlide.image_url} 
               alt={currentSlide.title || ''} 
-              className="w-full h-full opacity-60 md:opacity-100 mix-blend-overlay md:mix-blend-normal"
+              className="w-full h-full opacity-90 md:opacity-100 mix-blend-normal"
               imageClassName="object-contain w-full h-full"
             />
           </motion.div>
         </AnimatePresence>
 
         {/* Scanlines neon overlay */}
-        <div className="absolute inset-0 z-[1] pointer-events-none scanlines opacity-0 dark:opacity-100" />
+        <div className="absolute inset-0 z-[1] pointer-events-none scanlines opacity-0 dark:opacity-50 md:dark:opacity-100" />
 
         <div className="z-10 relative pointer-events-none max-w-xl text-center md:text-end flex flex-col items-center md:items-end w-full">
           {currentSlide.title && (
